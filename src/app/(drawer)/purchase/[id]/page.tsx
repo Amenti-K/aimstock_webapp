@@ -56,7 +56,7 @@ export default function PurchaseDetailPage() {
   const purchase = data.data;
   const purchaseItems = purchase.purchaseItems || [];
   const purchasePayments = purchase.purchasePayments || [];
-  
+
   const subtotal = purchaseItems.reduce(
     (sum: number, item: any) =>
       sum + Number(item.unitPrice || 0) * Number(item.quantity || 0),
@@ -75,7 +75,7 @@ export default function PurchaseDetailPage() {
     deletePurchase.mutate(
       { id: purchaseId },
       {
-        onSuccess: () => router.push("/app/purchase"),
+        onSuccess: () => router.push("/purchase"),
       },
     );
   };
@@ -84,9 +84,9 @@ export default function PurchaseDetailPage() {
     <div className="flex flex-col gap-8 pb-10">
       {/* Top Action Bar */}
       <div className="flex items-center justify-between px-1">
-        <Button 
-          variant="ghost" 
-          size="sm" 
+        <Button
+          variant="ghost"
+          size="sm"
           onClick={() => router.back()}
           className="rounded-xl hover:bg-card"
         >
@@ -103,7 +103,7 @@ export default function PurchaseDetailPage() {
                 variant="outline"
                 size="sm"
                 className="rounded-xl"
-                onClick={() => router.push(`/app/purchase/${purchaseId}/edit`)}
+                onClick={() => router.push(`/purchase/${purchaseId}/edit`)}
               >
                 <Pencil className="mr-2 h-4 w-4" />
                 Edit
@@ -126,18 +126,24 @@ export default function PurchaseDetailPage() {
           <div className="sm:hidden">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="icon" className="h-10 w-10 rounded-xl">
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="h-10 w-10 rounded-xl"
+                >
                   <MoreVertical className="h-5 w-5" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-40 rounded-xl">
                 {hasUpdateAccess && (
-                  <DropdownMenuItem onClick={() => router.push(`/app/purchase/${purchaseId}/edit`)}>
+                  <DropdownMenuItem
+                    onClick={() => router.push(`/purchase/${purchaseId}/edit`)}
+                  >
                     <Pencil className="mr-2 h-4 w-4" /> Edit
                   </DropdownMenuItem>
                 )}
                 {hasDeleteAccess && (
-                  <DropdownMenuItem 
+                  <DropdownMenuItem
                     className="text-destructive font-medium"
                     onClick={() => setIsDeleteOpen(true)}
                   >
@@ -187,11 +193,16 @@ export default function PurchaseDetailPage() {
           <AlertDialogHeader>
             <AlertDialogTitle>Delete permanently?</AlertDialogTitle>
             <AlertDialogDescription>
-              You are about to delete purchase <span className="font-bold text-foreground">{poNumber}</span>. This will also remove associated inventory increments and financial records. This action is irreversible.
+              You are about to delete purchase{" "}
+              <span className="font-bold text-foreground">{poNumber}</span>.
+              This will also remove associated inventory increments and
+              financial records. This action is irreversible.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="gap-2 sm:gap-0">
-            <AlertDialogCancel className="rounded-xl">Keep Purchase</AlertDialogCancel>
+            <AlertDialogCancel className="rounded-xl">
+              Keep Purchase
+            </AlertDialogCancel>
             <AlertDialogAction
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90 rounded-xl"
               onClick={handleDelete}

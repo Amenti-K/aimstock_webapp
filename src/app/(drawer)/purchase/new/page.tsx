@@ -37,7 +37,7 @@ export default function NewPurchasePage() {
         isLoading={createPurchase.isPending}
         onSubmit={(payload) =>
           createPurchase.mutate(payload, {
-            onSuccess: () => router.push("/app/purchase"),
+            onSuccess: () => router.push("/purchase"),
           })
         }
       />

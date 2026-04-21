@@ -18,13 +18,24 @@ export default function NewPartnerPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-4">
-        <Button variant="ghost" size="icon" onClick={() => router.back()}><ArrowLeft className="h-5 w-5" /></Button>
-        <div><h1 className="text-2xl font-bold tracking-tight">Add Partner</h1><p className="text-sm text-muted-foreground">Create a partner profile.</p></div>
+        <Button variant="ghost" size="icon" onClick={() => router.back()}>
+          <ArrowLeft className="h-5 w-5" />
+        </Button>
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight">Add Partner</h1>
+          <p className="text-sm text-muted-foreground">
+            Create a partner profile.
+          </p>
+        </div>
       </div>
       <PartnerForm
         isPending={createPartner.isPending}
         submitLabel="Create partner"
-        onSubmit={(values: PartnerFormValues) => createPartner.mutate(values as any, { onSuccess: () => router.push("/app/partner") })}
+        onSubmit={(values: PartnerFormValues) =>
+          createPartner.mutate(values as any, {
+            onSuccess: () => router.push("/partner"),
+          })
+        }
         onCancel={() => router.back()}
       />
     </div>

@@ -78,7 +78,7 @@ export default function LoginPage() {
                 {/* <div className="flex items-center justify-between">
                   <FormLabel>Password</FormLabel>
                   <Link 
-                    href="/app/auth/forgot-password" 
+                    href="/auth/forgot-password" 
                     className="text-sm font-medium text-primary hover:underline hover:text-primary/80"
                   >
                     Forgot password?
@@ -118,7 +118,7 @@ export default function LoginPage() {
       <div className="text-center text-sm">
         <span className="text-muted-foreground">New here? </span>
         <Link
-          href="/app/auth/register"
+          href="/auth/register"
           className="font-semibold text-primary hover:text-primary/80 hover:underline transition-colors"
         >
           Create an account

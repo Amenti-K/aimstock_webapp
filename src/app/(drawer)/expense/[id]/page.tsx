@@ -75,7 +75,7 @@ export default function ExpenseDetailPage() {
             <Button
               variant="outline"
               size="sm"
-              onClick={() => router.push(`/app/expense/${expenseId}/edit`)}
+              onClick={() => router.push(`/expense/${expenseId}/edit`)}
               className="rounded-full shadow-sm hover:shadow-md transition-all"
             >
               <Pencil className="mr-2 h-3.5 w-3.5" /> Edit
@@ -240,7 +240,7 @@ export default function ExpenseDetailPage() {
               onClick={() =>
                 deleteExpense.mutate(
                   { id: expenseId },
-                  { onSuccess: () => router.push("/app/expense") },
+                  { onSuccess: () => router.push("/expense") },
                 )
               }
             >

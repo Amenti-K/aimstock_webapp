@@ -2,7 +2,6 @@
 
 import React from "react";
 import {
-  IRole,
   useCreateRole,
   useDeleteRole,
   useFetchRoleById,
@@ -56,6 +55,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import RoleForm from "@/components/forms/role/RoleForm";
 import { RoleFormValues } from "@/components/forms/role/role.schema";
+import { IRole } from "@/components/interface/role/role.interface";
 
 export default function RolePage() {
   const { canView, canCreate, canUpdate, canDelete } = usePermissions();
@@ -64,8 +64,12 @@ export default function RolePage() {
   const hasUpdateAccess = canUpdate("ROLE");
   const hasDeleteAccess = canDelete("ROLE");
   const [search, setSearch] = React.useState("");
-  const [selectedRoleId, setSelectedRoleId] = React.useState<string | null>(null);
-  const [formMode, setFormMode] = React.useState<"create" | "edit" | "duplicate">("create");
+  const [selectedRoleId, setSelectedRoleId] = React.useState<string | null>(
+    null,
+  );
+  const [formMode, setFormMode] = React.useState<
+    "create" | "edit" | "duplicate"
+  >("create");
   const [isFormOpen, setIsFormOpen] = React.useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = React.useState(false);
 
@@ -81,7 +85,10 @@ export default function RolePage() {
     isFetchingNextPage,
   } = useGetRolesInfinite({ search }, hasViewAccess);
 
-  const selectedRoleQuery = useFetchRoleById(selectedRoleId ?? "", !!selectedRoleId);
+  const selectedRoleQuery = useFetchRoleById(
+    selectedRoleId ?? "",
+    !!selectedRoleId,
+  );
   const updateRole = useUpdateRole(selectedRoleId ?? "");
 
   const roles = React.useMemo(() => {
@@ -122,14 +129,15 @@ export default function RolePage() {
       permissions: values.permissions.filter((permission) => {
         const hasAll = values.permissions.some(
           (candidate) =>
-            candidate.module === permission.module && candidate.permission === "ALL",
+            candidate.module === permission.module &&
+            candidate.permission === "ALL",
         );
         return hasAll ? permission.permission === "ALL" : true;
       }),
     };
 
     if (formMode === "create" || formMode === "duplicate") {
-      createRole.mutate(payload, {
+      createRole.mutate(payload as any, {
         onSuccess: () => {
           setIsFormOpen(false);
           setSelectedRoleId(null);
@@ -139,7 +147,7 @@ export default function RolePage() {
     }
 
     if (selectedRoleId) {
-      updateRole.mutate(payload, {
+      updateRole.mutate(payload as any, {
         onSuccess: () => {
           setIsFormOpen(false);
           setSelectedRoleId(null);
@@ -172,7 +180,9 @@ export default function RolePage() {
     <div className="space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Roles & Permissions</h1>
+          <h1 className="text-2xl font-bold tracking-tight">
+            Roles & Permissions
+          </h1>
           <p className="text-sm text-muted-foreground">
             Configure access levels for your team members.
           </p>
@@ -227,11 +237,17 @@ export default function RolePage() {
                   </TableCell>
                   <TableCell>
                     <div className="flex flex-wrap gap-1">
-                      {role.permissions?.slice(0, 3).map((p: any, idx: number) => (
-                        <Badge key={idx} variant="secondary" className="text-[10px]">
-                          {p.module}:{p.permission}
-                        </Badge>
-                      ))}
+                      {role.permissions
+                        ?.slice(0, 3)
+                        .map((p: any, idx: number) => (
+                          <Badge
+                            key={idx}
+                            variant="secondary"
+                            className="text-[10px]"
+                          >
+                            {p.module}:{p.permission}
+                          </Badge>
+                        ))}
                       {(role.permissions?.length || 0) > 3 && (
                         <Badge variant="outline" className="text-[10px]">
                           +{(role.permissions?.length || 0) - 3} more
@@ -254,7 +270,9 @@ export default function RolePage() {
                           </DropdownMenuItem>
                         )}
                         {hasCreateAccess && (
-                          <DropdownMenuItem onClick={() => onOpenDuplicate(role.id)}>
+                          <DropdownMenuItem
+                            onClick={() => onOpenDuplicate(role.id)}
+                          >
                             <Copy className="mr-2 h-4 w-4" />
                             Duplicate role
                           </DropdownMenuItem>
@@ -279,7 +297,7 @@ export default function RolePage() {
             )}
           </TableBody>
         </Table>
-        
+
         {hasNextPage && (
           <div className="flex justify-center p-4">
             <Button
@@ -310,9 +328,13 @@ export default function RolePage() {
                   : "Edit role"}
             </DialogTitle>
           </DialogHeader>
-          {formMode !== "create" && selectedRoleId && selectedRoleQuery.isLoading ? (
+          {formMode !== "create" &&
+          selectedRoleId &&
+          selectedRoleQuery.isLoading ? (
             <LoadingView />
-          ) : formMode !== "create" && selectedRoleId && selectedRoleQuery.isError ? (
+          ) : formMode !== "create" &&
+            selectedRoleId &&
+            selectedRoleQuery.isError ? (
             <ErrorView refetch={selectedRoleQuery.refetch} />
           ) : (
             <RoleForm
@@ -334,7 +356,8 @@ export default function RolePage() {
           <AlertDialogHeader>
             <AlertDialogTitle>Delete role?</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. The selected role will be permanently removed.
+              This action cannot be undone. The selected role will be
+              permanently removed.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

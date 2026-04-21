@@ -7,7 +7,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
 
 import { useSignUp } from "@/api/auth/api.auth";
-import { appSignUpSchema, AppSignUpInput } from "@/components/schema/user-auth.schema";
+import {
+  appSignUpSchema,
+  AppSignUpInput,
+} from "@/components/schema/user-auth.schema";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -42,7 +45,9 @@ export default function RegisterPage() {
   return (
     <div className="flex flex-col space-y-6 lg:max-h-[85vh] lg:overflow-y-auto pr-2 pb-8 custom-scrollbar">
       <div className="flex flex-col space-y-2 text-center lg:text-left mt-4 lg:mt-0">
-        <h1 className="text-3xl font-bold tracking-tight text-foreground">Create an account</h1>
+        <h1 className="text-3xl font-bold tracking-tight text-foreground">
+          Create an account
+        </h1>
         <p className="text-sm text-muted-foreground">
           Sign up to streamline your stock and sales management
         </p>
@@ -57,11 +62,11 @@ export default function RegisterPage() {
               <FormItem>
                 <FormLabel>Full Name</FormLabel>
                 <FormControl>
-                  <Input 
-                    placeholder="Enter your full name" 
+                  <Input
+                    placeholder="Enter your full name"
                     className="h-11"
                     disabled={isPending}
-                    {...field} 
+                    {...field}
                   />
                 </FormControl>
                 <FormMessage />
@@ -76,11 +81,11 @@ export default function RegisterPage() {
               <FormItem>
                 <FormLabel>Company Name</FormLabel>
                 <FormControl>
-                  <Input 
-                    placeholder="Enter your company name" 
+                  <Input
+                    placeholder="Enter your company name"
                     className="h-11"
                     disabled={isPending}
-                    {...field} 
+                    {...field}
                   />
                 </FormControl>
                 <FormMessage />
@@ -95,12 +100,12 @@ export default function RegisterPage() {
               <FormItem>
                 <FormLabel>Phone Number</FormLabel>
                 <FormControl>
-                  <Input 
-                    placeholder="e.g. 0912345678" 
-                    type="tel" 
+                  <Input
+                    placeholder="e.g. 0912345678"
+                    type="tel"
                     className="h-11"
                     disabled={isPending}
-                    {...field} 
+                    {...field}
                   />
                 </FormControl>
                 <FormMessage />
@@ -115,12 +120,12 @@ export default function RegisterPage() {
               <FormItem>
                 <FormLabel>Password</FormLabel>
                 <FormControl>
-                  <Input 
-                    placeholder="Create a strong password" 
-                    type="password" 
+                  <Input
+                    placeholder="Create a strong password"
+                    type="password"
                     className="h-11"
                     disabled={isPending}
-                    {...field} 
+                    {...field}
                   />
                 </FormControl>
                 <FormMessage />
@@ -135,12 +140,12 @@ export default function RegisterPage() {
               <FormItem>
                 <FormLabel>Confirm Password</FormLabel>
                 <FormControl>
-                  <Input 
-                    placeholder="Confirm your password" 
-                    type="password" 
+                  <Input
+                    placeholder="Confirm your password"
+                    type="password"
                     className="h-11"
                     disabled={isPending}
-                    {...field} 
+                    {...field}
                   />
                 </FormControl>
                 <FormMessage />
@@ -163,11 +168,17 @@ export default function RegisterPage() {
                 <div className="space-y-1 leading-none">
                   <FormLabel className="text-sm font-normal text-muted-foreground">
                     I agree to the{" "}
-                    <Link href="#" className="font-medium text-primary hover:underline">
+                    <Link
+                      href="#"
+                      className="font-medium text-primary hover:underline"
+                    >
                       Terms & Conditions
                     </Link>{" "}
                     and{" "}
-                    <Link href="#" className="font-medium text-primary hover:underline">
+                    <Link
+                      href="#"
+                      className="font-medium text-primary hover:underline"
+                    >
                       Privacy Policy
                     </Link>
                   </FormLabel>
@@ -177,7 +188,11 @@ export default function RegisterPage() {
             )}
           />
 
-          <Button type="submit" className="w-full h-11 text-base font-medium mt-2" disabled={isPending}>
+          <Button
+            type="submit"
+            className="w-full h-11 text-base font-medium mt-2"
+            disabled={isPending}
+          >
             {isPending ? (
               <>
                 <Loader2 className="mr-2 h-5 w-5 animate-spin" />
@@ -192,8 +207,8 @@ export default function RegisterPage() {
 
       <div className="text-center text-sm pt-2">
         <span className="text-muted-foreground">Already have an account? </span>
-        <Link 
-          href="/app/auth/login" 
+        <Link
+          href="/auth/login"
           className="font-semibold text-primary hover:text-primary/80 hover:underline transition-colors"
         >
           Sign in

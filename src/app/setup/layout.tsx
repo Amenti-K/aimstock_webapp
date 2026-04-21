@@ -5,9 +5,15 @@ import { useRouter, usePathname } from "next/navigation";
 import { useAppSelector } from "@/redux/hooks";
 import { Loader2 } from "lucide-react";
 
-export default function SetupLayout({ children }: { children: React.ReactNode }) {
+export default function SetupLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const router = useRouter();
-  const { accessToken, company, loading } = useAppSelector((state) => state.userAuth);
+  const { accessToken, company, loading } = useAppSelector(
+    (state) => state.userAuth,
+  );
   const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
@@ -18,12 +24,12 @@ export default function SetupLayout({ children }: { children: React.ReactNode })
     if (!isReady) return;
 
     if (!accessToken) {
-      router.replace("/app/auth/login");
+      router.replace("/auth/login");
       return;
     }
 
     if (company?.setupStep === 4) {
-      router.replace("/app/dashboard");
+      router.replace("/dashboard");
       return;
     }
   }, [isReady, accessToken, company, router]);

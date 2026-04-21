@@ -133,13 +133,13 @@ export default function AuditPage() {
         </div>
         <SelectField
           name="entityType"
-          control={control}
+          control={control as any}
           label="Entity type"
           options={entityOptions}
         />
         <SelectField
           name="auditAction"
-          control={control}
+          control={control as any}
           label="Action"
           options={actionOptions}
         />

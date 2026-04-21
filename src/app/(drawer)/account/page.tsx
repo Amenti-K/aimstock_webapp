@@ -180,7 +180,7 @@ export default function AccountPage() {
                   <TableRow
                     key={acc.id}
                     className="cursor-pointer group transition-colors hover:bg-muted/50 border-b last:border-0"
-                    onClick={() => router.push(`/app/account/${acc.id}`)}
+                    onClick={() => router.push(`/account/${acc.id}`)}
                   >
                     <TableCell className="py-4 pl-6">
                       <div className="flex items-center gap-3">

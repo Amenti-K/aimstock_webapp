@@ -52,7 +52,7 @@ export default function EditInventoryPage() {
         isLoading={updateInventory.isPending}
         onSubmit={(payload: inventoryFormValues) =>
           updateInventory.mutate(payload, {
-            onSuccess: () => router.push(`/app/inventory/${inventoryId}`),
+            onSuccess: () => router.push(`/inventory/${inventoryId}`),
           })
         }
       />

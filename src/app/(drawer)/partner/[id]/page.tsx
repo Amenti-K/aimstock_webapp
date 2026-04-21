@@ -131,7 +131,7 @@ export default function PartnerDetailPage() {
           {canUpdate("PARTNERS") && (
             <Button
               variant="outline"
-              onClick={() => router.push(`/app/partner/${partnerId}/edit`)}
+              onClick={() => router.push(`/partner/${partnerId}/edit`)}
               className="rounded-full shadow-sm"
             >
               <Pencil className="mr-2 h-4 w-4" /> Edit
@@ -291,7 +291,7 @@ export default function PartnerDetailPage() {
                         <TableRow
                           key={s.id}
                           className="cursor-pointer hover:bg-muted/50 group"
-                          onClick={() => router.push(`/app/sales/${s.id}`)}
+                          onClick={() => router.push(`/sales/${s.id}`)}
                         >
                           <TableCell className="font-semibold text-sm">
                             {formatDate(s.createdAt)}
@@ -347,7 +347,7 @@ export default function PartnerDetailPage() {
                         <TableRow
                           key={p.id}
                           className="cursor-pointer hover:bg-muted/50 group"
-                          onClick={() => router.push(`/app/purchase/${p.id}`)}
+                          onClick={() => router.push(`/purchase/${p.id}`)}
                         >
                           <TableCell className="font-semibold text-sm">
                             {formatDate(p.createdAt)}
@@ -403,9 +403,7 @@ export default function PartnerDetailPage() {
                         <TableRow
                           key={l.id}
                           className="cursor-pointer hover:bg-muted/50 group"
-                          onClick={() =>
-                            router.push(`/app/loan/${l.partnerId}`)
-                          }
+                          onClick={() => router.push(`/loan/${l.partnerId}`)}
                         >
                           <TableCell className="font-semibold text-sm">
                             {formatDate(l.createdAt)}
@@ -452,7 +450,7 @@ export default function PartnerDetailPage() {
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90 rounded-full"
               onClick={() =>
                 deletePartner.mutate({ id: partnerId } as any, {
-                  onSuccess: () => router.push("/app/partner"),
+                  onSuccess: () => router.push("/partner"),
                 })
               }
             >

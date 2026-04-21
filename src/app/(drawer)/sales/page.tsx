@@ -88,7 +88,7 @@ export default function SalesPage() {
         {hasCreateAccess && (
           <Button
             className="w-full shadow-lg shadow-emerald-500/20 bg-emerald-600 hover:bg-emerald-700 transition-all hover:shadow-xl sm:w-auto"
-            onClick={() => router.push("/app/sales/new")}
+            onClick={() => router.push("/sales/new")}
           >
             <Plus className="mr-2 h-4 w-4" /> New Sale
           </Button>
@@ -144,7 +144,7 @@ export default function SalesPage() {
                     <TableRow
                       key={sale.id}
                       className="group cursor-pointer hover:bg-muted/30 transition-colors"
-                      onClick={() => router.push(`/app/sales/${sale.id}`)}
+                      onClick={() => router.push(`/sales/${sale.id}`)}
                     >
                       <TableCell className="py-4">
                         <div className="flex items-center gap-3">

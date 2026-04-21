@@ -67,7 +67,10 @@ export default function AdjustmentPage() {
           </p>
         </div>
         {hasCreateAccess && (
-          <Button className="w-full sm:w-auto" onClick={() => router.push("/app/adjustment/new")}>
+          <Button
+            className="w-full sm:w-auto"
+            onClick={() => router.push("/adjustment/new")}
+          >
             <Plus className="mr-2 h-4 w-4" /> New Adjustment
           </Button>
         )}
@@ -76,7 +79,12 @@ export default function AdjustmentPage() {
       <div className="flex items-center gap-2">
         <div className="relative flex-1 max-w-sm">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input placeholder="Search adjustments..." className="pl-8" value={search} onChange={(e) => setSearch(e.target.value)} />
+          <Input
+            placeholder="Search adjustments..."
+            className="pl-8"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
         </div>
       </div>
 
@@ -101,11 +109,17 @@ export default function AdjustmentPage() {
               </TableRow>
             ) : (
               adjustments.map((adj: any) => (
-                <TableRow key={adj.id} className="cursor-pointer" onClick={() => router.push(`/app/adjustment/${adj.id}`)}>
+                <TableRow
+                  key={adj.id}
+                  className="cursor-pointer"
+                  onClick={() => router.push(`/adjustment/${adj.id}`)}
+                >
                   <TableCell className="font-medium whitespace-nowrap">
                     {formatDate(adj.createdAt)}
                   </TableCell>
-                  <TableCell>{adj.warehouse?.name || adj.inventory?.name || "Unknown"}</TableCell>
+                  <TableCell>
+                    {adj.warehouse?.name || adj.inventory?.name || "Unknown"}
+                  </TableCell>
                   <TableCell>
                     <Badge
                       variant={
@@ -115,7 +129,9 @@ export default function AdjustmentPage() {
                       {adj.type}
                     </Badge>
                   </TableCell>
-                  <TableCell className="font-bold">{adj.itemsCount ?? adj.quantity ?? 0}</TableCell>
+                  <TableCell className="font-bold">
+                    {adj.itemsCount ?? adj.quantity ?? 0}
+                  </TableCell>
                   <TableCell className="max-w-[200px] truncate text-muted-foreground">
                     {adj.reason || "Manual Correction"}
                   </TableCell>
@@ -127,11 +143,17 @@ export default function AdjustmentPage() {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => router.push(`/app/adjustment/${adj.id}`)}>
+                        <DropdownMenuItem
+                          onClick={() => router.push(`/adjustment/${adj.id}`)}
+                        >
                           <Eye className="mr-2 h-4 w-4" /> View details
                         </DropdownMenuItem>
                         {hasUpdateAccess && (
-                          <DropdownMenuItem onClick={() => router.push(`/app/adjustment/${adj.id}/edit`)}>
+                          <DropdownMenuItem
+                            onClick={() =>
+                              router.push(`/adjustment/${adj.id}/edit`)
+                            }
+                          >
                             <Pencil className="mr-2 h-4 w-4" /> Edit
                           </DropdownMenuItem>
                         )}

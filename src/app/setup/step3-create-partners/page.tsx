@@ -62,7 +62,7 @@ export default function Step3PartnersPage() {
     try {
       await createBulkPartners(data as any);
       dispatch(setCompanyStep(4));
-      router.push("/app/setup/finished");
+      router.push("/setup/finished");
     } catch (error) {
       console.error(error);
     }
@@ -183,7 +183,7 @@ export default function Step3PartnersPage() {
                 onClick={() => {
                   // Skip logic
                   dispatch(setCompanyStep(4));
-                  router.push("/app/setup/finished");
+                  router.push("/setup/finished");
                 }}
               >
                 Skip for now

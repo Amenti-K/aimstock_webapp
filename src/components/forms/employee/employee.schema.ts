@@ -4,8 +4,10 @@ const phoneRegex = /^(09[0-9]{8}|07[0-9]{8}|\+2519[0-9]{8}|\+2517[0-9]{8})$/;
 
 const baseEmployeeSchema = {
   name: z.string().min(2, "Name is required"),
-  phoneNumber: z.string().regex(phoneRegex, "Enter a valid Ethiopian phone number"),
-  roleId: z.string().optional(),
+  phoneNumber: z
+    .string()
+    .regex(phoneRegex, "Enter a valid Ethiopian phone number"),
+  roleId: z.string(),
 };
 
 export const createEmployeeSchema = z.object({

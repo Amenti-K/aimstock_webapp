@@ -5,14 +5,11 @@ import { useParams, useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import SalesForm from "@/components/sales/SalesForm";
-import {
-  useFetchSale,
-  useUpdateSale,
-  type INewSale,
-} from "@/api/sale/api.sale";
+import { useFetchSale, useUpdateSale } from "@/api/sale/api.sale";
 import { usePermissions } from "@/hooks/permission.hook";
 import { AccessDeniedView } from "@/components/guards/AccessDeniedView";
 import { LoadingView, ErrorView } from "@/components/common/StateView";
+import { INewSale } from "@/components/interface/sales/interface.sale";
 
 export default function EditSalesPage() {
   const { id } = useParams();
@@ -34,7 +31,7 @@ export default function EditSalesPage() {
 
   const handleSubmit = (payload: INewSale) => {
     updateSale.mutate(payload as any, {
-      onSuccess: () => router.push(`/app/sales/${saleId}`),
+      onSuccess: () => router.push(`/sales/${saleId}`),
     });
   };
 

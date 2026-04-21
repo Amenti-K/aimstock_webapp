@@ -136,7 +136,7 @@ export default function InventoryPage() {
         {hasCreateAccess && (
           <Button
             className="w-full sm:w-auto bg-primary hover:bg-primary/90 shadow-sm"
-            onClick={() => router.push("/app/inventory/new")}
+            onClick={() => router.push("/inventory/new")}
           >
             <Plus className="mr-2 h-4 w-4" /> Add Item
           </Button>
@@ -191,7 +191,7 @@ export default function InventoryPage() {
             <InventoryMobileCard
               key={item.id}
               item={item}
-              onClick={() => router.push(`/app/inventory/${item.id}`)}
+              onClick={() => router.push(`/inventory/${item.id}`)}
               hasUpdateAccess={hasUpdateAccess}
               hasDeleteAccess={hasDeleteAccess}
               onDelete={(id) => {
@@ -251,7 +251,7 @@ export default function InventoryPage() {
                   <TableRow
                     key={item.id}
                     className="cursor-pointer hover:bg-muted/50 transition-colors group"
-                    onClick={() => router.push(`/app/inventory/${item.id}`)}
+                    onClick={() => router.push(`/inventory/${item.id}`)}
                   >
                     <TableCell>
                       <div className="flex items-center gap-3">

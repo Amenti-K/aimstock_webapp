@@ -3,23 +3,14 @@ import endpoints from "@/lib/endpoints";
 import { queryKeys } from "@/lib/queryKeys";
 import { toast } from "sonner";
 import axiosInstance from "@/lib/axiosInstance";
-
-
-export interface IRole {
-  id: string;
-  name: string;
-  description?: string;
-  permissions: any[];
-}
-
-export interface INewRole {
-  name: string;
-  description?: string;
-  permissions: string[];
-}
+import { INewRole, IRole } from "@/components/interface/role/role.interface";
 
 const onErrorNotification = (error: any) => {
-  toast.error(error.response?.data?.message || error.response?.data?.msg || "An error occurred");
+  toast.error(
+    error.response?.data?.message ||
+      error.response?.data?.msg ||
+      "An error occurred",
+  );
 };
 
 const onSuccessNotification = (data: any) => {
@@ -28,7 +19,7 @@ const onSuccessNotification = (data: any) => {
 
 export const useGetRolesInfinite = (
   filterOptions?: Record<string, any>,
-  enabled?: boolean
+  enabled?: boolean,
 ) => {
   const { search, ...filter } = filterOptions ?? { search: undefined };
   const queryParams = {
@@ -74,7 +65,7 @@ export const useDeleteRole = () => {
       onError: onErrorNotification,
       onSuccess: () => toast.success("Role deleted successfully!"),
       queryKey: queryKeys.roles.root,
-    }
+    },
   );
 };
 
@@ -85,7 +76,8 @@ export const useFetchRoleSelector = () => {
 };
 
 export const fetchRolePermissionsApi = async (roleId: string) => {
-  const { data } = await axiosInstance.get(`${endpoints.ROLE}/permissions/${roleId}`);
+  const { data } = await axiosInstance.get(
+    `${endpoints.ROLE}/permissions/${roleId}`,
+  );
   return data;
 };
-

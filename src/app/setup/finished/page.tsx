@@ -14,7 +14,7 @@ export default function SetupFinishedPage() {
   const handleGoToDashboard = () => {
     // In case there's any final state manipulation needed
     dispatch(setCompanyStep(4));
-    router.replace("/app/dashboard");
+    router.replace("/dashboard");
   };
 
   return (
@@ -24,16 +24,21 @@ export default function SetupFinishedPage() {
           <CheckCircle2 className="w-12 h-12" />
         </div>
       </div>
-      
+
       <h1 className="text-3xl font-bold tracking-tight text-foreground mb-4">
         You're All Set!
       </h1>
-      
+
       <p className="text-muted-foreground mb-8">
-        Your AIM Stock workspace has been successfully set up. You can now start managing your inventory and exploring all the features we have to offer.
+        Your AIM Stock workspace has been successfully set up. You can now start
+        managing your inventory and exploring all the features we have to offer.
       </p>
 
-      <Button onClick={handleGoToDashboard} size="lg" className="px-10 h-12 text-base font-semibold w-full sm:w-auto">
+      <Button
+        onClick={handleGoToDashboard}
+        size="lg"
+        className="px-10 h-12 text-base font-semibold w-full sm:w-auto"
+      >
         Go to Dashboard
       </Button>
     </div>

@@ -119,7 +119,7 @@ export default function AccountDetailPage() {
       {
         onSuccess: () => {
           setIsDeleteAlertOpen(false);
-          router.push("/app/account");
+          router.push("/account");
         },
       },
     );
@@ -249,7 +249,9 @@ export default function AccountDetailPage() {
                 <span className="text-4xl xs:text-5xl font-black text-primary tracking-tighter">
                   {Number(account.balance).toLocaleString()}
                 </span>
-                <span className="text-base font-medium opacity-70 text-primary uppercase">ETB</span>
+                <span className="text-base font-medium opacity-70 text-primary uppercase">
+                  ETB
+                </span>
               </div>
               <div className="mt-4 flex items-center gap-2 text-xs text-emerald-600 font-medium px-3 py-1.5 bg-emerald-50 rounded-full border border-emerald-100">
                 <CheckCircle2 className="h-3.5 w-3.5" /> Verified Balance
@@ -282,7 +284,7 @@ export default function AccountDetailPage() {
                 </p>
               </div>
               <div className="bg-emerald-500/10 p-2 rounded-xl">
-                 <TrendingUp className="h-6 w-6 text-emerald-500" />
+                <TrendingUp className="h-6 w-6 text-emerald-500" />
               </div>
             </div>
             <div className="flex justify-between items-center p-4 rounded-2xl bg-rose-50 border border-rose-100 dark:bg-rose-500/5 dark:border-rose-500/10 group hover:scale-[1.02] transition-transform">
@@ -303,7 +305,7 @@ export default function AccountDetailPage() {
                 </p>
               </div>
               <div className="bg-rose-500/10 p-2 rounded-xl">
-                 <TrendingUp className="h-6 w-6 text-rose-500 rotate-180" />
+                <TrendingUp className="h-6 w-6 text-rose-500 rotate-180" />
               </div>
             </div>
             <div className="pt-2 flex items-center justify-center gap-2 text-muted-foreground border-t border-dashed mt-auto">
@@ -324,48 +326,68 @@ export default function AccountDetailPage() {
             </CardTitle>
             <CardDescription>Last activities on this account</CardDescription>
           </div>
-          <Badge variant="outline" className="bg-background/50 border-muted-foreground/10 px-3 font-semibold rounded-full hidden sm:flex">
-             {transactions.length} Records
+          <Badge
+            variant="outline"
+            className="bg-background/50 border-muted-foreground/10 px-3 font-semibold rounded-full hidden sm:flex"
+          >
+            {transactions.length} Records
           </Badge>
         </CardHeader>
         <CardContent className="p-0 sm:p-2">
           {/* Card list for mobile (hidden on medium-up) */}
           <div className="block sm:hidden divide-y divide-muted-foreground/10 px-4">
-             {transactions.length === 0 ? (
-               <div className="h-48 flex flex-col items-center justify-center text-muted-foreground gap-2">
-                  <History className="h-10 w-10 opacity-20" />
-                  <p>No transactions found.</p>
-               </div>
-             ) : (
-               transactions.map((tx: any) => (
-                 <div key={tx.id} className="py-5 group active:bg-muted/50 transition-colors">
-                    <div className="flex justify-between items-start mb-2">
-                       <div className="flex items-center gap-3">
-                          <div className="p-2 rounded-xl bg-muted group-active:bg-background">
-                             {getTransactionIcon(tx.source)}
-                          </div>
-                          <div className="flex flex-col">
-                             <span className="font-bold text-sm capitalize">{tx.source.replace(/_/g, " ")}</span>
-                             <span className="text-[10px] text-muted-foreground font-semibold">{formatDate(tx.createdAt)}</span>
-                          </div>
-                       </div>
-                       <Badge variant="outline" className={`text-[10px] h-4.5 px-1.5 rounded-sm font-bold border-none ${tx.direction === "in" ? "text-emerald-600 bg-emerald-50" : "text-rose-600 bg-rose-50"}`}>
-                          {tx.direction === "in" ? "RECEIVED" : "SENT"}
-                       </Badge>
+            {transactions.length === 0 ? (
+              <div className="h-48 flex flex-col items-center justify-center text-muted-foreground gap-2">
+                <History className="h-10 w-10 opacity-20" />
+                <p>No transactions found.</p>
+              </div>
+            ) : (
+              transactions.map((tx: any) => (
+                <div
+                  key={tx.id}
+                  className="py-5 group active:bg-muted/50 transition-colors"
+                >
+                  <div className="flex justify-between items-start mb-2">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 rounded-xl bg-muted group-active:bg-background">
+                        {getTransactionIcon(tx.source)}
+                      </div>
+                      <div className="flex flex-col">
+                        <span className="font-bold text-sm capitalize">
+                          {tx.source.replace(/_/g, " ")}
+                        </span>
+                        <span className="text-[10px] text-muted-foreground font-semibold">
+                          {formatDate(tx.createdAt)}
+                        </span>
+                      </div>
                     </div>
-                    
-                    <div className="flex justify-between items-end gap-4 pl-12">
-                       <div className="flex flex-col gap-1 overflow-hidden">
-                          <p className="text-xs font-medium text-foreground line-clamp-1">{tx.description || "No description"}</p>
-                          <p className="text-[10px] text-muted-foreground font-bold truncate">Partner: {tx.relatedName || "Generic"}</p>
-                       </div>
-                       <p className={`text-base font-black whitespace-nowrap ${tx.direction === "in" ? "text-emerald-600" : "text-rose-600"}`}>
-                          {tx.direction === "in" ? "+" : "-"} {Number(tx.amount).toLocaleString()}
-                       </p>
+                    <Badge
+                      variant="outline"
+                      className={`text-[10px] h-4.5 px-1.5 rounded-sm font-bold border-none ${tx.direction === "in" ? "text-emerald-600 bg-emerald-50" : "text-rose-600 bg-rose-50"}`}
+                    >
+                      {tx.direction === "in" ? "RECEIVED" : "SENT"}
+                    </Badge>
+                  </div>
+
+                  <div className="flex justify-between items-end gap-4 pl-12">
+                    <div className="flex flex-col gap-1 overflow-hidden">
+                      <p className="text-xs font-medium text-foreground line-clamp-1">
+                        {tx.description || "No description"}
+                      </p>
+                      <p className="text-[10px] text-muted-foreground font-bold truncate">
+                        Partner: {tx.relatedName || "Generic"}
+                      </p>
                     </div>
-                 </div>
-               ))
-             )}
+                    <p
+                      className={`text-base font-black whitespace-nowrap ${tx.direction === "in" ? "text-emerald-600" : "text-rose-600"}`}
+                    >
+                      {tx.direction === "in" ? "+" : "-"}{" "}
+                      {Number(tx.amount).toLocaleString()}
+                    </p>
+                  </div>
+                </div>
+              ))
+            )}
           </div>
 
           {/* Table for larger screens (hidden on mobile) */}
@@ -373,11 +395,21 @@ export default function AccountDetailPage() {
             <Table>
               <TableHeader className="bg-muted/50 border-none">
                 <TableRow className="hover:bg-transparent border-none">
-                  <TableHead className="font-bold py-4 pl-6 text-xs uppercase tracking-wider text-muted-foreground/70">Transaction</TableHead>
-                  <TableHead className="font-bold py-4 text-xs uppercase tracking-wider text-muted-foreground/70">Description</TableHead>
-                  <TableHead className="font-bold py-4 text-xs uppercase tracking-wider text-muted-foreground/70">Related Party</TableHead>
-                  <TableHead className="font-bold py-4 text-right text-xs uppercase tracking-wider text-muted-foreground/70">Amount</TableHead>
-                  <TableHead className="font-bold py-4 text-center pr-6 text-xs uppercase tracking-wider text-muted-foreground/70">Date</TableHead>
+                  <TableHead className="font-bold py-4 pl-6 text-xs uppercase tracking-wider text-muted-foreground/70">
+                    Transaction
+                  </TableHead>
+                  <TableHead className="font-bold py-4 text-xs uppercase tracking-wider text-muted-foreground/70">
+                    Description
+                  </TableHead>
+                  <TableHead className="font-bold py-4 text-xs uppercase tracking-wider text-muted-foreground/70">
+                    Related Party
+                  </TableHead>
+                  <TableHead className="font-bold py-4 text-right text-xs uppercase tracking-wider text-muted-foreground/70">
+                    Amount
+                  </TableHead>
+                  <TableHead className="font-bold py-4 text-center pr-6 text-xs uppercase tracking-wider text-muted-foreground/70">
+                    Date
+                  </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -426,7 +458,8 @@ export default function AccountDetailPage() {
                       <TableCell
                         className={`py-4 text-right font-black text-sm sm:text-lg tabular-nums ${tx.direction === "in" ? "text-emerald-600" : "text-rose-600"}`}
                       >
-                        {tx.direction === "in" ? "+" : "-"} {Number(tx.amount).toLocaleString()}
+                        {tx.direction === "in" ? "+" : "-"}{" "}
+                        {Number(tx.amount).toLocaleString()}
                       </TableCell>
                       <TableCell className="py-4 text-center pr-6">
                         <div className="flex flex-col items-center">

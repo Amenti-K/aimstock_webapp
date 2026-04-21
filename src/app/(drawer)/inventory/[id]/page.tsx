@@ -121,7 +121,7 @@ export default function InventoryDetailPage() {
             <Button
               variant="outline"
               className="flex-1 md:flex-none rounded-full shadow-sm border-none bg-card"
-              onClick={() => router.push(`/app/inventory/${inventoryId}/edit`)}
+              onClick={() => router.push(`/inventory/${inventoryId}/edit`)}
             >
               <Pencil className="mr-2 h-4 w-4" />
               Edit
@@ -140,7 +140,7 @@ export default function InventoryDetailPage() {
         </div>
       </div>
 
-         <div className="flex flex-col gap-8">
+      <div className="flex flex-col gap-8">
         {/* Main Info Grid */}
         <div className="grid gap-4 sm:grid-cols-2">
           <Card className="rounded-3xl border-none shadow-sm bg-card overflow-hidden">
@@ -407,7 +407,9 @@ export default function InventoryDetailPage() {
                               "h-full transition-all duration-1000 rounded-full shadow-[0_0_8px_rgba(var(--primary),0.2)]",
                               isItemLow ? "bg-destructive" : "bg-primary",
                             )}
-                            style={{ width: `${Math.min(sharePercentage, 100)}%` }}
+                            style={{
+                              width: `${Math.min(sharePercentage, 100)}%`,
+                            }}
                           />
                         </div>
                         <div className="flex justify-between items-center">
@@ -448,9 +450,7 @@ export default function InventoryDetailPage() {
               </p>
             </div>
             <Button
-              onClick={() =>
-                router.push(`/app/inventory/${inventoryId}/analysis`)
-              }
+              onClick={() => router.push(`/inventory/${inventoryId}/analysis`)}
               className="bg-white text-primary hover:bg-white/90 rounded-2xl h-12 px-8 font-bold shadow-lg shadow-black/10"
             >
               <ChartColumnIncreasing className="mr-2 h-5 w-5" />
@@ -479,7 +479,7 @@ export default function InventoryDetailPage() {
                 deleteInventory.mutate(
                   { id: inventoryId },
                   {
-                    onSuccess: () => router.push("/app/inventory"),
+                    onSuccess: () => router.push("/inventory"),
                   },
                 )
               }

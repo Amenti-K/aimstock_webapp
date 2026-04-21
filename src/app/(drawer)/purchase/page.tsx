@@ -94,7 +94,7 @@ export default function PurchasePage() {
         {hasCreateAccess && (
           <Button
             className="w-full shadow-lg shadow-primary/20 transition-all hover:shadow-xl sm:w-auto"
-            onClick={() => router.push("/app/purchase/new")}
+            onClick={() => router.push("/purchase/new")}
           >
             <Plus className="mr-2 h-4 w-4" /> New Purchase
           </Button>
@@ -151,9 +151,7 @@ export default function PurchasePage() {
                     <TableRow
                       key={purchase.id}
                       className="group cursor-pointer hover:bg-muted/30 transition-colors"
-                      onClick={() =>
-                        router.push(`/app/purchase/${purchase.id}`)
-                      }
+                      onClick={() => router.push(`/purchase/${purchase.id}`)}
                     >
                       <TableCell className="py-4">
                         <div className="flex items-center gap-3">

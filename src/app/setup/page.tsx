@@ -13,13 +13,13 @@ export default function SetupRouterPage() {
     if (!company) return;
 
     if (company.setupStep === 1 || !company.setupStep) {
-      router.replace("/app/setup/step1-create-warehouse");
+      router.replace("/setup/step1-create-warehouse");
     } else if (company.setupStep === 2) {
-      router.replace("/app/setup/step2-create-inventory");
+      router.replace("/setup/step2-create-inventory");
     } else if (company.setupStep === 3) {
-      router.replace("/app/setup/step3-create-partners");
+      router.replace("/setup/step3-create-partners");
     } else if (company.setupStep === 4) {
-      router.replace("/app/setup/finished");
+      router.replace("/setup/finished");
     }
   }, [company, router]);
 

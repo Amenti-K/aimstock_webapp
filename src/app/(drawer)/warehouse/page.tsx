@@ -71,7 +71,7 @@ export default function WarehousePage() {
         {hasCreateAccess && (
           <Button
             className="w-full sm:w-auto bg-primary hover:bg-primary/90 shadow-sm"
-            onClick={() => router.push("/app/warehouse/new")}
+            onClick={() => router.push("/warehouse/new")}
           >
             <Plus className="mr-2 h-4 w-4" /> Add Warehouse
           </Button>
@@ -92,7 +92,7 @@ export default function WarehousePage() {
             <WarehouseMobileCard
               key={warehouse.id}
               warehouse={warehouse}
-              onClick={() => router.push(`/app/warehouse/${warehouse.id}`)}
+              onClick={() => router.push(`/warehouse/${warehouse.id}`)}
             />
           ))
         )}
@@ -124,7 +124,7 @@ export default function WarehousePage() {
                 <TableRow
                   key={warehouse.id}
                   className="cursor-pointer hover:bg-muted/50 transition-colors group"
-                  onClick={() => router.push(`/app/warehouse/${warehouse.id}`)}
+                  onClick={() => router.push(`/warehouse/${warehouse.id}`)}
                 >
                   <TableCell>
                     <div className="flex items-center gap-3">

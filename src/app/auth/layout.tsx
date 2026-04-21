@@ -1,9 +1,6 @@
 "use client";
 
-import { logoutUser } from "@/redux/slices/userAuthSlice";
 import { Package2 } from "lucide-react";
-import React, { useEffect } from "react";
-import { useDispatch } from "react-redux";
 
 export default function AuthLayout({
   children,

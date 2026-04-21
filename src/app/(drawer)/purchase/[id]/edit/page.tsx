@@ -8,11 +8,11 @@ import PurchaseForm from "@/components/purchase/PurchaseForm";
 import {
   useFetchPurchase,
   useUpdatePurchase,
-  type INewPurchase,
 } from "@/api/purchase/api.purchase";
 import { usePermissions } from "@/hooks/permission.hook";
 import { AccessDeniedView } from "@/components/guards/AccessDeniedView";
 import { LoadingView, ErrorView } from "@/components/common/StateView";
+import { INewPurchase } from "@/components/interface/purchase/purchase.interface";
 
 export default function EditPurchasePage() {
   const { id } = useParams();
@@ -34,7 +34,7 @@ export default function EditPurchasePage() {
 
   const handleSubmit = (payload: INewPurchase) => {
     updatePurchase.mutate(payload as any, {
-      onSuccess: () => router.push(`/app/purchase/${purchaseId}`),
+      onSuccess: () => router.push(`/purchase/${purchaseId}`),
     });
   };
 

@@ -37,7 +37,7 @@ export default function NewSalesPage() {
         isLoading={createSale.isPending}
         onSubmit={(payload) =>
           createSale.mutate(payload, {
-            onSuccess: () => router.push("/app/sales"),
+            onSuccess: () => router.push("/sales"),
           })
         }
       />

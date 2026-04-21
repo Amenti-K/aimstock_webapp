@@ -68,7 +68,7 @@ export default function ExpensePage() {
         {hasCreateAccess && (
           <Button
             className="w-full sm:w-auto shadow-lg hover:shadow-xl transition-all duration-300"
-            onClick={() => router.push("/app/expense/new")}
+            onClick={() => router.push("/expense/new")}
           >
             <Plus className="mr-2 h-5 w-5" /> New Expense
           </Button>
@@ -102,7 +102,7 @@ export default function ExpensePage() {
                 <TableRow
                   key={exp.id}
                   className="cursor-pointer transition-colors hover:bg-muted/30 group border-muted/20"
-                  onClick={() => router.push(`/app/expense/${exp.id}`)}
+                  onClick={() => router.push(`/expense/${exp.id}`)}
                 >
                   <TableCell className="px-6 py-4">
                     <div className="flex items-center gap-3">
@@ -147,7 +147,7 @@ export default function ExpensePage() {
             <Card
               key={exp.id}
               className="overflow-hidden border-none shadow-md active:scale-[0.98] transition-all bg-card/80 backdrop-blur-sm"
-              onClick={() => router.push(`/app/expense/${exp.id}`)}
+              onClick={() => router.push(`/expense/${exp.id}`)}
             >
               <CardContent className="p-0">
                 <div className="flex items-center p-4">

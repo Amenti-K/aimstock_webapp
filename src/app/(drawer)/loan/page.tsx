@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Plus, Search, MoreHorizontal, HandCoins } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { LoanSettlingModal } from "./components/LoanSettlingModal";
+import { LoanSettlingModal } from "../../../components/loan/LoanSettlingModal";
 import {
   Table,
   TableBody,
@@ -75,7 +75,7 @@ export default function LoanPage() {
         {hasCreateAccess && (
           <Button
             className="w-full sm:w-auto"
-            onClick={() => router.push("/app/loan/new")}
+            onClick={() => router.push("/loan/new")}
           >
             <Plus className="mr-2 h-4 w-4" /> Add Partner Loan
           </Button>
@@ -166,7 +166,7 @@ export default function LoanPage() {
                         balance: balance.toString(),
                         address: lp.address || "",
                       });
-                      router.push(`/app/loan/${lp.id}?${queryObj.toString()}`);
+                      router.push(`/loan/${lp.id}?${queryObj.toString()}`);
                     }}
                   >
                     <TableCell className="font-medium whitespace-nowrap">
@@ -230,7 +230,7 @@ export default function LoanPage() {
                                   address: lp.address || "",
                                 });
                                 router.push(
-                                  `/app/loan/${lp.id}?${queryObj.toString()}`,
+                                  `/loan/${lp.id}?${queryObj.toString()}`,
                                 );
                               }}
                             >
@@ -267,7 +267,7 @@ export default function LoanPage() {
                     balance: balance.toString(),
                     address: lp.address || "",
                   });
-                  router.push(`/app/loan/${lp.id}?${queryObj.toString()}`);
+                  router.push(`/loan/${lp.id}?${queryObj.toString()}`);
                 }}
               >
                 <div className="flex items-center justify-between">

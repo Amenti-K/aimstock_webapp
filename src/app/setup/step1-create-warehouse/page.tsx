@@ -7,7 +7,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2, Plus, Trash2, Building2 } from "lucide-react";
 
 import { useCreateManyWarehouses } from "@/api/warehouse/api.warehouse";
-import { warehousesArraySchema, FormWarehousesArrayValues } from "@/components/schema/warehouse.schema";
+import {
+  warehousesArraySchema,
+  FormWarehousesArrayValues,
+} from "@/components/schema/warehouse.schema";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { setCompanyStep } from "@/redux/slices/userAuthSlice";
 
@@ -31,8 +34,9 @@ export default function Step1WarehousePage() {
   const { company } = useAppSelector((state) => state.userAuth);
 
   const maxWarehouses = 2; // Can be based on subscription plan later
-  
-  const { mutateAsync: createManyWarehouses, isPending } = useCreateManyWarehouses();
+
+  const { mutateAsync: createManyWarehouses, isPending } =
+    useCreateManyWarehouses();
 
   const form = useForm<FormWarehousesArrayValues>({
     resolver: zodResolver(warehousesArraySchema),
@@ -82,7 +86,7 @@ export default function Step1WarehousePage() {
       await createManyWarehouses(payload);
 
       dispatch(setCompanyStep(2));
-      router.push("/app/setup/step2-create-inventory");
+      router.push("/setup/step2-create-inventory");
     } catch (error) {
       console.error(error);
     }
@@ -96,10 +100,10 @@ export default function Step1WarehousePage() {
           Step 1: Setup Warehouses
         </h1>
         <p className="text-muted-foreground mt-2">
-          Add your initial warehouses or store locations to start tracking inventory. 
-          You can add more later.
+          Add your initial warehouses or store locations to start tracking
+          inventory. You can add more later.
         </p>
-        
+
         {/* Progress bar logic could go here */}
         <div className="w-full h-2 bg-muted mt-6 rounded-full overflow-hidden">
           <div className="h-full bg-primary w-1/4 transition-all duration-500 ease-out" />
@@ -109,7 +113,10 @@ export default function Step1WarehousePage() {
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           {fields.map((field, index) => (
-            <Card key={field.id} className="fade-in-up border-primary/20 bg-background shadow-sm">
+            <Card
+              key={field.id}
+              className="fade-in-up border-primary/20 bg-background shadow-sm"
+            >
               <CardContent className="p-6 relative">
                 {fields.length > 1 && (
                   <Button
@@ -123,7 +130,9 @@ export default function Step1WarehousePage() {
                   </Button>
                 )}
 
-                <h3 className="text-lg font-semibold mb-4">Warehouse #{index + 1}</h3>
+                <h3 className="text-lg font-semibold mb-4">
+                  Warehouse #{index + 1}
+                </h3>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <FormField
@@ -161,7 +170,11 @@ export default function Step1WarehousePage() {
                       <FormItem className="md:col-span-2">
                         <FormLabel>Location / Address</FormLabel>
                         <FormControl>
-                          <Input placeholder="e.g. Bole, Addis Ababa" {...field} value={field.value || ""} />
+                          <Input
+                            placeholder="e.g. Bole, Addis Ababa"
+                            {...field}
+                            value={field.value || ""}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -175,7 +188,12 @@ export default function Step1WarehousePage() {
                       <FormItem className="md:col-span-2">
                         <FormLabel>Description (Optional)</FormLabel>
                         <FormControl>
-                          <Textarea placeholder="Short description..." className="resize-none h-20" {...field} value={field.value || ""} />
+                          <Textarea
+                            placeholder="Short description..."
+                            className="resize-none h-20"
+                            {...field}
+                            value={field.value || ""}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -194,11 +212,10 @@ export default function Step1WarehousePage() {
                           />
                         </FormControl>
                         <div className="space-y-1 leading-none">
-                          <FormLabel>
-                            Is this an internal warehouse?
-                          </FormLabel>
+                          <FormLabel>Is this an internal warehouse?</FormLabel>
                           <p className="text-xs text-muted-foreground">
-                            Check this if this location is strictly internal and not open for direct customer sales.
+                            Check this if this location is strictly internal and
+                            not open for direct customer sales.
                           </p>
                         </div>
                       </FormItem>
@@ -224,10 +241,16 @@ export default function Step1WarehousePage() {
               className="w-full sm:w-auto"
             >
               <Plus className="w-4 h-4 mr-2" />
-              {isLimitReached ? `Limit Reached (${maxWarehouses})` : "Add Another Warehouse"}
+              {isLimitReached
+                ? `Limit Reached (${maxWarehouses})`
+                : "Add Another Warehouse"}
             </Button>
 
-            <Button type="submit" disabled={isPending} className="w-full sm:w-auto px-8">
+            <Button
+              type="submit"
+              disabled={isPending}
+              className="w-full sm:w-auto px-8"
+            >
               {isPending ? (
                 <>
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />

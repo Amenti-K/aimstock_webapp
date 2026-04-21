@@ -38,7 +38,10 @@ export default function SalesDetailPage() {
   const hasDeleteAccess = canDelete("SALES");
   const [isDeleteOpen, setIsDeleteOpen] = React.useState(false);
 
-  const { data, isLoading, isError, refetch } = useFetchSale(saleId, hasViewAccess);
+  const { data, isLoading, isError, refetch } = useFetchSale(
+    saleId,
+    hasViewAccess,
+  );
   const deleteSale = useDeleteSale();
 
   if (!hasViewAccess) {
@@ -68,7 +71,7 @@ export default function SalesDetailPage() {
     deleteSale.mutate(
       { id: saleId },
       {
-        onSuccess: () => router.push("/app/sales"),
+        onSuccess: () => router.push("/sales"),
       },
     );
   };
@@ -77,9 +80,9 @@ export default function SalesDetailPage() {
     <div className="flex flex-col gap-8 pb-10">
       {/* Top Action Bar */}
       <div className="flex items-center justify-between px-1">
-        <Button 
-          variant="ghost" 
-          size="sm" 
+        <Button
+          variant="ghost"
+          size="sm"
           onClick={() => router.back()}
           className="rounded-xl hover:bg-card"
         >
@@ -96,7 +99,7 @@ export default function SalesDetailPage() {
                 variant="outline"
                 size="sm"
                 className="rounded-xl"
-                onClick={() => router.push(`/app/sales/${saleId}/edit`)}
+                onClick={() => router.push(`/sales/${saleId}/edit`)}
               >
                 <Pencil className="mr-2 h-4 w-4" />
                 Edit
@@ -119,18 +122,24 @@ export default function SalesDetailPage() {
           <div className="sm:hidden">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="icon" className="h-10 w-10 rounded-xl">
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="h-10 w-10 rounded-xl"
+                >
                   <MoreVertical className="h-5 w-5" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-40 rounded-xl">
                 {hasUpdateAccess && (
-                  <DropdownMenuItem onClick={() => router.push(`/app/sales/${saleId}/edit`)}>
+                  <DropdownMenuItem
+                    onClick={() => router.push(`/sales/${saleId}/edit`)}
+                  >
                     <Pencil className="mr-2 h-4 w-4" /> Edit
                   </DropdownMenuItem>
                 )}
                 {hasDeleteAccess && (
-                  <DropdownMenuItem 
+                  <DropdownMenuItem
                     className="text-destructive font-medium"
                     onClick={() => setIsDeleteOpen(true)}
                   >
@@ -180,11 +189,16 @@ export default function SalesDetailPage() {
           <AlertDialogHeader>
             <AlertDialogTitle>Delete permanently?</AlertDialogTitle>
             <AlertDialogDescription>
-              You are about to delete sale <span className="font-bold text-foreground">{soNumber}</span>. This will also remove associated inventory increments and financial records. This action is irreversible.
+              You are about to delete sale{" "}
+              <span className="font-bold text-foreground">{soNumber}</span>.
+              This will also remove associated inventory increments and
+              financial records. This action is irreversible.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="gap-2 sm:gap-0">
-            <AlertDialogCancel className="rounded-xl">Keep Sale</AlertDialogCancel>
+            <AlertDialogCancel className="rounded-xl">
+              Keep Sale
+            </AlertDialogCancel>
             <AlertDialogAction
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90 rounded-xl"
               onClick={handleDelete}

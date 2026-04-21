@@ -110,7 +110,7 @@ export const useFetchInventoryAnalytics = (
 };
 
 export const useUpdateInventory = (id: string) => {
-  return useMutate<Partial<IInventory>>(
+  return useMutate<Partial<INewInventory>>(
     `${endpoints.INVENTORY}/${id}`,
     "patch",
     {

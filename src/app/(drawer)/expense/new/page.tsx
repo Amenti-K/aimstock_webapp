@@ -18,13 +18,22 @@ export default function NewExpensePage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-4">
-        <Button variant="ghost" size="icon" onClick={() => router.back()}><ArrowLeft className="h-5 w-5" /></Button>
-        <div><h1 className="text-2xl font-bold tracking-tight">Add Expense</h1><p className="text-sm text-muted-foreground">Record a new expense.</p></div>
+        <Button variant="ghost" size="icon" onClick={() => router.back()}>
+          <ArrowLeft className="h-5 w-5" />
+        </Button>
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight">Add Expense</h1>
+          <p className="text-sm text-muted-foreground">Record a new expense.</p>
+        </div>
       </div>
       <ExpenseForm
         isPending={createExpense.isPending}
         submitLabel="Save expense"
-        onSubmit={(values: ExpenseFormValues) => createExpense.mutate(values as any, { onSuccess: () => router.push("/app/expense") })}
+        onSubmit={(values: ExpenseFormValues) =>
+          createExpense.mutate(values as any, {
+            onSuccess: () => router.push("/expense"),
+          })
+        }
         onCancel={() => router.back()}
       />
     </div>

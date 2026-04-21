@@ -2,7 +2,10 @@
 
 import { ArrowLeft } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
-import { useFetchPartnerById, useUpdatePartner } from "@/api/partner/api.partner";
+import {
+  useFetchPartnerById,
+  useUpdatePartner,
+} from "@/api/partner/api.partner";
 import PartnerForm from "@/components/forms/partner/PartnerForm";
 import { PartnerFormValues } from "@/components/forms/partner/partner.schema";
 import { ErrorView, LoadingView } from "@/components/common/StateView";
@@ -17,7 +20,10 @@ export default function EditPartnerPage() {
   const { canUpdate } = usePermissions();
   if (!canUpdate("PARTNERS")) return <AccessDeniedView moduleName="Partners" />;
 
-  const { data, isLoading, isError, refetch } = useFetchPartnerById(partnerId, true);
+  const { data, isLoading, isError, refetch } = useFetchPartnerById(
+    partnerId,
+    true,
+  );
   const updatePartner = useUpdatePartner(partnerId);
   if (isLoading) return <LoadingView />;
   if (isError || !data?.data) return <ErrorView refetch={refetch} />;
@@ -25,14 +31,25 @@ export default function EditPartnerPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-4">
-        <Button variant="ghost" size="icon" onClick={() => router.back()}><ArrowLeft className="h-5 w-5" /></Button>
-        <div><h1 className="text-2xl font-bold tracking-tight">Edit Partner</h1><p className="text-sm text-muted-foreground">Update partner information.</p></div>
+        <Button variant="ghost" size="icon" onClick={() => router.back()}>
+          <ArrowLeft className="h-5 w-5" />
+        </Button>
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight">Edit Partner</h1>
+          <p className="text-sm text-muted-foreground">
+            Update partner information.
+          </p>
+        </div>
       </div>
       <PartnerForm
         initialData={data.data}
         isPending={updatePartner.isPending}
         submitLabel="Save changes"
-        onSubmit={(values: PartnerFormValues) => updatePartner.mutate(values as any, { onSuccess: () => router.push(`/app/partner/${partnerId}`) })}
+        onSubmit={(values: PartnerFormValues) =>
+          updatePartner.mutate(values as any, {
+            onSuccess: () => router.push(`/partner/${partnerId}`),
+          })
+        }
         onCancel={() => router.back()}
       />
     </div>

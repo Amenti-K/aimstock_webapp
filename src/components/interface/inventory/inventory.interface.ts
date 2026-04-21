@@ -22,7 +22,7 @@ export interface IInventoryFilters {
 }
 
 export interface INewInventory {
-  sku: string;
+  sku?: string;
   name: string;
   boughtPrice: number;
   sellingPrice: number;

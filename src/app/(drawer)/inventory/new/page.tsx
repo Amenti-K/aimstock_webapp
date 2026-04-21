@@ -38,7 +38,7 @@ export default function NewInventoryPage() {
         isLoading={createInventory.isPending}
         onSubmit={(payload: inventoryFormValues) =>
           createInventory.mutate(payload, {
-            onSuccess: () => router.push("/app/inventory"),
+            onSuccess: () => router.push("/inventory"),
           })
         }
       />

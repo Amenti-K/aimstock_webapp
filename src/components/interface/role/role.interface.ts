@@ -2,6 +2,7 @@ import { Module, Permission } from "@/components/schema/role.schema";
 
 export interface INewRole {
   name: string;
+  description?: string;
   permissions: INewPermission[];
 }
 
@@ -26,6 +27,7 @@ export interface IPermission {
 export interface IRole {
   id: string;
   name: string;
+  description?: string;
   permissions: IPermission[];
 }
 

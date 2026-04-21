@@ -68,7 +68,7 @@ export default function WarehouseDetailPage() {
   // Moved up to follow Rules of Hooks
   const aggregatedTransactions = useMemo(() => {
     if (!data?.data) return [];
-    
+
     const warehouse = data.data;
     const purchases = (warehouse.purchaseItems || []).map((p) => ({
       ...p,
@@ -88,7 +88,7 @@ export default function WarehouseDetailPage() {
     return <AccessDeniedView moduleName="Warehouses" />;
   if (isLoading) return <LoadingView />;
   if (isError || !data?.data) return <ErrorView refetch={refetch} />;
-  
+
   const warehouse = data.data;
   const totalTransactions =
     (warehouse.purchaseItems?.length || 0) + (warehouse.saleItems?.length || 0);
@@ -134,7 +134,7 @@ export default function WarehouseDetailPage() {
           {canUpdate("WAREHOUSES") && (
             <Button
               variant="outline"
-              onClick={() => router.push(`/app/warehouse/${warehouseId}/edit`)}
+              onClick={() => router.push(`/warehouse/${warehouseId}/edit`)}
               className="rounded-full shadow-sm"
             >
               <Pencil className="mr-2 h-4 w-4" /> Edit
@@ -219,9 +219,7 @@ export default function WarehouseDetailPage() {
               <div className="bg-background p-3 rounded-xl shadow-sm border border-primary/10">
                 <div className="flex items-center gap-1.5 text-primary mb-1">
                   <ArrowUpRight className="h-3 w-3" />
-                  <span className="text-[10px] font-bold uppercase">
-                    Sales
-                  </span>
+                  <span className="text-[10px] font-bold uppercase">Sales</span>
                 </div>
                 <span className="text-xl font-black">
                   {warehouse.saleItems?.length || 0}
@@ -233,9 +231,7 @@ export default function WarehouseDetailPage() {
                 <span className="text-[10px] font-bold uppercase opacity-80">
                   Total Transactions
                 </span>
-                <span className="text-2xl font-black">
-                  {totalTransactions}
-                </span>
+                <span className="text-2xl font-black">{totalTransactions}</span>
               </div>
               <div className="h-10 w-10 rounded-full bg-white/20 flex items-center justify-center">
                 <ShieldCheck className="h-6 w-6" />
@@ -307,9 +303,7 @@ export default function WarehouseDetailPage() {
                             key={item.id}
                             className="hover:bg-muted/20 cursor-pointer"
                             onClick={() =>
-                              router.push(
-                                `/app/inventory/${item.inventory?.id}`,
-                              )
+                              router.push(`/inventory/${item.inventory?.id}`)
                             }
                           >
                             <TableCell className="font-semibold text-sm">
@@ -410,7 +404,7 @@ export default function WarehouseDetailPage() {
                           className="hover:bg-muted/20 cursor-pointer group"
                           onClick={() =>
                             router.push(
-                              `/app/${tx.type.toLowerCase() === "purchase" ? "purchase" : "sales"}/${tx.id}`,
+                              `/${tx.type.toLowerCase() === "purchase" ? "purchase" : "sales"}/${tx.id}`,
                             )
                           }
                         >
@@ -473,7 +467,7 @@ export default function WarehouseDetailPage() {
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90 rounded-full"
               onClick={() =>
                 deleteWarehouse.mutate({ id: warehouseId } as any, {
-                  onSuccess: () => router.push("/app/warehouse"),
+                  onSuccess: () => router.push("/warehouse"),
                 })
               }
             >

@@ -16,7 +16,9 @@ export default function NewLoanPage() {
           <ChevronLeft className="h-5 w-5" />
         </Button>
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Add Initial Loan</h1>
+          <h1 className="text-2xl font-bold tracking-tight">
+            Add Initial Loan
+          </h1>
           <p className="text-sm text-muted-foreground">
             Create a new partner loan and record the initial transaction.
           </p>
@@ -24,8 +26,8 @@ export default function NewLoanPage() {
       </div>
 
       <div className="p-6 bg-card rounded-xl border shadow-sm">
-        <LoanInitialForm 
-          onSuccess={() => router.push("/app/loan")}
+        <LoanInitialForm
+          onSuccess={() => router.push("/loan")}
           onCancel={() => router.back()}
         />
       </div>

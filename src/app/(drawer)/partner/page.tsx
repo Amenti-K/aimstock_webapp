@@ -68,7 +68,7 @@ export default function PartnerPage() {
         {hasCreateAccess && (
           <Button
             className="w-full sm:w-auto bg-primary hover:bg-primary/90 shadow-sm"
-            onClick={() => router.push("/app/partner/new")}
+            onClick={() => router.push("/partner/new")}
           >
             <Plus className="mr-2 h-4 w-4" /> Add Partner
           </Button>
@@ -89,7 +89,7 @@ export default function PartnerPage() {
             <PartnerMobileCard
               key={partner.id}
               partner={partner}
-              onClick={() => router.push(`/app/partner/${partner.id}`)}
+              onClick={() => router.push(`/partner/${partner.id}`)}
             />
           ))
         )}
@@ -123,7 +123,7 @@ export default function PartnerPage() {
                 <TableRow
                   key={partner.id}
                   className="cursor-pointer hover:bg-muted/50 transition-colors group"
-                  onClick={() => router.push(`/app/partner/${partner.id}`)}
+                  onClick={() => router.push(`/partner/${partner.id}`)}
                 >
                   <TableCell>
                     <div className="flex items-center gap-3">
