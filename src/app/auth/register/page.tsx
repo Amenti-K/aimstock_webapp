@@ -169,14 +169,14 @@ export default function RegisterPage() {
                   <FormLabel className="text-sm font-normal text-muted-foreground">
                     I agree to the{" "}
                     <Link
-                      href="#"
+                      href="https://aimstock.aimtechgroups.com/terms"
                       className="font-medium text-primary hover:underline"
                     >
                       Terms & Conditions
                     </Link>{" "}
                     and{" "}
                     <Link
-                      href="#"
+                      href="https://aimstock.aimtechgroups.com/privacy"
                       className="font-medium text-primary hover:underline"
                     >
                       Privacy Policy
