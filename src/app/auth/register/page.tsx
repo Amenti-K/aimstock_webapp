@@ -7,10 +7,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
 
 import { useSignUp } from "@/api/auth/api.auth";
-import {
-  appSignUpSchema,
-  AppSignUpInput,
-} from "@/components/schema/user-auth.schema";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -22,12 +18,13 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Checkbox } from "@/components/ui/checkbox";
+import { SignUpInput, signUpSchema } from "@/components/schema/auth.schema";
 
 export default function RegisterPage() {
   const { mutate: signUp, isPending } = useSignUp();
 
-  const form = useForm<AppSignUpInput>({
-    resolver: zodResolver(appSignUpSchema),
+  const form = useForm<SignUpInput>({
+    resolver: zodResolver(signUpSchema),
     defaultValues: {
       name: "",
       companyName: "",
@@ -38,7 +35,7 @@ export default function RegisterPage() {
     },
   });
 
-  const onSubmit = (data: AppSignUpInput) => {
+  const onSubmit = (data: SignUpInput) => {
     signUp(data);
   };
 

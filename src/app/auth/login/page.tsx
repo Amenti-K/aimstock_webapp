@@ -7,10 +7,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
 
 import { useSignIn } from "@/api/auth/api.auth";
-import {
-  appSignInSchema,
-  AppSignInInput,
-} from "@/components/schema/user-auth.schema";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -21,19 +17,20 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { SignInInput, signInSchema } from "@/components/schema/auth.schema";
 
 export default function LoginPage() {
   const { mutate: signIn, isPending } = useSignIn();
 
-  const form = useForm<AppSignInInput>({
-    resolver: zodResolver(appSignInSchema),
+  const form = useForm<SignInInput>({
+    resolver: zodResolver(signInSchema),
     defaultValues: {
       phoneNumber: "",
       password: "",
     },
   });
 
-  const onSubmit = (data: AppSignInInput) => {
+  const onSubmit = (data: SignInInput) => {
     signIn(data);
   };
 

@@ -15,20 +15,20 @@ import {
 } from "lucide-react";
 
 export const drawerNavItems = [
-  { title: "Dashboard", href: "/app/dashboard", icon: Home },
-  { title: "Sales", href: "/app/sales", icon: BadgeDollarSign },
-  { title: "Purchase", href: "/app/purchase", icon: WalletCards },
-  { title: "Inventory", href: "/app/inventory", icon: Boxes },
-  { title: "Account", href: "/app/account", icon: BriefcaseBusiness },
-  { title: "Warehouse", href: "/app/warehouse", icon: Building2 },
-  { title: "Partners", href: "/app/partner", icon: Users },
-  { title: "Expense", href: "/app/expense", icon: ReceiptText },
-  { title: "Loan", href: "/app/loan", icon: HandCoins },
-  { title: "Employee", href: "/app/employee", icon: UserCog },
-  { title: "Adjustment", href: "/app/adjustment", icon: Activity },
-  { title: "Role & Permissions", href: "/app/role", icon: ShieldCheck },
-  { title: "Audit", href: "/app/audit", icon: Activity },
-  { title: "Settings", href: "/app/setting", icon: Settings },
+  { title: "Dashboard", href: "/dashboard", icon: Home },
+  { title: "Sales", href: "/sales", icon: BadgeDollarSign },
+  { title: "Purchase", href: "/purchase", icon: WalletCards },
+  { title: "Inventory", href: "/inventory", icon: Boxes },
+  { title: "Account", href: "/account", icon: BriefcaseBusiness },
+  { title: "Warehouse", href: "/warehouse", icon: Building2 },
+  { title: "Partners", href: "/partner", icon: Users },
+  { title: "Expense", href: "/expense", icon: ReceiptText },
+  { title: "Loan", href: "/loan", icon: HandCoins },
+  { title: "Employee", href: "/employee", icon: UserCog },
+  { title: "Adjustment", href: "/adjustment", icon: Activity },
+  { title: "Role & Permissions", href: "/role", icon: ShieldCheck },
+  { title: "Audit", href: "/audit", icon: Activity },
+  { title: "Settings", href: "/setting", icon: Settings },
 ];
 
 export const moduleMockData: Record<
@@ -36,7 +36,8 @@ export const moduleMockData: Record<
   { description: string; stats: Array<{ label: string; value: string }> }
 > = {
   sales: {
-    description: "Track completed sales, due invoices, and recent transactions.",
+    description:
+      "Track completed sales, due invoices, and recent transactions.",
     stats: [
       { label: "Today Sales", value: "$1,240" },
       { label: "Open Invoices", value: "12" },
@@ -71,7 +72,8 @@ export const moduleMockData: Record<
     ],
   },
   warehouse: {
-    description: "Maintain warehouse list, location capacity, and stock movement.",
+    description:
+      "Maintain warehouse list, location capacity, and stock movement.",
     stats: [
       { label: "Warehouses", value: "3" },
       { label: "Active Transfers", value: "4" },
@@ -132,7 +134,8 @@ export const moduleMockData: Record<
     ],
   },
   audit: {
-    description: "Inspect system events and user activity logs for traceability.",
+    description:
+      "Inspect system events and user activity logs for traceability.",
     stats: [
       { label: "Events Today", value: "98" },
       { label: "Critical Events", value: "2" },

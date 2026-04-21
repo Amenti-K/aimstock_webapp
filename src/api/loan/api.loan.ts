@@ -2,7 +2,6 @@ import { useMutate, useFetch, useInfiniteFetch } from "@/hooks/query.hook";
 import endpoints from "@/lib/endpoints";
 import { queryKeys } from "@/lib/queryKeys";
 import { toast } from "sonner";
-import { IAccount } from "@/api/account/api.account";
 import {
   INewLoanTranx,
   IUpdateLoanTranx,

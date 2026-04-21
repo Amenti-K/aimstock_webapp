@@ -17,10 +17,8 @@ export default function BlockedPlansPage() {
     router.replace("/auth/login");
   };
 
-  const goToBilling = () => {
-    // Navigate to a payment flow or settings/billing
-    // This assumes /dashboard/settings/billing exists later
-    router.push("/pricing");
+  const choosePlans = () => {
+    router.push("/settings/subscription/plans");
   };
 
   return (
@@ -46,7 +44,7 @@ export default function BlockedPlansPage() {
         <Button variant="outline" className="flex-1" onClick={handleLogout}>
           Logout
         </Button>
-        <Button onClick={goToBilling} className="flex-1 gap-2">
+        <Button onClick={choosePlans} className="flex-1 gap-2">
           <CreditCard className="w-4 h-4" />
           Renew Subscription
         </Button>

@@ -1,12 +1,9 @@
 import { useMutate } from "@/hooks/query.hook";
-import { useQuery } from "@tanstack/react-query";
 import { ILogin, IRegistration } from "@/components/interface/interface.auth";
 import endpoints from "@/lib/endpoints";
-import AxiosInstance from "@/lib/axiosInstance";
 import { AxiosError } from "axios";
 import { loginUser } from "@/redux/slices/userAuthSlice";
 import { useDispatch } from "react-redux";
-import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
 
@@ -49,13 +46,6 @@ export const useSignIn = () => {
         },
       }),
     );
-
-    // We navigate using router.replace because we don't have mobile's auto-router layout redirect setup perfectly identical yet.
-    if (payload.company.setupStep !== 4) {
-      router.replace("/app/setup");
-    } else {
-      router.replace("/app/dashboard");
-    }
   };
 
   return useMutate<ILogin>(endpoints.SIGNIN, "post", {
@@ -101,8 +91,6 @@ export const useSignUp = () => {
         },
       }),
     );
-
-    router.replace("/app/setup");
   };
 
   return useMutate<IRegistration>(endpoints.SIGNUP, "post", {

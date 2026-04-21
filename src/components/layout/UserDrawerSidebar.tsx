@@ -23,9 +23,7 @@ import { useDispatch } from "react-redux";
 import { logoutUser } from "@/redux/slices/userAuthSlice";
 import { drawerNavItems } from "@/constants/drawer";
 
-export function UserDrawerSidebar(
-  props: React.ComponentProps<typeof Sidebar>,
-) {
+export function UserDrawerSidebar(props: React.ComponentProps<typeof Sidebar>) {
   const dispatch = useDispatch();
   const { user, company } = useAppSelector((state) => state.userAuth);
 
@@ -47,7 +45,7 @@ export function UserDrawerSidebar(
               <SidebarMenuButton asChild tooltip={item.title}>
                 <NavLink
                   to={item.href}
-                  end={item.href === "/app/dashboard"}
+                  end={item.href === "/dashboard"}
                   className="flex w-full items-center gap-3 rounded-md px-2 py-2 text-sm transition-colors hover:bg-sidebar-accent/60"
                   activeClassName="bg-sidebar-accent font-medium text-sidebar-accent-foreground"
                 >
@@ -85,7 +83,7 @@ export function UserDrawerSidebar(
                 </DropdownMenuTrigger>
                 <DropdownMenuContent
                   side="top"
-                  className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
+                  className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg bg-background"
                 >
                   <DropdownMenuItem
                     onClick={() => dispatch(logoutUser())}

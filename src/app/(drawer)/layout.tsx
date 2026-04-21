@@ -26,15 +26,24 @@ export default function DrawerLayout({
   const { isExpired, isPastDue, isTrialing, daysLeft } = useSubscription();
 
   const pageName =
-    pathname.split("/").filter(Boolean).pop()?.replace(/-/g, " ") || "dashboard";
+    pathname.split("/").filter(Boolean).pop()?.replace(/-/g, " ") ||
+    "dashboard";
 
   React.useEffect(() => {
-    if (isExpired && !pathname.includes("/blocked") && !pathname.includes("/plans")) {
-      router.replace("/blocked/plans");
+    if (
+      isExpired &&
+      !pathname.includes("/blocked") &&
+      !pathname.includes("/plans")
+    ) {
+      router.replace("/blocked/billing");
     }
   }, [isExpired, pathname, router]);
 
-  if (isExpired && !pathname.includes("/blocked") && !pathname.includes("/plans")) {
+  if (
+    isExpired &&
+    !pathname.includes("/blocked") &&
+    !pathname.includes("/plans")
+  ) {
     return null;
   }
 
@@ -49,16 +58,24 @@ export default function DrawerLayout({
         </header>
         <main className="flex-1 overflow-auto bg-muted/30 p-5 space-y-4">
           {isPastDue && (
-            <Alert variant="destructive" className="bg-destructive/10 border-destructive/20">
+            <Alert
+              variant="destructive"
+              className="bg-destructive/10 border-destructive/20"
+            >
               <AlertTriangle className="h-4 w-4" />
               <div className="flex w-full items-center justify-between">
                 <div>
                   <AlertTitle>Action Required</AlertTitle>
                   <AlertDescription>
-                    Your subscription is past due. You have {daysLeft} days left before access is restricted.
+                    Your subscription is past due. You have {daysLeft} days left
+                    before access is restricted.
                   </AlertDescription>
                 </div>
-                <Button variant="destructive" size="sm" onClick={() => router.push("/blocked/plans")}>
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  onClick={() => router.push("/blocked/plans")}
+                >
                   Renew Now
                 </Button>
               </div>
@@ -71,7 +88,8 @@ export default function DrawerLayout({
                 <div>
                   <AlertTitle>Trial Period</AlertTitle>
                   <AlertDescription>
-                    Your trial expires in {daysLeft} days. Upgrade now to keep all features.
+                    Your trial expires in {daysLeft} days. Upgrade now to keep
+                    all features.
                   </AlertDescription>
                 </div>
                 <Button size="sm" onClick={() => router.push("/blocked/plans")}>
@@ -86,4 +104,3 @@ export default function DrawerLayout({
     </SidebarProvider>
   );
 }
-

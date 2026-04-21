@@ -8,7 +8,7 @@ export default function AuthLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex min-h-screen bg-background">
+    <div className="flex h-screen bg-background">
       {/* Left side Marketing Panel */}
       <div className="hidden w-1/2 lg:block relative overflow-hidden bg-muted">
         <div className="absolute inset-0 bg-primary/20 z-10 mix-blend-overlay dark:bg-primary/10" />
