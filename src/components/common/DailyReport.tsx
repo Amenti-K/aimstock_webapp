@@ -118,33 +118,33 @@ export function DailyReport({
         </div>
 
         <CollapsibleContent>
-          <CardContent className="px-4 pb-6 pt-0 sm:px-6">
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+          <CardContent className="px-2 sm:px-6 pb-6 pt-0">
+            <div className="grid grid-cols-3 gap-2 sm:gap-4">
               <SummaryItem
-                icon={<Landmark className="h-5 w-5" />}
-                label="Paid by Bank"
+                icon={<Landmark className="h-4 w-4 sm:h-5 sm:w-5" />}
+                label="Bank"
                 value={dailyReport?.totalPaidByBank ?? 0}
-                color="text-blue-600"
-                bgColor="bg-blue-50"
-                borderColor="border-blue-100"
+                color="text-blue-600 dark:text-blue-400"
+                bgColor="bg-blue-500/10 dark:bg-blue-500/20"
+                borderColor="border-blue-500/20 dark:border-blue-500/30"
                 isLoading={isLoading}
               />
               <SummaryItem
-                icon={<Wallet className="h-5 w-5" />}
-                label="Paid by Cash"
+                icon={<Wallet className="h-4 w-4 sm:h-5 sm:w-5" />}
+                label="Cash"
                 value={dailyReport?.totalPaidByCash ?? 0}
-                color="text-emerald-600"
-                bgColor="bg-emerald-50"
-                borderColor="border-emerald-100"
+                color="text-emerald-600 dark:text-emerald-400"
+                bgColor="bg-emerald-500/10 dark:bg-emerald-500/20"
+                borderColor="border-emerald-500/20 dark:border-emerald-500/30"
                 isLoading={isLoading}
               />
               <SummaryItem
-                icon={<Banknote className="h-5 w-5" />}
-                label="Total Loan"
+                icon={<Banknote className="h-4 w-4 sm:h-5 sm:w-5" />}
+                label="Loan"
                 value={dailyReport?.totalLoan ?? 0}
-                color="text-rose-600"
-                bgColor="bg-rose-200"
-                borderColor="border-rose-100"
+                color="text-rose-600 dark:text-rose-400"
+                bgColor="bg-rose-500/10 dark:bg-rose-500/20"
+                borderColor="border-rose-500/20 dark:border-rose-500/30"
                 isNegative
                 isLoading={isLoading}
               />
@@ -178,25 +178,32 @@ function SummaryItem({
   return (
     <div
       className={cn(
-        "flex flex-col gap-3 rounded-xl border p-4 transition-all duration-300 hover:shadow-md",
+        "flex flex-col gap-1.5 sm:gap-3 rounded-xl border p-2.5 sm:p-4 transition-all duration-300 hover:shadow-md backdrop-blur-sm",
         bgColor,
         borderColor,
       )}
     >
-      <div className="flex items-center gap-3">
-        <div className={cn("rounded-lg p-2 bg-muted-black shadow-sm", color)}>
+      <div className="flex flex-col sm:flex-row sm:items-center gap-1.5 sm:gap-3">
+        <div className={cn("hidden sm:flex rounded-lg p-2 bg-background/50 shadow-sm shrink-0", color)}>
           {icon}
         </div>
-        <span className="text-sm font-medium text-black">{label}</span>
+        <div className="flex items-center gap-1.5">
+          <div className={cn("sm:hidden rounded-md p-1 bg-background/50 shrink-0", color)}>
+            {icon}
+          </div>
+          <span className="text-[10px] sm:text-sm font-bold uppercase tracking-wider text-muted-foreground truncate">
+            {label}
+          </span>
+        </div>
       </div>
-      <div className="flex flex-col">
+      <div className="flex flex-col min-w-0">
         {isLoading ? (
-          <Skeleton className="h-8 w-24 bg-black" />
+          <Skeleton className="h-6 sm:h-8 w-full bg-muted/50" />
         ) : (
           <span
             className={cn(
-              "text-2xl font-bold tracking-tight",
-              isNegative && value > 0 ? "text-rose-600" : "text-black",
+              "text-sm sm:text-xl md:text-2xl font-black tracking-tight truncate",
+              isNegative && value > 0 ? color : "text-foreground",
             )}
           >
             {formatCurrency(value)}
@@ -206,3 +213,4 @@ function SummaryItem({
     </div>
   );
 }
+

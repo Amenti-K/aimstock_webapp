@@ -23,12 +23,15 @@ import {
 import {
   useGetAnalytics,
   usePieChart,
-  useProfit,
+  // useProfit,
 } from "@/api/analytics/api.analytics";
 import { LoadingView, ErrorView } from "@/components/common/StateView";
 import PerformanceChart from "@/components/analytics/PerformanceChart";
 // import TrendChart from "@/components/analytics/TrendChart";
 import { TimeFrame } from "@/components/interface/inventory/inventory.interface";
+import { usePermissions } from "@/hooks/permission.hook";
+import { AccessDeniedView } from "@/components/guards/AccessDeniedView";
+import { cn } from "@/lib/utils";
 
 const timeFrameOptions = [
   { label: "30 Days", value: TimeFrame.LAST_30_DAYS },
@@ -38,6 +41,8 @@ const timeFrameOptions = [
 ];
 
 export default function DashboardPage() {
+  const { canView } = usePermissions();
+  const hasViewAccess = canView("ANALYTICS");
   const [timeFrame, setTimeFrame] = useState<TimeFrame>(TimeFrame.LAST_30_DAYS);
 
   const {
@@ -66,6 +71,10 @@ export default function DashboardPage() {
     refetchPie();
     // refetchProfit();
   };
+
+  if (!hasViewAccess) {
+    return <AccessDeniedView moduleName="Analytics" />;
+  }
 
   if (isSummaryLoading || isPieLoading) {
     return (
@@ -130,109 +139,110 @@ export default function DashboardPage() {
         </Button>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2">
-        <Card className="bg-gradient-to-br from-card to-muted/20">
-          <CardHeader className="pb-2">
-            <CardDescription className="font-medium text-primary/80">
-              Total Inventory Value
+      <div className="grid gap-3 sm:gap-4 grid-cols-2">
+        <Card className="bg-gradient-to-br from-card to-muted/20 border-none shadow-sm overflow-hidden">
+          <CardHeader className="p-3 sm:p-6 pb-2 sm:pb-3">
+            <CardDescription className="flex items-center gap-1.5 text-[9px] sm:text-[10px] uppercase tracking-wider font-bold text-primary/70">
+              <Box className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
+              Inventory Value
             </CardDescription>
-            <CardTitle className="text-3xl font-extrabold tracking-tight">
+            <CardTitle className="text-xl sm:text-3xl font-extrabold tracking-tight mt-1 truncate">
               {formatCurrency(summary?.totalInventoryValue || 0)}
             </CardTitle>
           </CardHeader>
-          <CardContent className="flex items-center gap-2 text-xs text-muted-foreground">
-            <Box className="h-4 w-4" />
-            Live valuation based on current stock and purchase prices
+          <CardContent className="px-3 sm:px-6 pb-3 sm:pb-4 pt-0">
+            <p className="text-[10px] sm:text-xs text-muted-foreground leading-tight line-clamp-1 sm:line-clamp-none">
+              Live valuation based on stock levels
+            </p>
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-br from-card to-amber-500/5 border-amber-500/10">
-          <CardHeader className="pb-2">
-            <CardDescription className="font-medium text-amber-600 dark:text-amber-400">
-              Lowest Stock Alert
+        <Card className="bg-gradient-to-br from-card to-amber-500/5 border-none shadow-sm overflow-hidden">
+          <CardHeader className="p-3 sm:p-6 pb-2 sm:pb-3">
+            <CardDescription className="flex items-center gap-1.5 text-[9px] sm:text-[10px] uppercase tracking-wider font-bold text-amber-600 dark:text-amber-400">
+              <AlertTriangle className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
+              Stock Alert
             </CardDescription>
-            <CardTitle className="text-3xl font-extrabold tracking-tight">
-              {summary?.lowestStock?.inventory || "Optimal Levels"}
+            <CardTitle className="text-xl sm:text-3xl font-extrabold tracking-tight mt-1 truncate">
+              {summary?.lowestStock?.inventory || "Optimal"}
             </CardTitle>
           </CardHeader>
-          <CardContent className="flex items-center gap-2 text-xs text-amber-600/80">
-            <AlertTriangle className="h-4 w-4" />
-            {summary?.lowestStock
-              ? `${summary.lowestStock.quantity} units remaining`
-              : "All items have sufficient stock"}
+          <CardContent className="px-3 sm:px-6 pb-3 sm:pb-4 pt-0">
+            <p className="text-[10px] sm:text-xs text-amber-600/80 dark:text-amber-400/80 leading-tight line-clamp-1 sm:line-clamp-none font-medium">
+              {summary?.lowestStock
+                ? `${summary.lowestStock.quantity} units left`
+                : "Levels are healthy"}
+            </p>
           </CardContent>
         </Card>
       </div>
 
-      <Card className="border-none shadow-sm ring-1 ring-border">
-        <CardHeader className="space-y-4">
-          <div className="flex flex-wrap items-center justify-between gap-4">
-            <div className="space-y-1">
-              <CardTitle>Inventory Intelligence</CardTitle>
-              <CardDescription>
-                Detailed breakdown and movement analysis for your business
-                performance.
-              </CardDescription>
-            </div>
-            <div className="flex items-center gap-1.5 p-1 bg-muted/30 rounded-lg">
-              {timeFrameOptions.map((option) => (
-                <Button
-                  key={option.value}
-                  type="button"
-                  size="sm"
-                  variant={timeFrame === option.value ? "default" : "ghost"}
-                  onClick={() => setTimeFrame(option.value as TimeFrame)}
-                  className="h-8 text-[11px] font-semibold uppercase tracking-wider px-3"
-                >
-                  {option.label}
-                </Button>
-              ))}
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent className="space-y-8">
-          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-            {quickStats.map((card) => (
-              <Card
-                key={card.title}
-                className="bg-muted/10 border-none transition-colors hover:bg-muted/20"
-              >
-                <CardHeader className="pb-2">
-                  <CardDescription className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest">
-                    {card.icon}
-                    {card.title}
-                  </CardDescription>
-                  <CardTitle className="text-xl font-bold truncate">
-                    {card.value}
-                  </CardTitle>
-                </CardHeader>
-                {card.subtitle && (
-                  <CardContent className="pt-0 text-[11px] text-muted-foreground font-medium">
-                    {card.subtitle}
-                  </CardContent>
-                )}
-              </Card>
-            ))}
-          </div>
+      <div className="flex flex-col gap-4">
+        <div className="flex items-center justify-between sm:justify-start gap-1 p-1 bg-muted/30 rounded-xl w-full sm:w-fit border border-muted/50 overflow-x-auto no-scrollbar">
+          {timeFrameOptions.map((option) => (
+            <Button
+              key={option.value}
+              type="button"
+              size="sm"
+              variant={timeFrame === option.value ? "default" : "ghost"}
+              onClick={() => setTimeFrame(option.value as TimeFrame)}
+              className={cn(
+                "h-8 text-[10px] sm:text-[11px] font-bold uppercase tracking-wider px-2.5 sm:px-4 rounded-lg flex-1 sm:flex-initial transition-all whitespace-nowrap",
+                timeFrame === option.value
+                  ? "shadow-sm"
+                  : "text-muted-foreground hover:text-foreground",
+              )}
+            >
+              {option.label}
+            </Button>
+          ))}
+        </div>
 
-          <Separator className="opacity-50" />
-
-          <div className="grid gap-6 lg:grid-cols-2">
-            <Card className="overflow-hidden border-none bg-card/50">
-              <CardHeader className="pb-0">
-                <CardTitle className="text-sm font-semibold uppercase tracking-tight text-muted-foreground">
-                  Performance Breakdown
-                </CardTitle>
-                <CardDescription>
-                  Top product distribution by quantity
+        <div className="grid gap-3 sm:gap-4 grid-cols-2 lg:grid-cols-4">
+          {quickStats.map((card) => (
+            <Card
+              key={card.title}
+              className="bg-secondary/50 border-none transition-all hover:bg-secondary hover:shadow-md group"
+            >
+              <CardHeader className="p-3 sm:p-5 pb-1.5 sm:pb-2">
+                <CardDescription className="flex items-center gap-1.5 text-[9px] sm:text-[10px] font-bold uppercase tracking-widest text-muted-foreground group-hover:text-primary transition-colors">
+                  {card.icon}
+                  {card.title}
                 </CardDescription>
+                <CardTitle className="text-lg sm:text-xl font-bold truncate mt-0.5">
+                  {card.value}
+                </CardTitle>
               </CardHeader>
-              <CardContent className="pt-4 px-0">
-                <PerformanceChart data={pie} />
-              </CardContent>
+              {card.subtitle && (
+                <CardContent className="px-3 sm:px-5 pb-3 sm:pb-4 pt-0">
+                  <p className="text-[10px] sm:text-[11px] text-muted-foreground font-medium truncate">
+                    {card.subtitle}
+                  </p>
+                </CardContent>
+              )}
             </Card>
+          ))}
+        </div>
+      </div>
 
-            {/* <Card className="overflow-hidden border-none bg-card/50">
+      <Separator className="opacity-50" />
+
+      <div className="grid gap-6 lg:grid-cols-2">
+        <Card className="overflow-hidden border-none bg-card/50">
+          <CardHeader className="pb-0">
+            <CardTitle className="text-sm font-semibold uppercase tracking-tight text-muted-foreground">
+              Performance Breakdown
+            </CardTitle>
+            <CardDescription>
+              Top product distribution by quantity
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="pt-4 px-0">
+            <PerformanceChart data={pie} />
+          </CardContent>
+        </Card>
+
+        {/* <Card className="overflow-hidden border-none bg-card/50">
               <CardHeader className="pb-0">
                 <CardTitle className="text-sm font-semibold uppercase tracking-tight text-muted-foreground">
                   Growth Trend
@@ -245,9 +255,7 @@ export default function DashboardPage() {
                 <TrendChart data={profit} />
               </CardContent>
             </Card> */}
-          </div>
-        </CardContent>
-      </Card>
+      </div>
     </section>
   );
 }

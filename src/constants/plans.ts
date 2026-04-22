@@ -1,4 +1,4 @@
-import { BillingInterval } from "@/interface/subscription/subscription.interface";
+import { BillingInterval } from "@/components/interface/subscription/subscription.interface";
 
 export const plans = [
   {

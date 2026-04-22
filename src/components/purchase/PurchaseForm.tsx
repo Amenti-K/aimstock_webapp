@@ -13,7 +13,10 @@ import SubmitButton from "@/components/forms/fields/SubmitButton";
 import { useFetchPartnerSelector } from "@/api/partner/api.partner";
 import { useGetInventoriesInfinite } from "@/api/inventory/api.inventory";
 import { useFetchAccountSelector } from "@/api/account/api.account";
-import type { INewPurchase, IPurchaseView } from "@/api/purchase/api.purchase";
+import {
+  INewPurchase,
+  IPurchaseView,
+} from "../interface/purchase/purchase.interface";
 
 type PurchaseFormValues = {
   partnerId: string;
@@ -51,11 +54,14 @@ export default function PurchaseForm({
   const form = useForm<PurchaseFormValues>({ defaultValues });
   const { control, handleSubmit, setError, reset, watch } = form;
 
-  const { fields: itemFields, append: appendItem, remove: removeItem } =
-    useFieldArray({
-      control,
-      name: "purchaseItems",
-    });
+  const {
+    fields: itemFields,
+    append: appendItem,
+    remove: removeItem,
+  } = useFieldArray({
+    control,
+    name: "purchaseItems",
+  });
   const {
     fields: paymentFields,
     append: appendPayment,
@@ -120,7 +126,8 @@ export default function PurchaseForm({
 
   const purchaseItems = watch("purchaseItems");
   const totalAmount = (purchaseItems ?? []).reduce(
-    (sum, item) => sum + Number(item.quantity || 0) * Number(item.unitPrice || 0),
+    (sum, item) =>
+      sum + Number(item.quantity || 0) * Number(item.unitPrice || 0),
     0,
   );
 
@@ -153,7 +160,7 @@ export default function PurchaseForm({
         unitPrice: Number(item.unitPrice),
         id: "",
       })),
-      purchasePayments: sanitizedPayments,
+      paymentItems: sanitizedPayments,
     });
   };
 
@@ -167,14 +174,14 @@ export default function PurchaseForm({
           <CardContent className="space-y-4">
             <SelectField
               name="partnerId"
-              control={control}
+              control={control as any}
               label="Supplier"
               placeholder="Select supplier"
               options={partnerOptions}
             />
             <TextAreaField
               name="description"
-              control={control}
+              control={control as any}
               label="Description"
               placeholder="Optional notes for this purchase"
             />
@@ -187,7 +194,9 @@ export default function PurchaseForm({
             <Button
               type="button"
               variant="outline"
-              onClick={() => appendItem({ inventoryId: "", quantity: 1, unitPrice: 0 })}
+              onClick={() =>
+                appendItem({ inventoryId: "", quantity: 1, unitPrice: 0 })
+              }
             >
               <Plus className="mr-2 h-4 w-4" />
               Add Item
@@ -195,11 +204,14 @@ export default function PurchaseForm({
           </CardHeader>
           <CardContent className="space-y-4">
             {itemFields.map((field, index) => (
-              <div key={field.id} className="grid grid-cols-1 gap-3 rounded-md border p-4 md:grid-cols-4">
+              <div
+                key={field.id}
+                className="grid grid-cols-1 gap-3 rounded-md border p-4 md:grid-cols-4"
+              >
                 <div className="md:col-span-2">
                   <SelectField
                     name={`purchaseItems.${index}.inventoryId`}
-                    control={control}
+                    control={control as any}
                     label="Inventory"
                     placeholder="Select inventory"
                     options={inventoryOptions}
@@ -207,14 +219,14 @@ export default function PurchaseForm({
                 </div>
                 <NumericField
                   name={`purchaseItems.${index}.quantity`}
-                  control={control}
+                  control={control as any}
                   label="Quantity"
                   placeholder="0"
                 />
                 <div className="space-y-2">
                   <NumericField
                     name={`purchaseItems.${index}.unitPrice`}
-                    control={control}
+                    control={control as any}
                     label="Unit Price"
                     placeholder="0"
                   />
@@ -254,23 +266,26 @@ export default function PurchaseForm({
           </CardHeader>
           <CardContent className="space-y-4">
             {paymentFields.map((field, index) => (
-              <div key={field.id} className="grid grid-cols-1 gap-3 rounded-md border p-4 md:grid-cols-4">
+              <div
+                key={field.id}
+                className="grid grid-cols-1 gap-3 rounded-md border p-4 md:grid-cols-4"
+              >
                 <SelectField
                   name={`purchasePayments.${index}.accountId`}
-                  control={control}
+                  control={control as any}
                   label="Account"
                   placeholder="Select account"
                   options={accountOptions}
                 />
                 <NumericField
                   name={`purchasePayments.${index}.amount`}
-                  control={control}
+                  control={control as any}
                   label="Amount"
                   placeholder="0"
                 />
                 <TextAreaField
                   name={`purchasePayments.${index}.description`}
-                  control={control}
+                  control={control as any}
                   label="Description"
                   placeholder="Optional"
                 />
@@ -291,7 +306,9 @@ export default function PurchaseForm({
 
         <div className="flex items-center justify-between rounded-md border p-4">
           <p className="text-sm text-muted-foreground">Total item amount</p>
-          <p className="text-xl font-semibold">{Number(totalAmount).toLocaleString()} ETB</p>
+          <p className="text-xl font-semibold">
+            {Number(totalAmount).toLocaleString()} ETB
+          </p>
         </div>
 
         <div className="flex justify-end">

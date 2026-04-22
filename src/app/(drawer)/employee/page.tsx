@@ -16,7 +16,6 @@ import { usePermissions } from "@/hooks/permission.hook";
 import { Button } from "@/components/ui/button";
 import {
   Plus,
-  Search,
   MoreHorizontal,
   User,
   Pencil,
@@ -37,7 +36,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
@@ -70,10 +68,13 @@ export default function EmployeePage() {
   const hasCreateAccess = canCreate("EMPLOYEES");
   const hasUpdateAccess = canUpdate("EMPLOYEES");
   const hasDeleteAccess = canDelete("EMPLOYEES");
-  const [search, setSearch] = React.useState("");
-  const [selectedEmployee, setSelectedEmployee] = React.useState<IEmployee | null>(null);
+  const [search] = React.useState("");
+  const [selectedEmployee, setSelectedEmployee] =
+    React.useState<IEmployee | null>(null);
   const [isEmployeeFormOpen, setIsEmployeeFormOpen] = React.useState(false);
-  const [employeeFormMode, setEmployeeFormMode] = React.useState<"add" | "edit">("add");
+  const [employeeFormMode, setEmployeeFormMode] = React.useState<
+    "add" | "edit"
+  >("add");
   const [isResetPasswordOpen, setIsResetPasswordOpen] = React.useState(false);
   const [isDeactivateOpen, setIsDeactivateOpen] = React.useState(false);
 
@@ -95,6 +96,7 @@ export default function EmployeePage() {
   const employees = React.useMemo(() => {
     return data?.pages?.flatMap((page) => page.data as IEmployee[]) ?? [];
   }, [data]);
+
   const roleOptions = React.useMemo(() => {
     if (!Array.isArray(roleSelector.data)) return [];
     return roleSelector.data.map((role: any) => ({
@@ -149,6 +151,54 @@ export default function EmployeePage() {
     );
   };
 
+  const ActionsDropdown = ({ emp }: { emp: IEmployee }) => (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" className="h-8 w-8 p-0">
+          <MoreHorizontal className="h-4 w-4" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-full bg-secondary">
+        {hasUpdateAccess && (
+          <DropdownMenuItem
+            className="cursor-pointer"
+            onClick={() => {
+              setEmployeeFormMode("edit");
+              setSelectedEmployee(emp);
+              setIsEmployeeFormOpen(true);
+            }}
+          >
+            <Pencil className="mr-2 h-4 w-4" />
+            Edit employee
+          </DropdownMenuItem>
+        )}
+        {hasUpdateAccess && (
+          <DropdownMenuItem
+            onClick={() => {
+              setSelectedEmployee(emp);
+              setIsResetPasswordOpen(true);
+            }}
+          >
+            <KeyRound className="mr-2 h-4 w-4" />
+            Reset password
+          </DropdownMenuItem>
+        )}
+        {hasDeleteAccess && (
+          <DropdownMenuItem
+            className="text-destructive"
+            onClick={() => {
+              setSelectedEmployee(emp);
+              setIsDeactivateOpen(true);
+            }}
+          >
+            <UserX className="mr-2 h-4 w-4" />
+            Deactivate
+          </DropdownMenuItem>
+        )}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+
   if (!hasViewAccess) {
     return <AccessDeniedView moduleName="Employees" />;
   }
@@ -158,6 +208,7 @@ export default function EmployeePage() {
 
   return (
     <div className="space-y-6">
+      {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Employees</h1>
@@ -179,33 +230,21 @@ export default function EmployeePage() {
         )}
       </div>
 
-      <div className="flex items-center gap-2">
-        <div className="relative flex-1 max-w-sm">
-          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search employees..."
-            className="pl-8"
-            value={search}
-            onChange={(event) => setSearch(event.target.value)}
-          />
-        </div>
-      </div>
-
-      <div className="rounded-md border bg-card">
+      {/* Desktop Table */}
+      <div className="hidden md:block rounded-md border bg-card">
         <Table>
           <TableHeader>
             <TableRow>
               <TableHead>Employee</TableHead>
               <TableHead>Phone</TableHead>
               <TableHead>Role</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead className="w-[100px]">Actions</TableHead>
+              <TableHead className="w-[80px]">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {employees.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={5} className="h-24 text-center">
+                <TableCell colSpan={4} className="h-24 text-center">
                   No employees found.
                 </TableCell>
               </TableRow>
@@ -215,8 +254,8 @@ export default function EmployeePage() {
                   <TableCell className="font-medium">
                     <div className="flex items-center gap-3">
                       <Avatar className="h-8 w-8">
-                        <AvatarFallback>
-                          <User className="h-4 w-4" />
+                        <AvatarFallback className="bg-primary/10 text-primary text-xs">
+                          {emp.name?.substring(0, 2).toUpperCase() || "EM"}
                         </AvatarFallback>
                       </Avatar>
                       <span>{emp.name}</span>
@@ -224,78 +263,70 @@ export default function EmployeePage() {
                   </TableCell>
                   <TableCell>{emp.phoneNumber}</TableCell>
                   <TableCell>
-                    <Badge variant="outline">{emp.role?.name || "Member"}</Badge>
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant={emp.isActive ? "secondary" : "destructive"}>
-                      {emp.isActive ? "Active" : "Inactive"}
+                    <Badge variant="outline">
+                      {emp.role?.name || "Member"}
                     </Badge>
                   </TableCell>
                   <TableCell>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0">
-                          <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        {hasUpdateAccess && (
-                          <DropdownMenuItem
-                            onClick={() => {
-                              setEmployeeFormMode("edit");
-                              setSelectedEmployee(emp);
-                              setIsEmployeeFormOpen(true);
-                            }}
-                          >
-                            <Pencil className="mr-2 h-4 w-4" />
-                            Edit employee
-                          </DropdownMenuItem>
-                        )}
-                        {hasUpdateAccess && (
-                          <DropdownMenuItem
-                            onClick={() => {
-                              setSelectedEmployee(emp);
-                              setIsResetPasswordOpen(true);
-                            }}
-                          >
-                            <KeyRound className="mr-2 h-4 w-4" />
-                            Reset password
-                          </DropdownMenuItem>
-                        )}
-                        {hasDeleteAccess && (
-                          <DropdownMenuItem
-                            className="text-destructive"
-                            onClick={() => {
-                              setSelectedEmployee(emp);
-                              setIsDeactivateOpen(true);
-                            }}
-                          >
-                            <UserX className="mr-2 h-4 w-4" />
-                            Deactivate
-                          </DropdownMenuItem>
-                        )}
-                      </DropdownMenuContent>
-                    </DropdownMenu>
+                    <ActionsDropdown emp={emp} />
                   </TableCell>
                 </TableRow>
               ))
             )}
           </TableBody>
         </Table>
-        
-        {hasNextPage && (
-          <div className="flex justify-center p-4">
-            <Button
-              variant="outline"
-              onClick={() => fetchNextPage()}
-              disabled={isFetchingNextPage}
-            >
-              {isFetchingNextPage ? "Loading more..." : "Load More"}
-            </Button>
+      </div>
+
+      {/* Mobile Cards */}
+      <div className="grid grid-cols-1 gap-4 md:hidden">
+        {employees.length === 0 ? (
+          <div className="rounded-xl border bg-card p-8 text-center text-muted-foreground">
+            No employees found.
           </div>
+        ) : (
+          employees.map((emp) => (
+            <div
+              key={emp.id}
+              className="flex items-center justify-between rounded-xl border bg-card p-4 shadow-sm"
+            >
+              <div className="flex items-center gap-3">
+                <Avatar className="h-11 w-11">
+                  <AvatarFallback className="bg-primary/10 text-primary font-semibold">
+                    {emp.name?.substring(0, 2).toUpperCase() || "EM"}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="flex flex-col">
+                  <span className="font-semibold leading-tight">
+                    {emp.name}
+                  </span>
+                  <span className="text-xs text-muted-foreground">
+                    {emp.phoneNumber || "No phone"}
+                  </span>
+                </div>
+              </div>
+              <Badge variant="outline" className="mt-1 w-fit text-xs">
+                {emp.role?.name || "Member"}
+              </Badge>
+              <ActionsDropdown emp={emp} />
+            </div>
+          ))
         )}
       </div>
 
+      {/* Load More */}
+      {hasNextPage && (
+        <div className="flex justify-center w-full">
+          <Button
+            variant="outline"
+            onClick={() => fetchNextPage()}
+            disabled={isFetchingNextPage}
+          >
+            {isFetchingNextPage ? "Loading more..." : "Load More"}
+          </Button>
+        </div>
+      )}
+
+      {/* Add / Edit Employee Dialog */}
       <Dialog open={isEmployeeFormOpen} onOpenChange={setIsEmployeeFormOpen}>
         <DialogContent className="sm:max-w-lg">
           <DialogHeader>
@@ -323,6 +354,7 @@ export default function EmployeePage() {
         </DialogContent>
       </Dialog>
 
+      {/* Reset Password Dialog */}
       <Dialog open={isResetPasswordOpen} onOpenChange={setIsResetPasswordOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
@@ -339,6 +371,7 @@ export default function EmployeePage() {
         </DialogContent>
       </Dialog>
 
+      {/* Deactivate Alert Dialog */}
       <AlertDialog open={isDeactivateOpen} onOpenChange={setIsDeactivateOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>

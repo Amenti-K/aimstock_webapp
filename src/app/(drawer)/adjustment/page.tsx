@@ -7,7 +7,7 @@ import { LoadingView, ErrorView } from "@/components/common/StateView";
 import { AccessDeniedView } from "@/components/guards/AccessDeniedView";
 import { usePermissions } from "@/hooks/permission.hook";
 import { Button } from "@/components/ui/button";
-import { Plus, Search, MoreHorizontal, Eye, Pencil } from "lucide-react";
+import { Plus, ArrowRight, PackageSearch } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -16,23 +16,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { formatDate } from "@/lib/formatter";
 
 export default function AdjustmentPage() {
   const router = useRouter();
-  const { canView, canCreate, canUpdate } = usePermissions();
+  const { canView, canCreate } = usePermissions();
   const hasViewAccess = canView("INVENTORYADJUSTMENT");
   const hasCreateAccess = canCreate("INVENTORYADJUSTMENT");
-  const hasUpdateAccess = canUpdate("INVENTORYADJUSTMENT");
-  const [search, setSearch] = React.useState("");
 
   const {
     data,
@@ -42,7 +33,7 @@ export default function AdjustmentPage() {
     hasNextPage,
     fetchNextPage,
     isFetchingNextPage,
-  } = useGetAdjustmentsInfinite({ search }, hasViewAccess);
+  } = useGetAdjustmentsInfinite({}, hasViewAccess);
 
   const adjustments = React.useMemo(() => {
     return data?.pages?.flatMap((page) => (page as any).data) ?? [];
@@ -59,9 +50,7 @@ export default function AdjustmentPage() {
     <div className="space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">
-            Stock Adjustments
-          </h1>
+          <h1 className="text-2xl font-bold tracking-tight">Stock Adjustments</h1>
           <p className="text-sm text-muted-foreground">
             View history of manual stock level corrections.
           </p>
@@ -76,34 +65,22 @@ export default function AdjustmentPage() {
         )}
       </div>
 
-      <div className="flex items-center gap-2">
-        <div className="relative flex-1 max-w-sm">
-          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search adjustments..."
-            className="pl-8"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-        </div>
-      </div>
-
-      <div className="rounded-md border bg-card">
+      {/* Desktop Table */}
+      <div className="hidden md:block rounded-md border bg-card">
         <Table>
           <TableHeader>
             <TableRow>
               <TableHead>Date</TableHead>
-              <TableHead>Item</TableHead>
+              <TableHead>Item / Warehouse</TableHead>
               <TableHead>Type</TableHead>
               <TableHead>Qty</TableHead>
               <TableHead>Reason</TableHead>
-              <TableHead className="w-[100px]">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {adjustments.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={6} className="h-24 text-center">
+                <TableCell colSpan={5} className="h-24 text-center">
                   No adjustments found.
                 </TableCell>
               </TableRow>
@@ -111,7 +88,7 @@ export default function AdjustmentPage() {
               adjustments.map((adj: any) => (
                 <TableRow
                   key={adj.id}
-                  className="cursor-pointer"
+                  className="cursor-pointer hover:bg-muted/50"
                   onClick={() => router.push(`/adjustment/${adj.id}`)}
                 >
                   <TableCell className="font-medium whitespace-nowrap">
@@ -122,9 +99,7 @@ export default function AdjustmentPage() {
                   </TableCell>
                   <TableCell>
                     <Badge
-                      variant={
-                        adj.type === "STOCK_IN" ? "secondary" : "destructive"
-                      }
+                      variant={adj.type === "STOCK_IN" ? "secondary" : "destructive"}
                     >
                       {adj.type}
                     </Badge>
@@ -135,49 +110,72 @@ export default function AdjustmentPage() {
                   <TableCell className="max-w-[200px] truncate text-muted-foreground">
                     {adj.reason || "Manual Correction"}
                   </TableCell>
-                  <TableCell onClick={(e) => e.stopPropagation()}>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0">
-                          <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem
-                          onClick={() => router.push(`/adjustment/${adj.id}`)}
-                        >
-                          <Eye className="mr-2 h-4 w-4" /> View details
-                        </DropdownMenuItem>
-                        {hasUpdateAccess && (
-                          <DropdownMenuItem
-                            onClick={() =>
-                              router.push(`/adjustment/${adj.id}/edit`)
-                            }
-                          >
-                            <Pencil className="mr-2 h-4 w-4" /> Edit
-                          </DropdownMenuItem>
-                        )}
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </TableCell>
                 </TableRow>
               ))
             )}
           </TableBody>
         </Table>
+      </div>
 
-        {hasNextPage && (
-          <div className="flex justify-center p-4">
-            <Button
-              variant="outline"
-              onClick={() => fetchNextPage()}
-              disabled={isFetchingNextPage}
-            >
-              {isFetchingNextPage ? "Loading more..." : "Load More"}
-            </Button>
+      {/* Mobile Cards */}
+      <div className="grid grid-cols-1 gap-4 md:hidden">
+        {adjustments.length === 0 ? (
+          <div className="rounded-xl border bg-card p-8 text-center text-muted-foreground">
+            No adjustments found.
           </div>
+        ) : (
+          adjustments.map((adj: any) => (
+            <div
+              key={adj.id}
+              className="flex items-center justify-between rounded-xl border bg-card p-4 shadow-sm cursor-pointer active:opacity-70"
+              onClick={() => router.push(`/adjustment/${adj.id}`)}
+            >
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-muted">
+                  <PackageSearch className="h-5 w-5 text-muted-foreground" />
+                </div>
+                <div className="flex flex-col gap-0.5">
+                  <span className="font-semibold leading-tight">
+                    {adj.warehouse?.name || adj.inventory?.name || "Unknown"}
+                  </span>
+                  <span className="text-xs text-muted-foreground">
+                    {formatDate(adj.createdAt)}
+                  </span>
+                  <div className="flex items-center gap-2 mt-0.5">
+                    <Badge
+                      variant={adj.type === "STOCK_IN" ? "secondary" : "destructive"}
+                      className="text-[10px]"
+                    >
+                      {adj.type}
+                    </Badge>
+                    <span className="text-xs font-bold">
+                      Qty: {adj.itemsCount ?? adj.quantity ?? 0}
+                    </span>
+                  </div>
+                  {adj.reason && (
+                    <span className="text-xs text-muted-foreground line-clamp-1">
+                      {adj.reason}
+                    </span>
+                  )}
+                </div>
+              </div>
+              <ArrowRight className="h-4 w-4 shrink-0 text-muted-foreground" />
+            </div>
+          ))
         )}
       </div>
+
+      {hasNextPage && (
+        <div className="flex justify-center w-full">
+          <Button
+            variant="outline"
+            onClick={() => fetchNextPage()}
+            disabled={isFetchingNextPage}
+          >
+            {isFetchingNextPage ? "Loading more..." : "Load More"}
+          </Button>
+        </div>
+      )}
     </div>
   );
 }

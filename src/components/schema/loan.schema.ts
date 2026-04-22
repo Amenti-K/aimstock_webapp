@@ -1,4 +1,4 @@
-import { LoanTxType } from "@/interface/loan/loan.interface";
+import { LoanTxType } from "@/components/interface/loan/loan.interface";
 import { z } from "zod";
 
 // Payment item schema (for bank/account payments)
@@ -16,20 +16,9 @@ const loanCashPaymentSchema = z.object({
 export const loanInitialSchema = z
   .object({
     partnerId: z.string().min(1, "Partner is required"),
-    txType: z.enum(
-      [
-        LoanTxType.LOAN_GIVEN,
-        LoanTxType.LOAN_TAKEN,
-        LoanTxType.LOAN_PAYMENT,
-        LoanTxType.LOAN_RECEIPT,
-        LoanTxType.SALE_FINANCING,
-        LoanTxType.PURCHASE_FINANCING,
-        LoanTxType.ADJUSTMENT,
-      ],
-      {
-        required_error: "Transaction type is required",
-      },
-    ),
+    txType: z.nativeEnum(LoanTxType, {
+      message: "Transaction type is required",
+    }),
     paymentItems: z.array(paymentItemSchema),
     loanCashPayment: loanCashPaymentSchema.optional(),
     note: z.string().optional(),
@@ -58,20 +47,9 @@ export const loanInitialSchema = z
 // Loan transaction schema (for adding transaction to existing partner)
 export const loanTransactionSchema = z
   .object({
-    txType: z.enum(
-      [
-        LoanTxType.LOAN_GIVEN,
-        LoanTxType.LOAN_TAKEN,
-        LoanTxType.LOAN_PAYMENT,
-        LoanTxType.LOAN_RECEIPT,
-        LoanTxType.SALE_FINANCING,
-        LoanTxType.PURCHASE_FINANCING,
-        LoanTxType.ADJUSTMENT,
-      ],
-      {
-        required_error: "Transaction type is required",
-      },
-    ),
+    txType: z.nativeEnum(LoanTxType, {
+      message: "Transaction type is required",
+    }),
     paymentItems: z.array(paymentItemSchema),
     loanCashPayment: loanCashPaymentSchema.optional(),
     note: z.string().optional(),

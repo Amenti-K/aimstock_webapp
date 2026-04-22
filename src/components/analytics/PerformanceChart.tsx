@@ -10,13 +10,13 @@ import {
   Legend,
 } from "recharts";
 import { PieChartResponse } from "@/components/interface/analytics/interface.analytics";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+// import {
+//   Card,
+//   CardContent,
+//   CardDescription,
+//   CardHeader,
+//   CardTitle,
+// } from "@/components/ui/card";
 
 interface PerformanceChartProps {
   data: PieChartResponse | null | undefined;
@@ -38,7 +38,12 @@ const PerformanceChart: React.FC<PerformanceChartProps> = ({ data }) => {
 
   return (
     <div className="h-[300px] w-full">
-      <ResponsiveContainer width="100%" height="100%">
+      <ResponsiveContainer
+        width="100%"
+        height="100%"
+        minWidth={0}
+        minHeight={undefined}
+      >
         <PieChart>
           <Pie
             data={chartData}

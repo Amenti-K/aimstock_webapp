@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { IAdjustmentType } from "@/interface/interface/adjustment.interface";
+import { IAdjustmentType } from "@/components/interface/adjustment/adjustment.interface";
 
 export const adjustmentItemSchema = z.object({
   inventoryId: z.string().uuid({ message: "inventoryId must be a valid UUID" }),
@@ -20,9 +20,7 @@ export const adjustmentSchema = z
       .string()
       .uuid({ message: "Source warehouse is required" })
       .min(1, { message: "Source warehouse is required" }),
-    type: z.nativeEnum(IAdjustmentType, {
-      errorMap: () => ({ message: "Please select a valid adjustment type" }),
-    }),
+    type: z.enum(IAdjustmentType),
     note: z.string().optional(),
     items: z
       .array(adjustmentItemSchema)

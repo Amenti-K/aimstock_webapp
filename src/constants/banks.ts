@@ -1,4 +1,4 @@
-import { EthiopianFinancialInstitution } from "@/interface/interface.account";
+import { EthiopianFinancialInstitution } from "@/components/interface/interface.account";
 
 export interface BankMeta {
   name: string;

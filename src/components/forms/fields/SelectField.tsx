@@ -41,7 +41,7 @@ const SelectField = ({
         <div className="space-y-2">
           {label && <Label htmlFor={name}>{label}</Label>}
           <Select onValueChange={onChange} value={value} disabled={disabled}>
-            <SelectTrigger className={error ? "border-red-500" : ""}>
+            <SelectTrigger className={`w-full ${error ? "border-red-500" : ""}`}>
               <SelectValue placeholder={placeholder} />
             </SelectTrigger>
             <SelectContent className="bg-background">

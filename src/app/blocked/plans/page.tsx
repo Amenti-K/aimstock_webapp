@@ -1,54 +1,339 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { Button } from "@/components/ui/button";
-import { ShieldAlert, CreditCard } from "lucide-react";
+import { useAppDispatch } from "@/redux/hooks";
 import { logoutUser } from "@/redux/slices/userAuthSlice";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { useSubscription } from "@/context/SubscriptionContext";
+import { useFetchPlans } from "@/api/subscription/api.plan";
+import {
+  useCreateTrialSubscription,
+} from "@/api/subscription/api.subscription";
+import {
+  BillingInterval,
+  IPlan,
+} from "@/components/interface/subscription/subscription.interface";
+import {
+  CheckCircle2,
+  Gift,
+  Loader2,
+  LogOut,
+  Rocket,
+  Star,
+  Zap,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
+
+// ─── Constants ────────────────────────────────────────────────────────────────
+
+const INTERVALS: {
+  key: BillingInterval;
+  label: string;
+  badge?: string;
+}[] = [
+  { key: BillingInterval.THREE_MONTHS, label: "3 Months" },
+  { key: BillingInterval.SIX_MONTHS, label: "6 Months" },
+  { key: BillingInterval.YEARLY, label: "1 Year", badge: "Save 20%" },
+];
+
+function formatPrice(amount: number) {
+  return new Intl.NumberFormat("en-ET", { minimumFractionDigits: 0 }).format(
+    amount
+  );
+}
+
+// ─── Plan Card ────────────────────────────────────────────────────────────────
+
+function PlanCard({
+  plan,
+  interval,
+  onSelect,
+}: {
+  plan: IPlan;
+  interval: BillingInterval;
+  onSelect: (
+    planId: string,
+    recommended: boolean,
+    interval: BillingInterval
+  ) => void;
+}) {
+  const priceObj = plan.prices.find((p) => p.interval === interval);
+  const price = priceObj?.amount || 0;
+  const currency = priceObj?.currency || "ETB";
+  const isRecommended = plan.isEnterprise;
+  const features = plan.features.filter((f) => f.enabled).map((f) => f.feature);
+
+  const intervalLabel =
+    interval === BillingInterval.THREE_MONTHS
+      ? "3 months"
+      : interval === BillingInterval.SIX_MONTHS
+        ? "6 months"
+        : "year";
+
+  return (
+    <div
+      className={cn(
+        "relative flex flex-col rounded-2xl border-2 bg-card transition-all duration-200 hover:shadow-xl hover:-translate-y-1 cursor-pointer",
+        isRecommended
+          ? "border-primary shadow-primary/20 shadow-lg"
+          : "border-border hover:border-primary/40"
+      )}
+      onClick={() => onSelect(plan.id, isRecommended, interval)}
+    >
+      {isRecommended && (
+        <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 z-10">
+          <Badge className="bg-primary text-primary-foreground px-4 py-1 text-xs font-bold uppercase tracking-wide shadow-md">
+            <Star className="w-3 h-3 mr-1" />
+            Recommended
+          </Badge>
+        </div>
+      )}
+
+      <div className="p-6 flex flex-col flex-1 pt-8">
+        {/* Name & Description */}
+        <div className="mb-4">
+          <h3 className="text-xl font-bold text-foreground">{plan.name}</h3>
+          {plan.description && (
+            <p className="text-sm text-muted-foreground mt-1">
+              {plan.description}
+            </p>
+          )}
+        </div>
+
+        {/* Price */}
+        <div className="flex items-baseline gap-1 mb-6">
+          <span
+            className={cn(
+              "text-4xl font-extrabold",
+              isRecommended ? "text-primary" : "text-foreground"
+            )}
+          >
+            {formatPrice(price)}
+          </span>
+          <span className="text-sm text-muted-foreground font-medium">
+            {currency} / {intervalLabel}
+          </span>
+        </div>
+
+        {/* Features */}
+        <div className="flex-1 space-y-2.5 mb-6">
+          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-3">
+            Key Features
+          </p>
+          {features.slice(0, 6).map((feature, i) => (
+            <div key={i} className="flex items-center gap-2.5">
+              <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" />
+              <span className="text-sm text-foreground capitalize">
+                {feature.replace(/_/g, " ").toLowerCase()}
+              </span>
+            </div>
+          ))}
+          {features.length > 6 && (
+            <p className="text-xs text-muted-foreground pl-6 mt-1">
+              +{features.length - 6} more features
+            </p>
+          )}
+        </div>
+
+        {/* CTA */}
+        <Button
+          variant={isRecommended ? "default" : "outline"}
+          className="w-full"
+          id={`select-plan-${plan.id}`}
+          onClick={(e) => {
+            e.stopPropagation();
+            onSelect(plan.id, isRecommended, interval);
+          }}
+        >
+          Select {plan.name}
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+// ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function BlockedPlansPage() {
   const router = useRouter();
   const dispatch = useAppDispatch();
-  const { company } = useAppSelector((state) => state.userAuth);
+  const [activeInterval, setActiveInterval] = useState<BillingInterval>(
+    BillingInterval.YEARLY
+  );
+
+  const { subscription, isInitialized, loading: subLoading } = useSubscription();
+  const { data: plansData, isLoading } = useFetchPlans();
+  const plans = plansData?.data || [];
+
+  // Find the first non-enterprise plan for the trial offer
+  const starterPlan = plans.find((p) => !p.isEnterprise);
+
+  const createTrial = useCreateTrialSubscription();
+
+  // Only show trial if user has NEVER had any subscription
+  const canTryTrial = isInitialized && !subLoading && subscription === null;
+
+  const filteredPlans = plans.filter((plan) =>
+    plan.prices.some((p) => p.interval === activeInterval)
+  );
+
+  const handleSelectPlan = (
+    planId: string,
+    recommended: boolean,
+    interval: BillingInterval
+  ) => {
+    router.push(
+      `/setting/subscription/billing?planId=${planId}&interval=${interval}&recommended=${recommended}`
+    );
+  };
+
+  const handleTryTrial = () => {
+    if (!starterPlan) return;
+    createTrial.mutate(
+      { planId: starterPlan.id },
+      { onSuccess: () => router.replace("/dashboard") }
+    );
+  };
 
   const handleLogout = () => {
     dispatch(logoutUser());
     router.replace("/auth/login");
   };
 
-  const choosePlans = () => {
-    router.push("/settings/subscription/plans");
-  };
-
   return (
-    <div className="flex flex-col items-center text-center">
-      <div className="w-20 h-20 bg-destructive/10 rounded-full flex items-center justify-center mb-6">
-        <ShieldAlert className="w-10 h-10 text-destructive" />
-      </div>
-
-      <h1 className="text-2xl font-bold tracking-tight mb-2">
-        Subscription Expired
-      </h1>
-
-      <p className="text-muted-foreground mb-8">
-        Your subscription for{" "}
-        <span className="font-semibold text-foreground">
-          {company?.name || "your company"}
-        </span>{" "}
-        has expired or requires a valid plan to continue accessing the
-        workspace.
-      </p>
-
-      <div className="flex flex-col sm:flex-row gap-4 w-full">
-        <Button variant="outline" className="flex-1" onClick={handleLogout}>
+    <div className="min-h-screen bg-background flex flex-col">
+      {/* ── Header ── */}
+      <header className="border-b bg-background/80 backdrop-blur-sm sticky top-0 z-10 px-6 py-4 flex items-center justify-between">
+        <div className="flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center shadow-sm">
+            <Zap className="w-4 h-4 text-primary-foreground" />
+          </div>
+          <span className="font-bold text-lg tracking-tight">AIM Stock</span>
+        </div>
+        <Button
+          id="blocked-plans-logout"
+          variant="ghost"
+          size="sm"
+          className="text-muted-foreground hover:text-destructive gap-2"
+          onClick={handleLogout}
+        >
+          <LogOut className="w-4 h-4" />
           Logout
         </Button>
-        <Button onClick={choosePlans} className="flex-1 gap-2">
-          <CreditCard className="w-4 h-4" />
-          Renew Subscription
-        </Button>
-      </div>
+      </header>
+
+      <main className="flex-1 px-4 sm:px-6 py-10 w-full max-w-6xl mx-auto">
+        {/* ── Page Title ── */}
+        <div className="text-center mb-10">
+          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight mb-2">
+            Choose Your Plan
+          </h1>
+          <p className="text-muted-foreground text-lg">
+            Select the plan that fits your business needs
+          </p>
+        </div>
+
+        {/* ── Trial Banner ── */}
+        {canTryTrial && starterPlan && (
+          <div className="mb-10 rounded-2xl bg-primary/5 border border-primary/20 p-5 sm:p-6 flex flex-col sm:flex-row items-center gap-4 sm:gap-6">
+            <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center flex-shrink-0">
+              <Gift className="w-7 h-7 text-primary" />
+            </div>
+            <div className="flex-1 text-center sm:text-left">
+              <h3 className="font-bold text-foreground text-lg">
+                Start Free — Try for 14 Days
+              </h3>
+              <p className="text-muted-foreground text-sm mt-1">
+                Get started with the{" "}
+                <span className="font-semibold text-foreground">
+                  {starterPlan.name}
+                </span>{" "}
+                plan — no payment required. Cancel anytime.
+              </p>
+            </div>
+            <Button
+              id="start-trial-btn"
+              size="lg"
+              className="gap-2 flex-shrink-0 min-w-[180px]"
+              onClick={handleTryTrial}
+              disabled={createTrial.isPending || !starterPlan}
+            >
+              {createTrial.isPending ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <Rocket className="w-4 h-4" />
+              )}
+              {createTrial.isPending ? "Starting..." : "Start Free Trial"}
+            </Button>
+          </div>
+        )}
+
+        {/* ── Interval Tabs ── */}
+        <div className="flex justify-center mb-8">
+          <div className="flex items-center gap-1 rounded-xl bg-muted p-1.5">
+            {INTERVALS.map((int) => (
+              <button
+                key={int.key}
+                id={`interval-tab-${int.key}`}
+                onClick={() => setActiveInterval(int.key)}
+                className={cn(
+                  "relative flex items-center gap-2 rounded-lg px-5 py-2 text-sm font-medium transition-all duration-200",
+                  activeInterval === int.key
+                    ? "bg-background text-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground"
+                )}
+              >
+                {int.label}
+                {int.badge && (
+                  <span className="text-xs bg-emerald-500 text-white px-1.5 py-0.5 rounded-full font-semibold leading-none">
+                    {int.badge}
+                  </span>
+                )}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Yearly savings note */}
+        {activeInterval === BillingInterval.YEARLY && (
+          <p className="text-center text-sm text-emerald-600 dark:text-emerald-400 font-medium mb-8">
+            🎉 Save up to 20% compared to 3-month billing
+          </p>
+        )}
+
+        {/* ── Plan Cards ── */}
+        {isLoading ? (
+          <div className="flex items-center justify-center py-24">
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          </div>
+        ) : filteredPlans.length === 0 ? (
+          <div className="text-center py-24 text-muted-foreground">
+            No plans available for this billing period.
+          </div>
+        ) : (
+          <div
+            className={cn(
+              "grid gap-6",
+              filteredPlans.length === 1
+                ? "max-w-sm mx-auto"
+                : filteredPlans.length === 2
+                  ? "sm:grid-cols-2 max-w-3xl mx-auto"
+                  : "sm:grid-cols-2 lg:grid-cols-3"
+            )}
+          >
+            {filteredPlans.map((plan) => (
+              <PlanCard
+                key={plan.id}
+                plan={plan}
+                interval={activeInterval}
+                onSelect={handleSelectPlan}
+              />
+            ))}
+          </div>
+        )}
+      </main>
     </div>
   );
 }

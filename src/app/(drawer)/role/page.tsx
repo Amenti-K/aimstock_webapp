@@ -14,7 +14,6 @@ import { usePermissions } from "@/hooks/permission.hook";
 import { Button } from "@/components/ui/button";
 import {
   Plus,
-  Search,
   MoreHorizontal,
   ShieldCheck,
   Pencil,
@@ -35,7 +34,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import {
   Dialog,
@@ -63,7 +61,6 @@ export default function RolePage() {
   const hasCreateAccess = canCreate("ROLE");
   const hasUpdateAccess = canUpdate("ROLE");
   const hasDeleteAccess = canDelete("ROLE");
-  const [search, setSearch] = React.useState("");
   const [selectedRoleId, setSelectedRoleId] = React.useState<string | null>(
     null,
   );
@@ -83,7 +80,7 @@ export default function RolePage() {
     hasNextPage,
     fetchNextPage,
     isFetchingNextPage,
-  } = useGetRolesInfinite({ search }, hasViewAccess);
+  } = useGetRolesInfinite({}, hasViewAccess);
 
   const selectedRoleQuery = useFetchRoleById(
     selectedRoleId ?? "",
@@ -169,6 +166,48 @@ export default function RolePage() {
     );
   };
 
+  const ActionsDropdown = ({ role }: { role: IRole }) => (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" className="h-8 w-8 p-0">
+          <MoreHorizontal className="h-4 w-4" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="bg-secondary">
+        {hasUpdateAccess && (
+          <DropdownMenuItem
+            className="cursor-pointer"
+            onClick={() => onOpenEdit(role.id)}
+          >
+            <Pencil className="mr-2 h-4 w-4" />
+            Edit role
+          </DropdownMenuItem>
+        )}
+        {hasCreateAccess && (
+          <DropdownMenuItem
+            className="cursor-pointer"
+            onClick={() => onOpenDuplicate(role.id)}
+          >
+            <Copy className="mr-2 h-4 w-4" />
+            Duplicate role
+          </DropdownMenuItem>
+        )}
+        {hasDeleteAccess && (
+          <DropdownMenuItem
+            className="cursor-pointer text-destructive"
+            onClick={() => {
+              setSelectedRoleId(role.id);
+              setIsDeleteOpen(true);
+            }}
+          >
+            <Trash2 className="mr-2 h-4 w-4" />
+            Delete role
+          </DropdownMenuItem>
+        )}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+
   if (!hasViewAccess) {
     return <AccessDeniedView moduleName="Roles & Permissions" />;
   }
@@ -178,6 +217,7 @@ export default function RolePage() {
 
   return (
     <div className="space-y-6">
+      {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">
@@ -194,26 +234,15 @@ export default function RolePage() {
         )}
       </div>
 
-      <div className="flex items-center gap-2">
-        <div className="relative flex-1 max-w-sm">
-          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search roles..."
-            className="pl-8"
-            value={search}
-            onChange={(event) => setSearch(event.target.value)}
-          />
-        </div>
-      </div>
-
-      <div className="rounded-md border bg-card">
+      {/* Desktop Table */}
+      <div className="hidden md:block rounded-md border bg-card">
         <Table>
           <TableHeader>
             <TableRow>
               <TableHead>Role Name</TableHead>
               <TableHead>Description</TableHead>
               <TableHead>Permissions</TableHead>
-              <TableHead className="w-[100px]">Actions</TableHead>
+              <TableHead className="w-[80px]">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -256,61 +285,74 @@ export default function RolePage() {
                     </div>
                   </TableCell>
                   <TableCell>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0">
-                          <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        {hasUpdateAccess && (
-                          <DropdownMenuItem onClick={() => onOpenEdit(role.id)}>
-                            <Pencil className="mr-2 h-4 w-4" />
-                            Edit role
-                          </DropdownMenuItem>
-                        )}
-                        {hasCreateAccess && (
-                          <DropdownMenuItem
-                            onClick={() => onOpenDuplicate(role.id)}
-                          >
-                            <Copy className="mr-2 h-4 w-4" />
-                            Duplicate role
-                          </DropdownMenuItem>
-                        )}
-                        {hasDeleteAccess && (
-                          <DropdownMenuItem
-                            className="text-destructive"
-                            onClick={() => {
-                              setSelectedRoleId(role.id);
-                              setIsDeleteOpen(true);
-                            }}
-                          >
-                            <Trash2 className="mr-2 h-4 w-4" />
-                            Delete role
-                          </DropdownMenuItem>
-                        )}
-                      </DropdownMenuContent>
-                    </DropdownMenu>
+                    <ActionsDropdown role={role} />
                   </TableCell>
                 </TableRow>
               ))
             )}
           </TableBody>
         </Table>
+      </div>
 
-        {hasNextPage && (
-          <div className="flex justify-center p-4">
-            <Button
-              variant="outline"
-              onClick={() => fetchNextPage()}
-              disabled={isFetchingNextPage}
-            >
-              {isFetchingNextPage ? "Loading more..." : "Load More"}
-            </Button>
+      {/* Mobile Cards */}
+      <div className="grid grid-cols-1 gap-4 md:hidden">
+        {roles.length === 0 ? (
+          <div className="rounded-xl border bg-card p-8 text-center text-muted-foreground">
+            No roles found.
           </div>
+        ) : (
+          roles.map((role) => (
+            <div
+              key={role.id}
+              className="flex items-start justify-between rounded-xl border bg-card p-4 shadow-sm"
+            >
+              <div className="flex items-start gap-3">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10">
+                  <ShieldCheck className="h-5 w-5 text-primary" />
+                </div>
+                <div className="flex flex-col gap-1">
+                  <span className="font-semibold leading-tight">
+                    {role.name}
+                  </span>
+                  {role.description && (
+                    <span className="text-xs text-muted-foreground line-clamp-1">
+                      {role.description}
+                    </span>
+                  )}
+                  <div className="flex flex-wrap gap-1 mt-1">
+                    {role.permissions?.slice(0, 2).map((p: any, idx: number) => (
+                      <Badge key={idx} variant="secondary" className="text-[10px]">
+                        {p.module}:{p.permission}
+                      </Badge>
+                    ))}
+                    {(role.permissions?.length || 0) > 2 && (
+                      <Badge variant="outline" className="text-[10px]">
+                        +{(role.permissions?.length || 0) - 2} more
+                      </Badge>
+                    )}
+                  </div>
+                </div>
+              </div>
+              <ActionsDropdown role={role} />
+            </div>
+          ))
         )}
       </div>
 
+      {/* Load More */}
+      {hasNextPage && (
+        <div className="flex justify-center w-full">
+          <Button
+            variant="outline"
+            onClick={() => fetchNextPage()}
+            disabled={isFetchingNextPage}
+          >
+            {isFetchingNextPage ? "Loading more..." : "Load More"}
+          </Button>
+        </div>
+      )}
+
+      {/* Create / Edit / Duplicate Dialog */}
       <Dialog
         open={isFormOpen}
         onOpenChange={(open) => {
@@ -351,6 +393,7 @@ export default function RolePage() {
         </DialogContent>
       </Dialog>
 
+      {/* Delete Alert Dialog */}
       <AlertDialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>

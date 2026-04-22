@@ -1,12 +1,7 @@
 import z from "zod";
 
 export const warehouseSchema = z.object({
-    name: z
-        .string({
-            required_error: "Warehouse name is required",
-            invalid_type_error: "Name must be a string",
-        })
-        .min(2, "Name must be at least 2 characters"),
+    name: z.string().min(2, "Name must be at least 2 characters"),
     location: z.string().min(2).nullable(),
     contactPhone: z.string()
     .regex(

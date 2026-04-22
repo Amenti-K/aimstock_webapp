@@ -13,7 +13,7 @@ import SubmitButton from "@/components/forms/fields/SubmitButton";
 import { useFetchPartnerSelector } from "@/api/partner/api.partner";
 import { useGetInventoriesInfinite } from "@/api/inventory/api.inventory";
 import { useFetchAccountSelector } from "@/api/account/api.account";
-import type { INewSale, ISaleView } from "@/api/sale/api.sale";
+import type { INewSale, ISaleView } from "@/components/interface/sales/interface.sale";
 
 type SalesFormValues = {
   partnerId: string;
@@ -167,14 +167,14 @@ export default function SalesForm({
           <CardContent className="space-y-4">
             <SelectField
               name="partnerId"
-              control={control}
+              control={control as any}
               label="Customer"
               placeholder="Select customer"
               options={partnerOptions}
             />
             <TextAreaField
               name="description"
-              control={control}
+              control={control as any}
               label="Description"
               placeholder="Optional notes for this sale"
             />
@@ -199,7 +199,7 @@ export default function SalesForm({
                 <div className="md:col-span-2">
                   <SelectField
                     name={`saleItems.${index}.inventoryId`}
-                    control={control}
+                    control={control as any}
                     label="Inventory"
                     placeholder="Select inventory"
                     options={inventoryOptions}
@@ -207,14 +207,14 @@ export default function SalesForm({
                 </div>
                 <NumericField
                   name={`saleItems.${index}.quantity`}
-                  control={control}
+                  control={control as any}
                   label="Quantity"
                   placeholder="0"
                 />
                 <div className="space-y-2">
                   <NumericField
                     name={`saleItems.${index}.unitPrice`}
-                    control={control}
+                    control={control as any}
                     label="Unit Price"
                     placeholder="0"
                   />
@@ -257,20 +257,20 @@ export default function SalesForm({
               <div key={field.id} className="grid grid-cols-1 gap-3 rounded-md border p-4 md:grid-cols-4">
                 <SelectField
                   name={`salePayments.${index}.accountId`}
-                  control={control}
+                  control={control as any}
                   label="Account"
                   placeholder="Select account"
                   options={accountOptions}
                 />
                 <NumericField
                   name={`salePayments.${index}.amount`}
-                  control={control}
+                  control={control as any}
                   label="Amount"
                   placeholder="0"
                 />
                 <TextAreaField
                   name={`salePayments.${index}.description`}
-                  control={control}
+                  control={control as any}
                   label="Description"
                   placeholder="Optional"
                 />

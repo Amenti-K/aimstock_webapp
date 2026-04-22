@@ -6,7 +6,7 @@ import { LoadingView, ErrorView } from "@/components/common/StateView";
 import { AccessDeniedView } from "@/components/guards/AccessDeniedView";
 import { usePermissions } from "@/hooks/permission.hook";
 import { Button } from "@/components/ui/button";
-import { Search, History, User } from "lucide-react";
+import { History, User } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -17,7 +17,6 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { formatDate } from "@/lib/formatter";
-import { Input } from "@/components/ui/input";
 import SelectField from "@/components/forms/fields/SelectField";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -43,14 +42,13 @@ type FilterForm = z.infer<typeof filterSchema>;
 export default function AuditPage() {
   const { canView } = usePermissions();
   const hasViewAccess = canView("AUDITLOG");
-  const [search, setSearch] = React.useState("");
   const [selectedLog, setSelectedLog] = React.useState<any | null>(null);
   const [isDetailsOpen, setIsDetailsOpen] = React.useState(false);
   const { control, watch } = useForm<FilterForm>({
     resolver: zodResolver(filterSchema),
     defaultValues: {
-      auditAction: "",
-      entityType: "",
+      auditAction: "ALL",
+      entityType: "ALL",
     },
   });
   const selectedAction = watch("auditAction");
@@ -66,9 +64,12 @@ export default function AuditPage() {
     isFetchingNextPage,
   } = useGetAuditLogsInfinite(
     {
-      search,
-      auditAction: selectedAction || undefined,
-      entityType: selectedEntityType || undefined,
+      auditAction:
+        selectedAction && selectedAction !== "ALL" ? selectedAction : undefined,
+      entityType:
+        selectedEntityType && selectedEntityType !== "ALL"
+          ? selectedEntityType
+          : undefined,
     },
     hasViewAccess,
   );
@@ -83,9 +84,10 @@ export default function AuditPage() {
     ],
     [],
   );
+
   const entityOptions = React.useMemo(
     () => [
-      { label: "All entities", value: "All" as EntityType },
+      { label: "All entities", value: "ALL" as EntityType },
       ...Object.values(EntityType).map((entity) => ({
         label: entity,
         value: entity,
@@ -98,13 +100,6 @@ export default function AuditPage() {
     return data?.pages?.flatMap((page) => page.data) ?? [];
   }, [data]);
 
-  if (!hasViewAccess) {
-    return <AccessDeniedView moduleName="Audit Logs" />;
-  }
-
-  if (isLoading) return <LoadingView />;
-  if (isError) return <ErrorView refetch={refetch} />;
-
   const getActionColor = (action: string) => {
     if (action.includes("CREATE")) return "bg-green-500/10 text-green-600";
     if (action.includes("UPDATE")) return "bg-blue-500/10 text-blue-600";
@@ -112,8 +107,16 @@ export default function AuditPage() {
     return "bg-muted text-muted-foreground";
   };
 
+  if (!hasViewAccess) {
+    return <AccessDeniedView moduleName="Audit Logs" />;
+  }
+
+  if (isLoading) return <LoadingView />;
+  if (isError) return <ErrorView refetch={refetch} />;
+
   return (
     <div className="space-y-6">
+      {/* Header */}
       <div>
         <h1 className="text-2xl font-bold tracking-tight">Audit Logs</h1>
         <p className="text-sm text-muted-foreground">
@@ -121,16 +124,8 @@ export default function AuditPage() {
         </p>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-3">
-        <div className="relative md:col-span-1">
-          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search audit logs..."
-            className="pl-8"
-            value={search}
-            onChange={(event) => setSearch(event.target.value)}
-          />
-        </div>
+      {/* Filters — always side by side, 50/50 */}
+      <div className="grid grid-cols-2 gap-4 w-full items-end">
         <SelectField
           name="entityType"
           control={control as any}
@@ -145,7 +140,8 @@ export default function AuditPage() {
         />
       </div>
 
-      <div className="rounded-md border bg-card">
+      {/* Desktop Table */}
+      <div className="hidden md:block rounded-md border bg-card">
         <Table>
           <TableHeader>
             <TableRow>
@@ -167,7 +163,7 @@ export default function AuditPage() {
               logs.map((log: any) => (
                 <TableRow
                   key={log.id}
-                  className="cursor-pointer"
+                  className="cursor-pointer hover:bg-muted/50"
                   onClick={() => {
                     setSelectedLog(log);
                     setIsDetailsOpen(true);
@@ -206,20 +202,66 @@ export default function AuditPage() {
             )}
           </TableBody>
         </Table>
+      </div>
 
-        {hasNextPage && (
-          <div className="flex justify-center p-4">
-            <Button
-              variant="outline"
-              onClick={() => fetchNextPage()}
-              disabled={isFetchingNextPage}
-            >
-              {isFetchingNextPage ? "Loading more..." : "Load More"}
-            </Button>
+      {/* Mobile Cards */}
+      <div className="grid grid-cols-1 gap-4 md:hidden">
+        {logs.length === 0 ? (
+          <div className="rounded-xl border bg-card p-8 text-center text-muted-foreground">
+            No audit logs found.
           </div>
+        ) : (
+          logs.map((log: any) => (
+            <div
+              key={log.id}
+              className="flex items-start justify-between rounded-xl border bg-card p-4 shadow-sm cursor-pointer active:opacity-70"
+              onClick={() => {
+                setSelectedLog(log);
+                setIsDetailsOpen(true);
+              }}
+            >
+              <div className="flex items-start gap-3">
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-muted">
+                  <History className="h-4 w-4 text-muted-foreground" />
+                </div>
+                <div className="flex flex-col gap-1">
+                  <div className="flex items-center gap-1 text-md font-semibold">
+                    <User className="h-4 w-4" />
+                    <span>{log.user?.name || "System"}</span>
+                  </div>
+                  <span className="text-xs text-muted-foreground">
+                    {formatDate(log.createdAt)}
+                  </span>
+                </div>
+              </div>
+              <div className="flex flex-col items-center gap-2">
+                <Badge
+                  variant="outline"
+                  className={`text-[10px] font-bold ${getActionColor(log.action)}`}
+                >
+                  {log.action}
+                </Badge>
+                <span className="text-xs font-semibold">{log.entityType}</span>
+              </div>
+            </div>
+          ))
         )}
       </div>
 
+      {/* Load More */}
+      {hasNextPage && (
+        <div className="flex justify-center w-full">
+          <Button
+            variant="outline"
+            onClick={() => fetchNextPage()}
+            disabled={isFetchingNextPage}
+          >
+            {isFetchingNextPage ? "Loading more..." : "Load More"}
+          </Button>
+        </div>
+      )}
+
+      {/* Log Detail Dialog */}
       <Dialog open={isDetailsOpen} onOpenChange={setIsDetailsOpen}>
         <DialogContent className="max-h-[90vh] overflow-auto sm:max-w-3xl">
           <DialogHeader>
@@ -227,7 +269,7 @@ export default function AuditPage() {
           </DialogHeader>
           {!selectedLog ? null : (
             <div className="space-y-4 text-sm">
-              <div className="grid gap-2 md:grid-cols-2">
+              <div className="grid gap-2 grid-cols-2">
                 <div>
                   <p className="text-xs text-muted-foreground">Action</p>
                   <p className="font-medium">{selectedLog.action}</p>
