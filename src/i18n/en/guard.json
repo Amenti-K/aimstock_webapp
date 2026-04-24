@@ -1,0 +1,23 @@
+{
+  "permission": {
+    "accessRestricted": "Access Restricted",
+    "accessDenied": "Access Denied",
+    "module": "Module",
+    "accessDeniedMessage": "You don't have permission to access this module."
+  },
+  "maintenance": {
+    "title": "Under Maintenance",
+    "subtitle": "We're making things better for you",
+    "message": "Our system is currently undergoing scheduled maintenance. We'll be back online shortly.",
+    "checking": "Checking service status...",
+    "checkNow": "Check Now",
+    "autoCheck": "Auto-checking every hour",
+    "lastChecked": "Last checked",
+    "statusOnline": "Service is back online!",
+    "statusOffline": "Still under maintenance",
+    "retry": "Retry",
+    "justNow": "just now",
+    "minutesAgo": "{{count}}m ago",
+    "hoursAgo": "{{count}}h ago"
+  }
+}

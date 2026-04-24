@@ -1,0 +1,83 @@
+{
+  "moduleName": "ሂሳቦች",
+  "emptyAcconts": "ምንም ሂሳብ አልተገኘም። በመጀመሪያ ሂሳብዎን በመጨመር ይጀምሩ",
+  "emptyTranxs": "ምንም ግብይት አልተገኘም። በመጀመሪያ ግብይትዎን በመጨመር ይጀምሩ",
+  "pendingAcc": "የሂሳብ ዝርዝሮች በመጫን ላይ...",
+  "errorAcc": "የሂሳብ ዝርዝሮችን መጫን አልተሳካም።",
+  "permissions": {
+    "view": "የሂሳብ መረጃ ለመመልከት ፈቃድ የሎትም።",
+    "create": "የሂሳብ መረጃ ለመፍጠር ፈቃድ የሎትም።",
+    "update": "የሂሳብ መረጃ ለማዘመን ፈቃድ የሎትም።",
+    "delete": "የሂሳብ መረጃ ለመሰረዝ ፈቃድ የሎትም።"
+  },
+  "totalCard": {
+    "title": "ጠቅላላ ቀሪ ሒሳብ",
+    "subtitle": "በሁሉም ሂሳቦች ውስጥ ያለው ጠቅላላ ቀሪ"
+  },
+  "accountCard": {
+    "cash": "ጥሬ ገንዘብ",
+    "branch": "ቅርንጫፍ",
+    "accountNumber": "የሂሳብ ቁጥር",
+    "holder": "የባለቤቱ ስም",
+    "balance": "ቀሪ ሒሳብ"
+  },
+  "transfer": {
+    "title": "ገንዘብ ያስተላልፉ",
+    "deposit": "ጥሬ ገንዘብ አስገባ",
+    "to": "ወደ",
+    "amount": "መጠን",
+    "transfer": "አስተላልፍ",
+    "select": "ሂሳብ ይምረጡ",
+    "loading": "ሂሳቦች በመጫን ላይ...",
+    "error": "ሂሳቦችን መጫን አልተሳካም።"
+  },
+  "tranxCard": {
+    "transaction": "ግብይት",
+    "transactions": "ግብይቶች",
+    "income": "ገቢ",
+    "expense": "ወጪ"
+  },
+  "form": {
+    "add": "ሂሳብ ጨምር",
+    "select": "ሂሳብ ይምረጡ",
+    "name": "የሂሳብ ስም",
+    "bank": "ባንክ *",
+    "branch": "ቅርንጫፍ (አማራጭ)",
+    "number": "የሂሳብ ቁጥር (አማራጭ)",
+    "balance": "ቀሪ ሒሳብ *",
+    "edit": "ሂሳብ አርም",
+    "balanceEdit": "ቀሪ ሒሳብ (ሊቀየር አይችልም)",
+    "loading": "ሂሳቦች በመጫን ላይ...",
+    "error": "ሂሳቦችን መጫን አልተሳካም።"
+  },
+  "bank": {
+    "TELEBIRR": "ቴሌብር",
+    "CBE": "ኮመርሻል ባንክ ኦፍ ኢትዮጵያ",
+    "DBE": "ዴቨሎፕመንት ባንክ ኦፍ ኢትዮጵያ",
+    "AWASH_BANK": "አዋሽ ባንክ",
+    "DASHEN_BANK": "ዳሽን ባንክ",
+    "BANK_OF_ABYSSINIA": "ባንክ ኦፍ አብሲኒያ",
+    "HIBRET_BANK": "ሕብረት ባንክ",
+    "NIB_INTERNATIONAL_BANK": "ኒብ ኢንተርናሽናል ባንክ",
+    "COOPERATIVE_BANK_OF_OROMIA": "ኮኦፕራቲቭ ባንክ ኦፍ ኦሮሚያ",
+    "OROMIA_INTERNATIONAL_BANK": "ኦሮሚያ ኢንተርናሽናል ባንክ",
+    "WEGAGEN_BANK": "ወጋገን ባንክ",
+    "ZEMEN_BANK": "ዘመን ባንክ",
+    "BERHAN_BANK": "ብርሃን ባንክ",
+    "BUNNA_BANK": "ቡና ባንክ",
+    "LION_BANK": "ሊዮን ባንክ",
+    "ABAY_BANK": "አባይ ባንክ",
+    "ADDIS_INTERNATIONAL_BANK": "አዲስ ኢንተርናሽናል ባንክ",
+    "ENAT_BANK": "እናት ባንክ",
+    "GLOBAL_BANK_ETHIOPIA": "ግሎባል ባንክ ኢትዮጵያ",
+    "ZAMZAM_BANK": "ዘምዘም ባንክ",
+    "HIJRA_BANK": "ሂጅራ ባንክ",
+    "AHADU_BANK": "አሐዱ ባንክ",
+    "AMHARA_BANK": "አማራ ባንክ",
+    "SIINQEE_BANK": "ሲንቀዌ ባንክ",
+    "TSEDEY_BANK": "ጸደይ ባንክ",
+    "GADAA_BANK": "ጋዳ ባንክ",
+    "SHABELLE_BANK": "ሸበሌ ባንክ",
+    "others": "ሌሎች"
+  }
+}

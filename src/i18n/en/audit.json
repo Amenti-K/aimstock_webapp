@@ -1,0 +1,39 @@
+{
+  "moduleName": "Audit Logs",
+  "detailTitle": "Audit History",
+  "allActions": "All Actions",
+  "allEntities": "All Entities",
+  "selectAction": "Select Action",
+  "selectEntityType": "Select Entity Type",
+  "entityType": "Entity Type",
+  "actionLabel": "Action",
+  "pendingAudit": "Loading audit logs...",
+  "errorAudit": "Error loading audit logs",
+  "noHistory": "No history found for this entity",
+  "emptyAudit": "No audit logs found",
+  "timelineTitle": "Timeline",
+  "permissions": {
+    "view": "You do not have permission to view audit logs"
+  },
+  "entities": {
+    "purchase": "Purchase",
+    "sale": "Sale",
+    "warehouse": "Warehouse",
+    "inventory": "Inventory",
+    "inventoryadjustment": "Adjustment",
+    "loan": "Loan",
+    "expense": "Expense",
+    "account": "Account",
+    "partner": "Partner",
+    "role": "Role",
+    "employee": "Employee",
+    "accounttransfer": "Transfer"
+  },
+  "action": {
+    "by": "by {{name}}",
+    "create": "Created",
+    "update": "Updated",
+    "delete": "Deleted",
+    "restore": "Restored"
+  }
+}

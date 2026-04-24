@@ -40,6 +40,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { cn } from "@/lib/utils";
+import LastAudit from "@/components/audit/LastAudit";
 
 export default function InventoryDetailPage() {
   const { id } = useParams();
@@ -114,8 +115,15 @@ export default function InventoryDetailPage() {
                 {inventory.brand || "General"} • {inventory.unit || "Units"}
               </p>
             </div>
+            <LastAudit
+              lastAudit={inventory.lastAuditLog}
+              className="ml-2 hidden lg:inline-flex"
+            />
           </div>
         </div>
+      </div>
+      <div className="flex flex-col items-end gap-2">
+        <LastAudit lastAudit={inventory.lastAuditLog} className="lg:hidden" />
         <div className="flex gap-2">
           {hasUpdateAccess && (
             <Button

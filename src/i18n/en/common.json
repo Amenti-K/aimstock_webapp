@@ -1,0 +1,133 @@
+{
+  "confirmDelete": {
+    "title": "Delete {entity}",
+    "message": "Are you sure you want to delete this {entity.toLowerCase()}?"
+  },
+  "confirmLogout": {
+    "title": "Logout",
+    "message": "Are you sure you want to logout?"
+  },
+  "reportAcco": {
+    "title": "Daily Report",
+    "subtitle": "Summary for selected date",
+    "selectDate": "Select date",
+    "loadingReport": "Loading daily report...",
+    "errorReport": "Error fetching daily report",
+    "retry": "Retry",
+    "totalPaidByBank": "Total Paid by Bank",
+    "totalLoanAmount": "Total Loan",
+    "totalPaidByCash": "Total Cash"
+  },
+  "trade": {
+    "order": "Order",
+    "description": "Description",
+    "id": "ID: {{id}}",
+    "total": "Total",
+    "financialOverview": "Financial Overview",
+    "paymentDetails": "Payment Details",
+    "paymentBreakdown": "Payment Breakdown",
+    "bankPayments": "Bank Payments",
+    "cashPayment": "Cash Payment",
+    "loanFinancing": "Loan Financing",
+    "pettyCash": "Petty Cash",
+    "handDelivered": "Hand Delivered",
+    "outstanding": "Outstanding Bal.",
+    "noItems": "No items found",
+    "inventorySummary": "{{itemCount}} Items • {{warehouseCount}} Warehouses",
+    "qty": "Qty",
+    "price": "Price",
+    "paid": "Paid",
+    "unpaid": "Unpaid",
+    "partial": "Partial",
+    "paidByCash": "Paid by Cash",
+    "paidByBank": "Paid by Bank",
+    "amountPaid": "Amount Paid",
+    "received": "Received",
+    "balance": "Balance",
+    "remainingBalance": "Remaining Balance",
+    "balanceDue": "Balance Due",
+    "totalInvoice": "Invoice Total",
+    "cash&Bank": "Cash & Bank"
+  },
+  "permission": {
+    "all": "All",
+    "view": "View",
+    "create": "Create",
+    "update": "Update",
+    "delete": "Delete"
+  },
+  "unit": {
+    "items": "items"
+  },
+  "others": "Others",
+  "share": "Share",
+  "select": "Select",
+  "addNew": "Add New",
+  "cash": "Cash",
+  "birr": "Br",
+  "edit": "Edit",
+  "delete": "Delete",
+  "cancel": "Cancel",
+  "save": "Save",
+  "create": "Create",
+  "update": "Update",
+  "duplicate": "Duplicate",
+  "void": "Void",
+  "close": "Close",
+  "errorView": "Something went wrong",
+  "search": "Search...",
+  "loading": "Loading...",
+  "emptyView": "No data found",
+  "retry": "Retry",
+  "back": "Back",
+  "disable": "Disable",
+  "success": "Success",
+  "layout": {
+    "drawer": {
+      "welcome": "Welcome Back!",
+      "footer": "AimStock - Powered by AIM Technologies",
+      "slogan": "Bringing Modern ERP Solutions to Life",
+      "items": {
+        "dashboard": "Dashboard",
+        "warehouse": "Warehouse",
+        "partners": "Partners",
+        "expense": "Expense",
+        "loan": "Loan",
+        "employee": "Employee",
+        "inventoryAdjustment": "Inventory Adjustment",
+        "rolesAndPermissions": "Roles & Permissions",
+        "audit": "Audit",
+        "settings": "Settings"
+      }
+    },
+    "header": {
+      "sales": "Sales",
+      "purchase": "Purchase",
+      "dashboard": "Dashboard",
+      "inventory": "Inventory",
+      "account": "Account"
+    },
+    "tabs": {
+      "sales": "Sales",
+      "purchase": "Purchase",
+      "dashboard": "Dashboard",
+      "home": "Home",
+      "inventory": "Inventory",
+      "account": "Account"
+    },
+      "lockScreen": {
+        "locked": "AIM Locked",
+        "enterPin": "Enter PIN to unlock",
+        "incorrectPin": "Incorrect PIN",
+        "forgot": "Forgot?",
+        "unlock": "Unlock Session",
+        "switchAccount": "Switch Account",
+        "forgotMessage": "Forgot PIN? This will log you out of the system for security."
+      }
+  },
+  "network": {
+    "noInternet": "No Internet Connection",
+    "checkNetwork": "Please check your network settings and try again to continue using the app.",
+    "retry": "Retry Connection"
+  }
+}

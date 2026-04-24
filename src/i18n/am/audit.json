@@ -1,0 +1,39 @@
+{
+  "moduleName": "የኦዲት መዝገቦች",
+  "detailTitle": "የኦዲት ታሪክ",
+  "allActions": "ሁሉንም ተግባራት",
+  "allEntities": "ሁሉንም ዓይነት",
+  "selectAction": "ተግባር ይምረጡ",
+  "selectEntityType": "ዓይነት ይምረጡ",
+  "entityType": "የአካል ዓይነት",
+  "actionLabel": "ተግባር",
+  "pendingAudit": "የኦዲት መዝገቦችን በመጫን ላይ...",
+  "errorAudit": "የኦዲት መዝገቦችን በመጫን ላይ ስህተት ተከስቷል",
+  "noHistory": "ለዚህ አካል የተገኘ የታሪክ መዝገብ የለም",
+  "emptyAudit": "ምንም የኦዲት መዝገብ አልተገኘም",
+  "timelineTitle": "የጊዜ መስመር",
+  "permissions": {
+    "view": "የኦዲት መዝገቦችን ለማየት ፈቃድ የለዎትም"
+  },
+  "entities": {
+    "purchase": "ግዢ",
+    "sale": "ሽያጭ",
+    "warehouse": "መጋዘን",
+    "inventory": "ዕቃ",
+    "inventoryadjustment": "የዕቃ ማስተካከያ",
+    "loan": "ብድር",
+    "expense": "ወጪ",
+    "account": "ሒሳብ",
+    "partner": "አጋር",
+    "role": "ድርሻ",
+    "employee": "ሠራተኛ",
+    "accounttransfer": "የሒሳብ ዝውውር"
+  },
+  "action": {
+    "by": "በ {{name}}",
+    "create": "ተፈጥሯል",
+    "update": "ተሻሽሏል",
+    "delete": "ተሰርዟል",
+    "restore": "ተመልሷል"
+  }
+}

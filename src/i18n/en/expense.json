@@ -1,0 +1,50 @@
+{
+  "moduleName": "Expenses",
+  "emptyExpense": "No expenses found. Start by adding your first expense",
+  "pendingExpense": "Loading expense details...",
+  "errorExpense": "Failed to load expense details.",
+  "permissions": {
+    "view": "You do not have permission to view Expense data.",
+    "create": "You do not have permission to create Expense data.",
+    "update": "You do not have permission to update Expense data.",
+    "delete": "You do not have permission to delete Expense data."
+  },
+  "card": {
+    "amount": "Amount",
+    "description": "Description"
+  },
+  "detail": {
+    "title": "Expense Detail",
+    "totalAmt": "Total Amount",
+    "paymentTitle": "Payment Breakdown",
+    "bankPay": "Bank Payments",
+    "unknownBank": "Unknown Account",
+    "tatalBank": "Total Bank",
+    "cashPay": "Cash Payment",
+    "cash": "Cash"
+  },
+  "form": {
+    "addExpense": "New Expense",
+    "editExpense": "Edit Expense",
+    "description": "Description (optional)",
+    "bankPay": {
+      "title": "Bank Payments",
+      "index": "Payment {index}",
+      "account": "Acount",
+      "selectAcc": "Select Account",
+      "amount": "Amount",
+      "addPayment": "+ Add bank Payment"
+    },
+    "cashPay": {
+      "title": "Cash Payment (optional)",
+      "amount": "Amount",
+      "addPayment": "Add Payment"
+    },
+    "total": {
+      "totalEx": "Total Expense",
+      "grand": "Grand Total",
+      "paid": "Total Paid",
+      "loan": "Remaining (Loan)"
+    }
+  }
+}

@@ -1,0 +1,72 @@
+{
+  "moduleName": "ክምችት ማስተካከያ",
+  "emptyAdjustment": "ምንም ማስተካከያ አልተገኘም። በመጀመሪያ ማስተካከያዎን በመጨመር ይጀምሩ",
+  "pendingAdjustment": "የማስተካከያ ዝርዝሮች በመጫን ላይ...",
+  "errorAdjustment": "የማስተካከያ ዝርዝሮችን መጫን አልተሳካም።",
+  "permissions": {
+    "view": "የማስተካከያ መረጃ ለመመልከት ፈቃድ የሎትም።",
+    "create": "የማስተካከያ መረጃ ለመፍጠር ፈቃድ የሎትም።",
+    "update": "የማስተካከያ መረጃ ለማዘመን ፈቃድ የሎትም።",
+    "delete": "የማስተካከያ መረጃ ለመሰረዝ ፈቃድ የሎትም።"
+  },
+  "types": {
+    "stockIn": "ጨምር",
+    "stockOut": "ቀንስ",
+    "transfer": "ዝውውር"
+  },
+  "card": {
+    "actions": {
+      "general": "የክምችት ማስተካከያ",
+      "generalDesc": "በመጋዘኖች መካከል ዝውውር ለማድረግ፣ ክምችት ለመጨመር (ተመላሽ/የተገኘ) ወይም ለመቀነስ (ጉዳት/የጠፋ) ይጠቀሙ።",
+      "transfer": "ክምችት ያስተላልፉ",
+      "transferDesc": "ክምችትን በመጋዘኖች መካከል በማንቀሳቀስ ሚዛኑን ይጠብቁ።",
+      "stockIn": "ጨምር",
+      "stockInDesc": "ክምችት ይጨምሩ (ተመላሽ/የተገኘ)",
+      "stockOut": "ቀንስ",
+      "stockOutDesc": "ክምችት ይቀንሱ (ጉዳት/የጠፋ)",
+      "start": "ሂደቱን ጀምር"
+    },
+    "recentAdjust": "የቅርብ ጊዜ ማስተካከያዎች",
+    "from": "ከ ",
+    "adjustment": "ማስተካከያ",
+    "item": "የተስተካከለ እቃ",
+    "items": "የተስተካከሉ እቃዎች"
+  },
+  "detail": {
+    "allItems": "የተስተካከሉ እቃዎች",
+    "item": "እቃ",
+    "type": "አይነት",
+    "qty": "ብዛት",
+    "dest": "መድረሻ",
+    "noItems": "በዚህ ማስተካከያ ውስጥ ምንም እቃ የለም።"
+  },
+  "form": {
+    "addAdjustment": "ክምችት ማስተካከያ ጨምር",
+    "editAdjustment": "ማስተካከያ አርም",
+    "basicInfoTitle": "1. መሰረታዊ መረጃ",
+    "basicInfoDescription": "የማስተካከያውን አይነት እና መነሻ መጋዘኑን ይምረጡ።",
+    "typeLabel": "የማስተካከያ አይነት",
+    "selectType": "አይነት ይምረጡ",
+    "sourceWarehouse": "መነሻ መጋዘን",
+    "selectSource": "መነሻ ይምረጡ",
+    "notes": "ማስታወሻ",
+    "notesPlaceholder": "ተጨማሪ ዝርዝሮችን እዚህ ይጨምሩ...",
+    "itemsTitle": "2. የተስተካከሉ እቃዎች",
+    "selectSourceFirst": "እባክዎ በመጀመሪያ መነሻ መጋዘን ይምረጡ።",
+    "addingItemsFrom": "እቃዎችን ከ... በመጨመር ላይ",
+    "addItem": "እቃ ጨምር",
+    "itemLabel": "እቃ {{index}}",
+    "inventoryItem": "የክምችት እቃ",
+    "selectItem": "እቃ ይምረጡ",
+    "quantityAdd": "የሚጨመር ብዛት",
+    "quantityRemove": "የሚቀነስ ብዛት",
+    "quantityTransfer": "የሚተላለፍ ብዛት",
+    "available": "ያለ",
+    "remaining": "የቀረ",
+    "toWarehouse": "ወደ መጋዘን",
+    "selectDest": "መድረሻ ይምረጡ",
+    "selectSourceAndType": "እቃዎችን ለመጨመር መነሻ መጋዘን እና አይነት ይምረጡ",
+    "validationError": "እባክዎ ከማስቀመጥዎ በፊት በቅጹ ላይ ያሉትን ስህተቶች ያስተካክሉ።",
+    "errorExcessiveStock": "የገባው ብዛት ከሚገኘው ክምችት በላይ ነው"
+  }
+}

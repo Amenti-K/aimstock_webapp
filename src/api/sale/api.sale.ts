@@ -9,6 +9,7 @@ import {
   ISaleView,
   ISale,
 } from "@/components/interface/sales/interface.sale";
+import { IResponse } from "@/components/interface/common.interface";
 
 const onErrorNotification = (error: any) => {
   toast.error(
@@ -75,7 +76,7 @@ export const useFetchDailySaleReport = (date: Date, enabled?: boolean) => {
 };
 
 export const useFetchSale = (id: string, enabled?: boolean) => {
-  return useFetch<{ data: ISaleView }>(`${endpoints.SALE}/${id}`, {
+  return useFetch<IResponse<ISaleView>>(`${endpoints.SALE}/${id}`, {
     queryKey: queryKeys.sales.detail(id),
     enabled: enabled ?? !!id,
   });

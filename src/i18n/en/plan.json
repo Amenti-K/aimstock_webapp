@@ -1,0 +1,65 @@
+{
+  "moduleName": "Plan",
+  "emptyPlan": "No plan found. Start by adding your first plan",
+  "pendingPlan": "Loading plan details...",
+  "errorPlan": "Failed to load plan details.",
+  "permissions": {
+    "view": "You do not have permission to view plan data.",
+    "create": "You do not have permission to create plan data.",
+    "update": "You do not have permission to update plan data.",
+    "delete": "You do not have permission to delete plan data."
+  },
+  "choose": "Choose a Plan",
+  "chooseDes": "You need an active subscription to continue. Please select a plan.",
+  "trial": {
+    "bannerTitle": "Start Free — No Card Required",
+    "bannerDescription": "New to AIM? Try the {{planName}} plan free for 30 days. No payment needed to get started.",
+    "startButton": "Start My Free Trial"
+  },
+  "tabs": {
+    "1month": "Monthly",
+    "3months": "3 Months",
+    "6months": "6 Months",
+    "1year": "Yearly",
+    "noPlans": "No plans available for this interval.",
+    "save20": "Save up to 20% with yearly billing!"
+  },
+  "card": {
+    "recommended": "Recommended",
+    "price": "{{price}} / {{interval}}",
+    "getStarted": "Get Started",
+    "currentPlan": "Current Plan",
+    "keyFeatures": "Key Features",
+    "noFeatures": "No features available",
+    "moreFeatures": "+ {{count}} more features",
+    "selectPlan": "Select Plan"
+  },
+  "billing": {
+    "title": "Checkout",
+    "loading": "Loading Plan Details...",
+    "error": "Failed to load plan details",
+    "order": {
+      "title": "Order Summary",
+      "planSuffix": "Plan",
+      "billingCycle": "Billing Cycle",
+      "totalDue": "Total Due"
+    },
+    "intervals": {
+      "1month": "1 Month",
+      "3months": "3 Months",
+      "6months": "6 Months",
+      "1year": "1 Year"
+    },
+    "payment": {
+      "title": "Payment Method",
+      "transferInstruction": "Transfer the total amount to the following account:"
+    },
+    "instructions": {
+      "title": "Next Steps",
+      "step1": "1. Make a transfer using mobile banking or cash deposit.",
+      "step2": "2. Take a screenshot or photo of the receipt.",
+      "step3": "3. Tap the button below to send it via Telegram for verification.",
+      "sendReceipt": "Send Receipt on Telegram"
+    }
+  }
+}

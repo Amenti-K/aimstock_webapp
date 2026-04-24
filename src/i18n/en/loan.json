@@ -1,0 +1,109 @@
+{
+  "moduleName": "Loan",
+  "emptyLoan": "No loans found. Start by adding your first loan",
+  "pendingLoan": "Loading loan details...",
+  "errorLoan": "Failed to load loan details.",
+  "permissions": {
+    "view": "You do not have permission to view Loan data.",
+    "create": "You do not have permission to create Loan data.",
+    "update": "You do not have permission to update Loan data.",
+    "delete": "You do not have permission to delete Loan data."
+  },
+  "tranxType": {
+    "loanGiven": "Loan Given",
+    "givenDes": "Money lent to partner (Asset)",
+    "saleFinance": "Sale Financing",
+    "saleFinanceDes": "Financing for goods sold to partner (Asset)",
+    "paymentMade": "Payment Made",
+    "paymentMadeDes": "Payment made to partner (Decreasing Liability)",
+    "loanTaken": "Loan Taken",
+    "takenDes": "Money borrowed from partner (Liability)",
+    "purchaseFinance": "Purchase Financing",
+    "purchaseFinanceDes": "Financing for goods purchased from partner (Liability)",
+    "paymentReceived": "Payment Received",
+    "paymentReceivedDes": "Payment received from partner (Decreasing Asset)",
+    "adjustment": "Adjustment",
+    "adjustmentDes": "Manual adjustment"
+  },
+  "card": {
+    "totalGiven": "Total Given",
+    "totalTaken": "Total Taken",
+    "totalGivenCount": "{count} partners",
+    "totalTakenCount": "{count} partners",
+    "noPhone": "No Phone",
+    "receive": "Receive",
+    "pay": "Pay",
+    "settle": "Settle",
+    "owesYou": "Owes You (Asset)",
+    "youOwe": "You Owe (Liability)"
+  },
+  "modal": {
+    "canNotExceedBalance": "Cannot exceed balance",
+    "outstandingBalance": "outstanding balance",
+    "recivePay": "Receive Payment",
+    "makePay": "Make Payment",
+    "outStandingBal": "Outstanding Balance",
+    "oweYou": "They owe you",
+    "youOwe": "You owe them",
+    "exceedsOutstanding": "Amount exceeds outstanding balance!"
+  },
+  "detail": {
+    "title": "Loan Details",
+    "active": "Active",
+    "inactive": "Inactive",
+    "currentBal": "Current Balance",
+    "partnerOwes": "Partner Owes",
+    "companyOwes": "Company Owes",
+    "transactions": "Transactions",
+    "noTransactions": "No transactions yet",
+    "createTransaction": "Create a loan transaction to get started.",
+    "tranx": {
+      "payment": "Payment",
+      "payments": "Payments",
+      "loanTranx": "Loan Transaction",
+      "totalAmt": "Total Amount",
+      "paymentDetails": "Payment Details",
+      "bankAcc": "Bank Account",
+      "cashPay": "Cash Payment",
+      "tranxInfo": "Transaction Information",
+      "createdDate": "Created Date",
+      "dueDate": "Due Date",
+      "note": "Note",
+      "linkToEntity": "Link to {entity}",
+      "actions": "Actions",
+      "editTranx": "Edit Transaction",
+      "deleteTranx": "Delete Transaction"
+    }
+  },
+  "form": {
+    "addTranx": "Add Transaction",
+    "editTranx": "Edit Transaction",
+    "addLoan": "New Loan",
+    "partner": "Partner",
+    "selectPar": "Select Partner",
+    "initialLoanTranx": "Initial Loan Transaction",
+    "note": "Note (optional)",
+    "amount": "Amount",
+    "selectTranxType": "Select Transaction Type",
+    "tranxType": "Transaction Type",
+    "loanGiven": "Loan Given (Partner Owes)",
+    "loanTaken": "Loan Taken (Company Owes)",
+    "paymentMade": "Payment Made",
+    "paymentReceived": "Payment Received",
+    "bankPay": {
+      "bankPayments": "Bank payments",
+      "addBankPayment": "Add Bank Payment",
+      "selectAccount": "Select Account",
+      "account": "Account {index}"
+    },
+    "cashPay": {
+      "cashPayments": "Cash payments (optional)",
+      "description": "Description (optional)"
+    },
+    "total": "Total Amount",
+    "totalTranx": "Total Transaction Amount",
+    "remainingBalance": "Remaining Balance",
+    "dueDate": "Due Date (optional)",
+    "createTranx": "Create Transaction"
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "moduleName": "ደንበኝነት ምዝገባ",
+  "emptySub": "ምንም ደንበኝነት ምዝገባ አልተገኘም። በመጀመሪያ ደንበኝነት ምዝገባ በመጨመር ይጀምሩ",
+  "pendingSub": "የደንበኝነት ዝርዝሮች በመጫን ላይ...",
+  "errorSub": "የደንበኝነት ዝርዝሮችን መጫን አልተሳካም።",
+  "permissions": {
+    "view": "የደንበኝነት መረጃ ለመመልከት ፈቃድ የሎትም።",
+    "create": "የደንበኝነት መረጃ ለመፍጠር ፈቃድ የሎትም።",
+    "update": "የደንበኝነት መረጃ ለማዘመን ፈቃድ የሎትም።",
+    "delete": "የደንበኝነት መረጃ ለመሰረዝ ፈቃድ የሎትም።"
+  },
+  "card": {
+    "currentPlan": "የአሁኑ እቅድ",
+    "noPlan": "ምንም እቅድ የለም",
+    "plan": "እቅድ",
+    "remainingDays": "በአሁኑ ጊዜ ውስጥ {{daysLeft}} ቀናት ቀርተዋል",
+    "changePlan": "እቅድ ቀይር",
+    "resourceUsage": "የሀብት አጠቃቀም",
+    "planFeatures": "የእቅድ ባህሪያት"
+  },
+  "status": {
+    "inActive": "ንቁ አይደለም",
+    "trialing": "ሙከራ ላይ",
+    "active": "ንቁ",
+    "expired": "አልቋል",
+    "pastDue": "ክፍያ ያለፈበት",
+    "canceled": "ተሰርዟል",
+    "unpaid": "ክፍያ አልተከፈለም"
+  },
+  "banner": {
+    "actionLabel": {
+      "pastDue": "አሁን ክፈል",
+      "trialing": "ያሻሽሉ"
+    },
+    "message": {
+      "pastDue": "ደንበኝነትዎ ክፍያ ያለፈበት ነው። ከመቆሙ በፊት {{daysLeft}} ቀናት ቀርተዋል።",
+      "trialing": "በሙከራ እቅድ ላይ ነዎት። {{daysLeft}} ቀናት ቀርተዋል። ባህሪያትን ለመጠበቅ ያሻሽሉ።"
+    },
+    "attention": "ትኩረት ያስፈልጋል",
+    "subAlert": "ደንበኝነት ማስጠንቀቂያ",
+    "notice": "ማስታወቂያ",
+    "actionRequired": "እርምጃ ያስፈልጋል"
+  },
+  "payToContinue": {
+    "title": "ደንበኝነት ምዝገባ አልቋል",
+    "message": "ደንበኝነትዎ አልቋል። ንግድዎን ያለ መቋረጥ ለመቀጠል፣ እቅድዎን እንደገና ያስጀምሩ።",
+    "renewSub": "ደንበኝነትዎ ያድሱ"
+  },
+  "unlimited": "ያልተገደበ"
+}

@@ -1,18 +1,11 @@
 "use client";
 
 import React from "react";
-import { Card, CardContent } from "@/components/ui/card";
 import { formatCurrency, formatDate } from "@/lib/formatter";
-import {
-  User,
-  Calendar,
-  Receipt,
-  Info,
-  ArrowUpRight,
-  ArrowDownLeft,
-  Clock,
-} from "lucide-react";
+import { Clock, ArrowUpRight, ArrowDownLeft, Info } from "lucide-react";
 import { cn } from "@/lib/utils";
+import LastAudit from "../audit/LastAudit";
+import { ILastAudit } from "../interface/auditLog/interface.audit";
 
 interface OrderHeaderCardProps {
   orderNumber: string;
@@ -23,7 +16,7 @@ interface OrderHeaderCardProps {
   paidAmount: number;
   loanAmount: number;
   type: "purchase" | "sale";
-  lastAuditLog?: any;
+  lastAuditLog?: ILastAudit | null;
 }
 
 export function OrderHeaderCard({
@@ -61,6 +54,7 @@ export function OrderHeaderCard({
               <span>{formatDate(createdAt)}</span>
             </div>
           </div>
+          <LastAudit lastAudit={lastAuditLog} />
           <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
             {partner?.name ||
               (isPurchase ? "General Supplier" : "Walk-in Customer")}

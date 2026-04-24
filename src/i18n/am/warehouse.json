@@ -1,0 +1,36 @@
+{
+  "moduleName": "መጋዘኖች",
+  "emptyWare": "ምንም መጋዘኖች አልተገኙም። በመጀመሪያ መጋዘንዎን በመጨመር ይጀምሩ",
+  "pendingWare": "የመጋዘን ዝርዝሮች በመጫን ላይ...",
+  "errorWare": "የመጋዘን ዝርዝሮችን መጫን አልተሳካም።",
+  "permissions": {
+    "view": "የመጋዘን መረጃ ለመመልከት ፈቃድ የሎትም።",
+    "create": "የመጋዘን መረጃ ለመፍጠር ፈቃድ የሎትም።",
+    "update": "የመጋዘን መረጃ ለማዘመን ፈቃድ የሎትም።",
+    "delete": "የመጋዘን መረጃ ለመሰረዝ ፈቃድ የሎትም።"
+  },
+  "card": {
+    "isInternal": "ሱቅ",
+    "isExternal": "መጋዘን "
+  },
+  "detail": {
+    "title": "የመጋዘን ዝርዝር",
+    "tab": {
+      "items": "እቃዎች",
+      "noItems": "በዚህ መጋዘን ውስጥ ምንም እቃ የለም",
+      "inWare": "በመጋዘን ውስጥ",
+      "lowStock": "ዝቅተኛ ክምችት - እንደገና ማዘዣ ደረጃ",
+      "transactions": "ግብይቶች",
+      "noTransactions": "እስካሁን ምንም ግብይት የለም"
+    }
+  },
+  "form": {
+    "addWare": "አዲስ መጋዘን",
+    "editWare": "መጋዘን አርም",
+    "name": "ስም *",
+    "location": "አካባቢ *",
+    "contactPhone": "የመገናኛ ስልክ *",
+    "isInternal": "ሱቅ (ሱቅ + መጋዘን)",
+    "description": "መግለጫ (አማራጭ)"
+  }
+}

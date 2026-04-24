@@ -1,0 +1,36 @@
+{
+  "moduleName": "Warehouses",
+  "emptyWare": "No warehouses found. Start by adding your first warehouse",
+  "pendingWare": "Loading warehouse details...",
+  "errorWare": "Failed to load warehouse details.",
+  "permissions": {
+    "view": "You do not have permission to view Warehouse data.",
+    "create": "You do not have permission to create Warehouse data.",
+    "update": "You do not have permission to update Warehouse data.",
+    "delete": "You do not have permission to delete Warehouse data."
+  },
+  "card": {
+    "isInternal": "Shop",
+    "isExternal": "Warehouse Only"
+  },
+  "detail": {
+    "title": "Warehouse Detail",
+    "tab": {
+      "items": "Items",
+      "noItems": "No items in this warehouse",
+      "inWare": "In Warehouse",
+      "lowStock": "Low stock - Reorder level",
+      "transactions": "Transactions",
+      "noTransactions": "No transactions yet"
+    }
+  },
+  "form": {
+    "addWare": "New Warehouse",
+    "editWare": "Edit Warehouse",
+    "name": "Name *",
+    "location": "Location *",
+    "contactPhone": "Contact Phone *",
+    "isInternal": "Shop (Shop + warehouse)",
+    "description": "Description (optional)"
+  }
+}

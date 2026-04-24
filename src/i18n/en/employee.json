@@ -1,0 +1,30 @@
+{
+  "moduleName": "Employee",
+  "emptyEmployee": "No employees found. Start by adding your first employee",
+  "pendingEmployee": "Loading employee details...",
+  "errorEmployee": "Failed to load employee details.",
+  "permissions": {
+    "view": "You do not have permission to view employee data.",
+    "create": "You do not have permission to create employee data.",
+    "update": "You do not have permission to update employee data.",
+    "delete": "You do not have permission to delete employee data."
+  },
+  "card": {
+    "noPhone": "No Phone",
+    "editPro": "Edit Profile",
+    "resetPass": "Reset Password"
+  },
+  "detail": {},
+  "form": {
+    "addEmployee": "Register Employee",
+    "editEmployee": "Edit Employee",
+    "resetPass": "Reset Password",
+    "fullName": "Full Name *",
+    "phoneNum": "Phone Number *",
+    "role": "Role *",
+    "password": "Password *",
+    "updatePass": "Update Password",
+    "newPass": "New Password *",
+    "resetDes": "Enter a new password for this employee. The password must be at least 6 characters long."
+  }
+}

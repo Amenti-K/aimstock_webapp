@@ -1,0 +1,70 @@
+{
+  "moduleName": "ቅንብሮች",
+  "version": "ስሪት",
+  "build": "ግንባታ",
+  "devBy": "ተገንብቷል በ AIM Technologies",
+  "section": {
+    "account": "መለያ",
+    "profile": "የግል መረጃ",
+    "security": "ደህንነት እና መግቢያ",
+    "companyInfo": "የኩባንያ መረጃ",
+    "subscription": "ደንበኝነት ምዝገባ",
+    "preferences": "ምርጫዎች",
+    "theme": "አቀራረብ",
+    "language": "ቋንቋ"
+  },
+  "theme": {
+    "title": "አቀራረብ",
+    "light": "የብርሃን ሁኔታ",
+    "dark": "የጨለማ ሁኔታ",
+    "system": "የስርዓት ሁኔታ",
+    "useSystemTheme": "የስልክዎን አቀራረብ ተጠቀም",
+    "systemDefault": "የስርዓት ሁኔታ የስልክዎን አቀራረብ ይጠቀማል"
+  },
+  "profile": {
+    "title": "የግል መረጃ",
+    "cantChangeProPic": "የመለያ ምስል መቀየር አይቻልም።",
+    "name": "ሙሉ ስም",
+    "phoneNum": "ስልክ ቁጥር",
+    "cantChangePhoneNum": "ስልክ ቁጥር በድርጅትዎ አስተዳዳሪ ይተዳደራል።"
+  },
+  "pin": {
+    "enterNew": "አዲስ PIN ያስገቡ",
+    "confirmNew": "PIN ያረጋግጡ",
+    "error": "PINዎች አይዛመዱም። እንደገና ይሞክሩ።",
+    "pinSetMessage": "PIN ኮድ በተሳካ ሁኔታ ተቀምጧል። የመተግበሪያ ደህንነት አሁን ንቁ ነው።"
+  },
+  "security": {
+    "title": "ደህንነት እና መግቢያ",
+    "2fa": {
+      "title": "ሁለት-ደረጃ ማረጋገጫ",
+      "disableSecurity": "ደህንነትን ማሰናከል?",
+      "disableSecurityMessage": "ባዮሜትሪክስ ማንቃት አልተቻለም። መሣሪያዎ የሚደግፈውን እና የጣት አሻራ/ፊት መለያ እንዳስመዘገቡ ያረጋግጡ።",
+      "biometricErrorMessage": "",
+      "pinSetMessage": "PIN ኮድ በተሳካ ሁኔታ ተቀምጧል። የመተግበሪያ ደህንነት አሁን ንቁ ነው።",
+      "appLock": "መተግበሪያ መቆለፊያ",
+      "2faEnabled": "2FA ነቅቷል። መተግበሪያ በጀርባ ይቆለፋል።",
+      "2faDisabled": "መተግበሪያዎን በPIN ደህንነቱ ይጠብቁ።",
+      "biometrics": "ባዮሜትሪክስ",
+      "useBiometrics": "ጣት አሻራ/ፊት መለያ በመጠቀም ለመክፈት።"
+    },
+    "changePass": {
+      "title": "የይለፍ ቃል መቀየር",
+      "password": "የይለፍ ቃል",
+      "*": "******",
+      "change": "ቀይር",
+      "updatePass": "የይለፍ ቃል ያዘምኑ",
+      "updating": "በማዘመን ላይ...",
+      "currentPass": "የአሁኑ የይለፍ ቃል",
+      "newPass": "አዲስ የይለፍ ቃል",
+      "confirmPass": "አዲሱን የይለፍ ቃል ያረጋግጡ",
+      "success": "የይለፍ ቃል በተሳካ ሁኔታ ዘምኗል",
+      "error": "የይለፍ ቃል ማዘመን አልተሳካም"
+    }
+  },
+  "companyProfile": {
+    "title": "የኩባንያ መረጃ",
+    "name": "የኩባንያ ስም",
+    "moreCompanySettings": "ተጨማሪ የኩባንያ ቅንብሮች እና ውቅሮች በወደፊት ዝማኔዎች ይገኛሉ።"
+  }
+}

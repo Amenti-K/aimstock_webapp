@@ -43,9 +43,11 @@ import { useToast } from "@/hooks/use-toast";
 import { Sun, Moon, Laptop, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 
+import { useLanguage } from "@/hooks/language.hook";
+
 const LANGUAGES = [
   { code: "en", label: "English", native: "English" },
-  { code: "am", label: "Amharic", native: "Amharic" },
+  { code: "am", label: "Amharic", native: "አማርኛ" },
 ];
 
 export default function SettingsPage() {
@@ -53,10 +55,10 @@ export default function SettingsPage() {
   const { theme, setTheme } = useTheme();
   const { toast } = useToast();
   const { user, company } = useSelector((state: RootState) => state.userAuth);
+  const { t, language, changeLanguage } = useLanguage();
 
   const [isThemeModalOpen, setIsThemeModalOpen] = React.useState(false);
   const [isLanguageModalOpen, setIsLanguageModalOpen] = React.useState(false);
-  const [language, setLanguage] = React.useState<string>("en");
 
   const handleLogout = () => {
     dispatch(logoutUser());
@@ -65,7 +67,9 @@ export default function SettingsPage() {
   return (
     <div className="mx-auto max-w-2xl space-y-8 pb-12">
       <div className="hidden sm:block">
-        <h1 className="text-3xl font-bold tracking-tight">Settings</h1>
+        <h1 className="text-3xl font-bold tracking-tight">
+          {t("setting.moduleName")}
+        </h1>
         <p className="text-sm text-muted-foreground">
           Manage your account, organization, and display preferences.
         </p>
@@ -76,29 +80,29 @@ export default function SettingsPage() {
 
       <div className="space-y-8">
         {/* Account Section */}
-        <SettingSection title="Account & Security">
+        <SettingSection title={t("setting.section.account")}>
           <SettingItem
             icon={<User className="h-5 w-5" />}
-            title="Profile Information"
+            title={t("setting.section.profile")}
             href="/setting/account/profile"
           />
           <SettingItem
             icon={<Shield className="h-5 w-5" />}
-            title="Security & Login"
+            title={t("setting.section.security")}
             href="/setting/account/security"
             last={user?.role.name !== "OWNER"}
           />
           {user?.role.name === "OWNER" && (
             <SettingItem
               icon={<Building className="h-5 w-5" />}
-              title="Company Info"
+              title={t("setting.section.companyInfo")}
               href="/setting/company/profile"
             />
           )}
           {user?.role.name === "OWNER" && (
             <SettingItem
               icon={<CreditCard className="h-5 w-5" />}
-              title="Subscription"
+              title={t("setting.section.subscription")}
               href="/setting/company/subscription"
               last
             />
@@ -106,15 +110,15 @@ export default function SettingsPage() {
         </SettingSection>
 
         {/* Preferences Section */}
-        <SettingSection title="Preferences">
+        <SettingSection title={t("setting.section.preferences")}>
           <SettingItem
             icon={<Palette className="h-5 w-5" />}
-            title="Theme Appearance"
+            title={t("setting.section.theme")}
             onClick={() => setIsThemeModalOpen(true)}
           />
           <SettingItem
             icon={<Languages className="h-5 w-5" />}
-            title="Language"
+            title={t("setting.section.language")}
             onClick={() => setIsLanguageModalOpen(true)}
             last
           />
@@ -128,25 +132,23 @@ export default function SettingsPage() {
               className="flex w-full items-center justify-center gap-2 rounded-xl py-6 text-base font-semibold shadow-sm transition-all hover:scale-[1.02] active:scale-[0.98]"
             >
               <LogOut className="h-5 w-5" />
-              Sign Out
+              {t("confirmLogout.title")}
             </Button>
           </AlertDialogTrigger>
           <AlertDialogContent>
             <AlertDialogHeader>
-              <AlertDialogTitle>
-                Are you sure you want to sign out?
-              </AlertDialogTitle>
+              <AlertDialogTitle>{t("confirmLogout.title")}?</AlertDialogTitle>
               <AlertDialogDescription>
-                You will need to sign in again to access your account.
+                {t("confirmLogout.message")}
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogCancel>{t("cancel")}</AlertDialogCancel>
               <AlertDialogAction
                 onClick={handleLogout}
                 className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               >
-                Sign Out
+                {t("confirmLogout.title")}
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
@@ -154,10 +156,10 @@ export default function SettingsPage() {
 
         <div className="flex flex-col items-center gap-1 pt-4 text-center">
           <p className="text-xs text-muted-foreground font-medium">
-            Version 1.0.0 (Web)
+            {t("setting.version")} 1.0.0 (Web)
           </p>
           <p className="text-xs text-muted-foreground/60">
-            Developed by AimStock Team
+            {t("setting.devBy")}
           </p>
         </div>
       </div>
@@ -166,9 +168,9 @@ export default function SettingsPage() {
       <Dialog open={isThemeModalOpen} onOpenChange={setIsThemeModalOpen}>
         <DialogContent className="sm:max-w-md rounded-3xl">
           <DialogHeader>
-            <DialogTitle>Theme Appearance</DialogTitle>
+            <DialogTitle>{t("setting.theme.title")}</DialogTitle>
             <DialogDescription>
-              Customize how the application looks for you.
+              {t("setting.theme.systemDefault")}
             </DialogDescription>
           </DialogHeader>
           <div className="grid grid-cols-1 gap-4 pt-4 sm:grid-cols-3">
@@ -179,7 +181,7 @@ export default function SettingsPage() {
             >
               <Sun className="h-6 w-6 text-amber-500" />
               <span className="font-bold uppercase text-[10px] tracking-widest">
-                Light
+                {t("setting.theme.light")}
               </span>
             </Button>
             <Button
@@ -189,7 +191,7 @@ export default function SettingsPage() {
             >
               <Moon className="h-6 w-6 text-indigo-400" />
               <span className="font-bold uppercase text-[10px] tracking-widest">
-                Dark
+                {t("setting.theme.dark")}
               </span>
             </Button>
             <Button
@@ -199,7 +201,7 @@ export default function SettingsPage() {
             >
               <Laptop className="h-6 w-6 text-primary" />
               <span className="font-bold uppercase text-[10px] tracking-widest">
-                System
+                {t("setting.theme.system")}
               </span>
             </Button>
           </div>
@@ -210,7 +212,7 @@ export default function SettingsPage() {
       <Dialog open={isLanguageModalOpen} onOpenChange={setIsLanguageModalOpen}>
         <DialogContent className="sm:max-w-md rounded-3xl">
           <DialogHeader>
-            <DialogTitle>Interface Language</DialogTitle>
+            <DialogTitle>{t("setting.section.language")}</DialogTitle>
             <DialogDescription>
               Choose your preferred language for the system.
             </DialogDescription>
@@ -225,11 +227,12 @@ export default function SettingsPage() {
                   language === lang.code ? "border-primary" : "border-border",
                 )}
                 onClick={() => {
-                  setLanguage(lang.code);
+                  changeLanguage(lang.code);
                   toast({
-                    title: "Language preference selected",
-                    description: `${lang.label} will be applied once i18n wiring is connected.`,
+                    title: t("success"),
+                    description: `Interface changed to ${lang.label}`,
                   });
+                  setIsLanguageModalOpen(false);
                 }}
               >
                 <div className="flex flex-col items-start gap-0.5">

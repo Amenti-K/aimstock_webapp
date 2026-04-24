@@ -1,0 +1,29 @@
+{
+  "moduleName": "Role",
+  "emptyRole": "No roles found. Start by adding your first role",
+  "pendingRole": "Loading role details...",
+  "errorRole": "Failed to load role details.",
+  "permissions": {
+    "view": "You do not have permission to view role data.",
+    "create": "You do not have permission to create role data.",
+    "update": "You do not have permission to update role data.",
+    "delete": "You do not have permission to delete role data."
+  },
+  "roleDes": "Manage user access levels across the system.",
+  "card": {
+    "systemRole": "System Role",
+    "fullAccess": "This role has full access to all system features.",
+    "noPermissions": "No specific permissions assigned.",
+    "duplicate": "Duplicate"
+  },
+  "form": {
+    "addRole": "Add Role",
+    "editRole": "Edit Role",
+    "duplicateRole": "Duplicate Role",
+    "roleDetail": "Role Details",
+    "name": "Role Name",
+    "module": "Modules",
+    "saveChanges": "Save changes",
+    "createRole": "Create Role"
+  }
+}

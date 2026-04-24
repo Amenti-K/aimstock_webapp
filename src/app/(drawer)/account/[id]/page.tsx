@@ -64,6 +64,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { BankAvatar } from "@/components/account/BankAvatar";
+import LastAudit from "@/components/audit/LastAudit";
 
 export default function AccountDetailPage() {
   const { id } = useParams();
@@ -167,7 +168,15 @@ export default function AccountDetailPage() {
               Account Overview & Transaction History
             </p>
           </div>
+          <LastAudit
+            lastAudit={account.lastAuditLog}
+            className="ml-2 hidden lg:inline-flex"
+          />
         </div>
+      </div>
+
+      <div className="flex flex-col items-end gap-2">
+        <LastAudit lastAudit={account.lastAuditLog} className="lg:hidden" />
         <div className="flex gap-2">
           {!isCashAccount && hasUpdateAccess && (
             <Button

@@ -15,6 +15,7 @@ import { Toaster as SonnerToaster } from "@/components/ui/sonner";
 import { useRouter, usePathname } from "next/navigation";
 import { useAppSelector } from "@/redux/hooks";
 import { Loader2 } from "lucide-react";
+import "@/i18n";
 
 function AuthGuard({ children }: { children: React.ReactNode }) {
   const router = useRouter();

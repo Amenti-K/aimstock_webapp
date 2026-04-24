@@ -1,0 +1,55 @@
+{
+  "welcome": "Welcome to AIM Stock",
+  "tagLine": "Let's set up your business in a few simple steps",
+  "getStarted": "Get Started",
+  "header": {
+    "stepCount": "Step {{current}} of {{total}}",
+    "step1": {
+      "title": "Welcome to AIM",
+      "subtitle": "Let's get your business set up."
+    },
+    "step2": {
+      "title": "Add Inventory",
+      "subtitle": "Let's add your products."
+    },
+    "step3": {
+      "title": "Add Partners",
+      "subtitle": "Who do you do business with?"
+    }
+  },
+  "step1": {
+    "title": "Create Warehouses",
+    "description": "Add one or more warehouses where you store your products.",
+    "addAnother": "Add Another Warehouse",
+    "limitReached": "Limit Reached ({{count}} Max) - Upgrade Plan",
+    "nextStep": "Next Step",
+    "cardTitle": "Warehouse {{index}}"
+  },
+  "step2": {
+    "title": "Product Details",
+    "description": "Enter the details of products you stock.",
+    "addAnother": "Add Another Inventory",
+    "nextStep": "Next Step",
+    "cardTitle": "Product {{index}}",
+    "warehouseTable": {
+      "title": "Warehouse Inventories",
+      "warehouse": "Warehouse *",
+      "qty": "Qty *",
+      "reorder": "Reorder *",
+      "addWarehouse": "Add Warehouse"
+    }
+  },
+  "step3": {
+    "title": "Create Partners (Optional)",
+    "description": "Add customers or vendors. You can skip this step.",
+    "addAnother": "Add Another Partner",
+    "finish": "Finish Setup",
+    "skip": "Skip this step",
+    "cardTitle": "Partner {{index}}"
+  },
+  "finished": {
+    "title": "All Set!",
+    "description": "Your company has been successfully set up. You are ready to start using AIM.",
+    "goDashboard": "Go to Dashboard"
+  }
+}

@@ -1,0 +1,79 @@
+{
+  "moduleName": "Purchase",
+  "emptyPur": "No purchases found. Start by adding your first purchase",
+  "pendingPur": "Loading purchase details...",
+  "errorPur": "Failed to load purchase details.",
+  "permissions": {
+    "view": "You do not have permission to view Purchase data.",
+    "create": "You do not have permission to create Purchase data.",
+    "update": "You do not have permission to update Purchase data.",
+    "delete": "You do not have permission to delete Purchase data."
+  },
+  "card": {
+    "supplier": "Supplier",
+    "total": "Total",
+    "items": "Items",
+    "unitPrice": "Unit Price",
+    "qty": "Qty",
+    "subTotal": "Sub Total",
+    "noItems": "No items"
+  },
+  "detail": {
+    "title": "Purchase Details",
+    "itemsPurchased": "Items Purchased",
+    "order": {
+      "title": "Purchase Order Details",
+      "supplier": "Supplier"
+    },
+    "payment": {
+      "total": "Purchase Total"
+    },
+    "accordion": {
+      "items": "List Item",
+      "payments": "Payments",
+      "qty": "Qty",
+      "unitPrice": "Unit Price",
+      "subTotal": "Sub Total"
+    }
+  },
+  "form": {
+    "addPur": "New Purchase",
+    "editPur": "Edit Purchase",
+    "supplier": "Supplier",
+    "loadingPartners": "Loading partners...",
+    "selectPartner": "Select partner",
+    "description": "Description (optional)",
+    "items": {
+      "title": "Purchase Items",
+      "index": "Item {{index}}",
+      "item": "Item",
+      "selectItem": "Select item",
+      "warehouse": "Warehouse",
+      "selectWarehouse": "Select warehouse",
+      "unitPrice": "Unit Price 12",
+      "qty": "Qty",
+      "subTotal": "SubTotal",
+      "addItem": "+ Add Item",
+      "createItem": "+ Create New Inventory"
+    },
+    "cashPay": {
+      "title": "Cash Payment (optional)",
+      "amount": "Amount",
+      "addPayment": "Add Payment"
+    },
+    "bankPay": {
+      "title": "Bank Payments (optional)",
+      "index": "Payment {{index}}",
+      "account": "Acount",
+      "selectAcc": "Select Account",
+      "amount": "Amount",
+      "addPayment": "+ Add bank Payment"
+    },
+    "total": {
+      "grand": "Grand Total",
+      "paid": "Total Paid",
+      "loan": "Remaining (Loan)"
+    },
+    "modalTitle": "Create New Inventory"
+  }
+}

@@ -1,0 +1,70 @@
+{
+  "moduleName": "Setting",
+  "version": "Version",
+  "build": "Build",
+  "devBy": "Developed by AIM Technologies",
+  "section": {
+    "account": "Account",
+    "profile": "Profile Information",
+    "security": "Security & Login",
+    "companyInfo": "Company Profile",
+    "subscription": "Subscription",
+    "preferences": "Preferences",
+    "theme": "Theme",
+    "language": "Language"
+  },
+  "theme": {
+    "title": "Theme",
+    "light": "Light Mode",
+    "dark": "Dark Mode",
+    "system": "System Mode",
+    "useSystemTheme": "Use System Theme",
+    "systemDefault": "System Default uses your device's appearance settings."
+  },
+  "profile": {
+    "title": "Profile",
+    "cantChangeProPic": "Profile picture cannot be changed.",
+    "name": "Full Name",
+    "phoneNum": "Phone Number",
+    "cantChangePhoneNum": "Phone number is managed by your organization admin."
+  },
+  "pin": {
+    "enterNew": "Enter New PIN",
+    "confirmNew": "Confirm PIN",
+    "error": "PINs do not match. Try again.",
+    "pinSetMessage": "PIN code set successfully. App security is now active."
+  },
+  "security": {
+    "title": "Security & Login",
+    "2fa": {
+      "title": "2 Factor Authentication",
+      "disableSecurity": "Disable Security?",
+      "disableSecurityMessage": "Could not enable biometrics. Ensure your device supports it and you have enrolled fingerprints/face ID.",
+      "biometricErrorMessage": "",
+      "pinSetMessage": "PIN code set successfully. App security is now active.",
+      "appLock": "App Lock",
+      "2faEnabled": "2FA is enabled. App will lock in background.",
+      "2faDisabled": "Secure your app with a PIN.",
+      "biometrics": "Biometrics",
+      "useBiometrics": "Use Fingerprint/FaceID to unlock."
+    },
+    "changePass": {
+      "title": "Change Password",
+      "password": "Password",
+      "*": "******",
+      "change": "Change",
+      "updatePass": "Update Password",
+      "updating": "Updating...",
+      "currentPass": "Current Password",
+      "newPass": "New Password",
+      "confirmPass": "Confirm New Password",
+      "success": "Password updated successfully",
+      "error": "Failed to update password"
+    }
+  },
+  "companyProfile": {
+    "title": "Company Profile",
+    "name": "Company Name",
+    "moreCompanySettings": "More company settings and configurations will be available in future updates."
+  }
+}

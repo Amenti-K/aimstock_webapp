@@ -1,0 +1,55 @@
+{
+  "welcome": "እንኳን ወደ AIM Stock መጡ",
+  "tagLine": "ንግድዎን በጥቂት ቀላል ደረጃዎች እንዲዘጋጅ እናድርግ",
+  "getStarted": "ጀምር",
+  "header": {
+    "stepCount": "ደረጃ {{current}} ከ {{total}}",
+    "step1": {
+      "title": "እንኳን ወደ AIM መጡ",
+      "subtitle": "ንግድዎን እንዲዘጋጅ እናድርግ።"
+    },
+    "step2": {
+      "title": "እቃዎችን ጨምር",
+      "subtitle": "ምርቶችዎን እንጨምር።"
+    },
+    "step3": {
+      "title": "አጋሮችን ጨምር",
+      "subtitle": "ማን ጋር ንግድ ይሰራሉ?"
+    }
+  },
+  "step1": {
+    "title": "መጋዘኖችን ፍጠር",
+    "description": "ምርቶችዎን የሚያከማቹባቸው አንድ ወይም ብዙ መጋዘኖችን ያክሉ።",
+    "addAnother": "ሌላ መጋዘን ጨምር",
+    "limitReached": "ገደብ ደርሷል (ከፍተኛ {{count}}) - እቅድ ያሻሽሉ",
+    "nextStep": "ቀጣይ ደረጃ",
+    "cardTitle": "መጋዘን {{index}}"
+  },
+  "step2": {
+    "title": "የምርት ዝርዝሮች",
+    "description": "የሚያከማቹዋቸው ምርቶች ዝርዝሮችን ያስገቡ።",
+    "addAnother": "ሌላ እቃ ጨምር",
+    "nextStep": "ቀጣይ ደረጃ",
+    "cardTitle": "ምርት {{index}}",
+    "warehouseTable": {
+      "title": "የመጋዘን ክምችቶች",
+      "warehouse": "መጋዘን *",
+      "qty": "ብዛት *",
+      "reorder": "እንደገና ማዘዣ *",
+      "addWarehouse": "መጋዘን ጨምር"
+    }
+  },
+  "step3": {
+    "title": "አጋሮችን ፍጠር (አማራጭ)",
+    "description": "ደንበኞች ወይም አቅራቢዎችን ያክሉ። ይህን ደረጃ መተው ይችላሉ።",
+    "addAnother": "ሌላ አጋር ጨምር",
+    "finish": "ቅንብርን ጨርስ",
+    "skip": "ይህን ደረጃ ዝለል",
+    "cardTitle": "አጋር {{index}}"
+  },
+  "finished": {
+    "title": "ሁሉም ተዘጋጅቷል!",
+    "description": "ኩባንያዎ በተሳካ ሁኔታ ተዘጋጅቷል። አሁን AIM መጠቀም ይችላሉ።",
+    "goDashboard": "ወደ ዳሽቦርድ ሂድ"
+  }
+}

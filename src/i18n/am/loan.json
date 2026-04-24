@@ -1,0 +1,109 @@
+{
+  "moduleName": "ብድር",
+  "emptyLoan": "ምንም ብድር አልተገኘም። በመጀመሪያ ብድርዎን በመጨመር ይጀምሩ",
+  "pendingLoan": "የብድር ዝርዝሮች በመጫን ላይ...",
+  "errorLoan": "የብድር ዝርዝሮችን መጫን አልተሳካም።",
+  "permissions": {
+    "view": "የብድር መረጃ ለመመልከት ፈቃድ የሎትም።",
+    "create": "የብድር መረጃ ለመፍጠር ፈቃድ የሎትም።",
+    "update": "የብድር መረጃ ለማዘመን ፈቃድ የሎትም።",
+    "delete": "የብድር መረጃ ለመሰረዝ ፈቃድ የሎትም።"
+  },
+  "tranxType": {
+    "loanGiven": "ብድር ተሰጥቷል",
+    "givenDes": "ለአጋር የተሰጠ ገንዘብ (ንብረት)",
+    "saleFinance": "የሽያጭ ፋይናንስ",
+    "saleFinanceDes": "ለአጋር ለተሸጡ እቃዎች የተሰጠ ፋይናንስ (ንብረት)",
+    "paymentMade": "ክፍያ ተከፍሏል",
+    "paymentMadeDes": "ለአጋር የተከፈለ ክፍያ (ተጠያቂነት ይቀንሳል)",
+    "loanTaken": "ብድር ተወስዷል",
+    "takenDes": "ከአጋር የተበደረ ገንዘብ (ተጠያቂነት)",
+    "purchaseFinance": "የግዢ ፋይናንስ",
+    "purchaseFinanceDes": "ከአጋር ከተገዙ እቃዎች የተሰጠ ፋይናንስ (ተጠያቂነት)",
+    "paymentReceived": "ክፍያ ተቀብሏል",
+    "paymentReceivedDes": "ከአጋር የተቀበለ ክፍያ (ንብረት ይቀንሳል)",
+    "adjustment": "ማስተካከያ",
+    "adjustmentDes": "በእጅ ማስተካከያ"
+  },
+  "card": {
+    "totalGiven": "ጠቅላላ የተሰጠ",
+    "totalTaken": "ጠቅላላ የተወሰደ",
+    "totalGivenCount": "{{count}} አጋሮች",
+    "totalTakenCount": "{{count}} አጋሮች",
+    "noPhone": "ስልክ የለም",
+    "receive": "ተቀበል",
+    "pay": "ክፈል",
+    "settle": "አስቀምጥ",
+    "owesYou": "አሎት (ንብረት)",
+    "youOwe": "አለቦት(ተጠያቂነት)"
+  },
+  "modal": {
+    "canNotExceedBalance": "ከቀሪ ሒሳብ በላይ መሆን አይችልም",
+    "outstandingBalance": "ያልተከፈለ ቀሪ",
+    "recivePay": "ክፍያ ተቀበል",
+    "makePay": "ክፍያ ክፈል",
+    "outStandingBal": "ያልተከፈለ ቀሪ ሒሳብ",
+    "oweYou": "አሎት",
+    "youOwe": "አለቦት",
+    "exceedsOutstanding": "መጠኑ ከያልተከፈለው ቀሪ በላይ ነው!"
+  },
+  "detail": {
+    "title": "የብድር ዝርዝሮች",
+    "active": "ንቁ",
+    "inactive": " non-ንቁ",
+    "currentBal": "የአሁኑ ቀሪ ሒሳብ",
+    "partnerOwes": "አጋር ይገባዋል",
+    "companyOwes": "ኩባንያ ይገባዋል",
+    "transactions": "ግብይቶች",
+    "noTransactions": "እስካሁን ምንም ግብይት የለም",
+    "createTransaction": "ለመጀመር የብድር ግብይት ይፍጠሩ።",
+    "tranx": {
+      "payment": "ክፍያ",
+      "payments": "ክፍያዎች",
+      "loanTranx": "የብድር ግብይት",
+      "totalAmt": "ጠቅላላ መጠን",
+      "paymentDetails": "የክፍያ ዝርዝሮች",
+      "bankAcc": "የባንክ አካውንት",
+      "cashPay": "የጥሬ ገንዘብ ክፍያ",
+      "tranxInfo": "የግብይት መረጃ",
+      "createdDate": "የተፈጠረበት ቀን",
+      "dueDate": "የሚከፈልበት ቀን",
+      "note": "ማስታወሻ",
+      "linkToEntity": "ከ {{entity}} ጋር አገናኝ",
+      "actions": "እርምጃዎች",
+      "editTranx": "ግብይት አርም",
+      "deleteTranx": "ግብይት ሰርዝ"
+    }
+  },
+  "form": {
+    "addTranx": "ግብይት ጨምር",
+    "editTranx": "ግብይት አርም",
+    "addLoan": "አዲስ ብድር",
+    "partner": "አጋር",
+    "selectPar": "አጋር ይምረጡ",
+    "initialLoanTranx": "የመጀመሪያ ብድር ግብይት",
+    "note": "ማስታወሻ (አማራጭ)",
+    "amount": "መጠን",
+    "selectTranxType": "የግብይት አይነት ይምረጡ",
+    "tranxType": "የግብይት አይነት",
+    "loanGiven": "ብድር ተሰጥቷል (አጋር ይገባዋል)",
+    "loanTaken": "ብድር ተወስዷል (ኩባንያ ይገባዋል)",
+    "paymentMade": "ክፍያ ተከፍሏል",
+    "paymentReceived": "ክፍያ ተቀብሏል",
+    "bankPay": {
+      "bankPayments": "የባንክ ክፍያዎች",
+      "addBankPayment": "የባንክ ክፍያ ጨምር",
+      "selectAccount": "አካውንት ይምረጡ",
+      "account": "አካውንት {{index}}"
+    },
+    "cashPay": {
+      "cashPayments": "የጥሬ ገንዘብ ክፍያዎች (አማራጭ)",
+      "description": "መግለጫ (አማራጭ)"
+    },
+    "total": "ጠቅላላ መጠን",
+    "totalTranx": "ጠቅላላ የግብይት መጠን",
+    "remainingBalance": "የቀረ ሒሳብ",
+    "dueDate": "የሚከፈልበት ቀን (አማራጭ)",
+    "createTranx": "ግብይት ፍጠር"
+  }
+}

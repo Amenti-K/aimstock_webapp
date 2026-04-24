@@ -1,0 +1,48 @@
+{
+  "moduleName": "Analytics",
+  "pendingAnalytics": "Loading analytics data...",
+  "errorAnalytics": "Failed to load analytics data.",
+  "permissions": {
+    "view": "You do not have permission to view Accounts data."
+  },
+  "summary": {
+    "totalInv": {
+      "title": "Total Inventory Value",
+      "empty": "No inventory data available"
+    },
+    "bestSelling": {
+      "title": "Best Selling Items",
+      "sold": "sold"
+    },
+    "lowStock": {
+      "title": "Low Stock Items",
+      "left": "left"
+    },
+    "mostUnsold": {
+      "title": "Most Unsold Items",
+      "items": "items"
+    }
+  },
+  "chart": {
+    "emptyState": {
+      "unavailable": {
+        "title": "No Data Available",
+        "message": "Performance data will appear once analytics are available."
+      },
+      "noActivity": {
+        "title": "No Activity Yet",
+        "message": "Once you start making sales or transactions, performance insights will appear here."
+      }
+    },
+    "performance": {
+      "title": "Top Sold Products by Quantity",
+      "description": "Share of total units sold this period – highlights your fastest-moving inventory"
+    },
+    "metrics": {
+      "revenue": "Total Revenue",
+      "profit": "Total Profit",
+      "spending": "Total Spending",
+      "cashFlow": "Net Cash Flow"
+    }
+  }
+}

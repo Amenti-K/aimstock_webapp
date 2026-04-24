@@ -1,0 +1,72 @@
+{
+  "moduleName": "Inventory Adjustment",
+  "emptyAdjustment": "No Adjustment found. Start by adding your first Adjustment",
+  "pendingAdjustment": "Loading Adjustment details...",
+  "errorAdjustment": "Failed to load Adjustment details.",
+  "permissions": {
+    "view": "You do not have permission to view Adjustment data.",
+    "create": "You do not have permission to create Adjustment data.",
+    "update": "You do not have permission to update Adjustment data.",
+    "delete": "You do not have permission to delete Adjustment data."
+  },
+  "types": {
+    "stockIn": "Stock In",
+    "stockOut": "Stock Out",
+    "transfer": "Transfer"
+  },
+  "card": {
+    "actions": {
+      "general": "Inventory Adjustment",
+      "generalDesc": "Transfer between warehouses, increase stock (returns/found), or decrease stock (damage/lost).",
+      "transfer": "Transfer Stock",
+      "transferDesc": "Move items between warehouses",
+      "stockIn": "Stock In",
+      "stockInDesc": "Increase inventory (Returns/Found)",
+      "stockOut": "Stock Out",
+      "stockOutDesc": "Decrease inventory (Damage/Lost)",
+      "start": "Start Process"
+    },
+    "recentAdjust": "Recent Adjustments",
+    "from": "From ",
+    "adjustment": "Adjustment",
+    "item": "Item Adjusted",
+    "items": "Items Adjusted"
+  },
+  "detail": {
+    "allItems": "Adjusted Items",
+    "item": "Item",
+    "type": "Type",
+    "qty": "Qty",
+    "dest": "Destination",
+    "noItems": "No items in this adjustment."
+  },
+  "form": {
+    "addAdjustment": "Add Inventory Adjustment",
+    "editAdjustment": "Edit Adjustment",
+    "basicInfoTitle": "1. Basic Information",
+    "basicInfoDescription": "Select the adjustment type and source warehouse.",
+    "typeLabel": "Adjustment Type",
+    "selectType": "Select Type",
+    "sourceWarehouse": "Source Warehouse",
+    "selectSource": "Select Source",
+    "notes": "Notes",
+    "notesPlaceholder": "Add any additional details...",
+    "itemsTitle": "2. Adjusted Items",
+    "selectSourceFirst": "Please select a source warehouse first.",
+    "addingItemsFrom": "Adding items from",
+    "addItem": "Add Item",
+    "itemLabel": "Item {{index}}",
+    "inventoryItem": "Inventory Item",
+    "selectItem": "Select Item",
+    "quantityAdd": "Quantity to Add",
+    "quantityRemove": "Quantity to Remove",
+    "quantityTransfer": "Quantity to Transfer",
+    "available": "Available",
+    "remaining": "Remaining",
+    "toWarehouse": "To Warehouse",
+    "selectDest": "Select Destination",
+    "selectSourceAndType": "Select Source Warehouse and Type to add items",
+    "validationError": "Please correct the errors in the form before saving.",
+    "errorExcessiveStock": "Quantity exceeds available stock"
+  }
+}

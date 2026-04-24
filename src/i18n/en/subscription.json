@@ -1,0 +1,50 @@
+{
+  "moduleName": "Subscription",
+  "emptySub": "No subscription found. Start by adding your first subscription",
+  "pendingSub": "Loading subscription details...",
+  "errorSub": "Failed to load subscription details.",
+  "permissions": {
+    "view": "You do not have permission to view Subscription data.",
+    "create": "You do not have permission to create Subscription data.",
+    "update": "You do not have permission to update Subscription data.",
+    "delete": "You do not have permission to delete Subscription data."
+  },
+  "card": {
+    "currentPlan": "Current Plan",
+    "noPlan": "No Plan",
+    "plan": "Plan",
+    "remainingDays": "{{daysLeft}} days remaining in current period",
+    "changePlan": "Change Plan",
+    "resourceUsage": "Resource Usage",
+    "planFeatures": "Plan Features"
+  },
+  "status": {
+    "inActive": "In Active",
+    "trialing": "Trialing",
+    "active": "Active",
+    "expired": "Expired",
+    "pastDue": "Past Due",
+    "canceled": "Canceled",
+    "unpaid": "Unpaid"
+  },
+  "banner": {
+    "actionLabel": {
+      "pastDue": "Pay Now",
+      "trialing": "Upgrade"
+    },
+    "message": {
+      "pastDue": "Your subscription is past due. {{daysLeft}} days left before suspension.",
+      "trialing": "You are on a Trial Plan. {{daysLeft}} days remaining. Upgrade to keep features."
+    },
+    "attention": "Attention Needed",
+    "subAlert": "Subscription Alert",
+    "notice": "Notice",
+    "actionRequired": "Action Required"
+  },
+  "payToContinue": {
+    "title": "Subscription Expired",
+    "message": "Your subscription has ended. To continue managing your businesswithout interruption, please renew your plan.",
+    "renewSub": "Renew Subscription"
+  },
+  "unlimited": "Unlimited"
+}

@@ -1,0 +1,90 @@
+{
+  "moduleName": "Inventory",
+  "emptyInventory": "No inventory found. Start by adding your first inventory",
+  "noResults": "No results for {{query}}",
+  "pendingInvy": "Loading inventory details...",
+  "errorInvy": "Failed to load inventory details.",
+  "permissions": {
+    "view": "You do not have permission to view Inventory data.",
+    "create": "You do not have permission to create Inventory data.",
+    "update": "You do not have permission to update Inventory data.",
+    "delete": "You do not have permission to delete Inventory data."
+  },
+  "card": {
+    "sku": "SKU",
+    "name": "Name",
+    "brand": "Brand",
+    "boughtPrice": "Bought",
+    "sellingPrice": "Selling",
+    "quantity": "Qty",
+    "unitPrice": "Unit Price",
+    "lowStock": "Low Stock",
+    "inStock": "In Stock",
+    "reorder": "Reorder",
+    "lowStockMessage": "Low stock, consider reordering"
+  },
+  "detail": {
+    "title": "Inventory Detail",
+    "unit": "Unit",
+    "boughtPrice": "Bought Price",
+    "sellingPrice": "Selling Price",
+    "initialQuantity": "Initial Quantity",
+    "profitMargin": "Profit Margin",
+    "valuation": "Valuation",
+    "analysis": {
+      "buttonTitle": "Inventory {{name}} Analysis",
+      "buttonDescription": "View deep analytics, trends, and aggregated movements.",
+      "timeFrame": "Time Frame",
+      "tabs": {
+        "analytics": "Analytics",
+        "movement": "Movement"
+      },
+      "metrics": {
+        "totalPurchase": "Total Purchased",
+        "totalSale": "Total Sold",
+        "netMovement": "Net Movement",
+        "revenue": "Revenue",
+        "COGS": "Cost of items sold",
+        "profit": "Expected Profit",
+        "avgSalePrice": "Avg. Sale Price",
+        "avgPurchasePrice": "Avg. Purchase Price",
+        "avgDailySales": "Avg. Daily Sales"
+      },
+      "warehousePerformance": "Warehouse Performance"
+    }
+  },
+  "tab": {
+    "warehouse": "Warehouses",
+    "emptyWare": "No warehouses found for this inventory.",
+    "purchase": "Purchases",
+    "emptyPurchase": "No purchases found for this inventory.",
+    "sale": "Sales",
+    "emptySale": "No sales found for this inventory."
+  },
+  "tabs": {
+    "all": "All",
+    "low": "Low Stock",
+    "out": "Out of Stock"
+  },
+  "form": {
+    "searchPlaceholder": "Search inventories...",
+    "add": "New Inventory",
+    "edit": "Edit Inventory",
+    "sku": "SKU (optional)",
+    "name": "Name *",
+    "brand": "Brand (optional)",
+    "boughtPrice": "Bought Price *",
+    "sellingPrice": "Selling Price *",
+    "initialQty": "Initial Quantity *",
+    "unit": "Unit(psc,kg,ltr,etc) *",
+    "wareInv": {
+      "title": "Warehouse Inventories",
+      "ware": "Warehouse",
+      "qty": "Quantity",
+      "reorderQty": "Reorder Qty",
+      "selectWare": "Select warehouse",
+      "loadingWare": "Loading...",
+      "addWare": "+ Add Warehouse"
+    }
+  }
+}

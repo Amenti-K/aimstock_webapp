@@ -1,0 +1,40 @@
+{
+  "moduleName": "Partners",
+  "emptyPartner": "No partners found. Start by adding your first partner",
+  "pendingPartner": "Loading partner details...",
+  "errorPartner": "Failed to load partner details.",
+  "permissions": {
+    "view": "You do not have permission to view Partner data.",
+    "create": "You do not have permission to create Partner data.",
+    "update": "You do not have permission to update Partner data.",
+    "delete": "You do not have permission to delete Partner data."
+  },
+  "card": {
+    "id": "ID",
+    "isActive": "Active",
+    "isInactive": "Inactive",
+    "phoneNum": "Phone Number",
+    "address": "Address"
+  },
+  "detail": {
+    "title": "Partner Detail",
+    "tab": {
+      "pur": "Purchase",
+      "noPurchases": "No purchase records found for this partner.",
+      "sale": "Sale",
+      "noSales": "No sale records found for this partner.",
+      "loan": "Loan",
+      "noLoans": "No loan transactions found for this partner."
+    }
+  },
+  "form": {
+    "addPartner": "New Partner",
+    "addNewPar": "Add New Partner",
+    "editPartner": "Edit Partner",
+    "name": "Name *",
+    "phoneNum": "Phone Number (Optional)",
+    "address": "Address (optional)",
+    "isInternal": "Shop(Shop + warehouse)",
+    "description": "Description (optional)"
+  }
+}

@@ -49,6 +49,7 @@ import { formatCurrency, formatDate } from "@/lib/formatter";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { ISale } from "@/components/interface/sales/interface.sale";
+import LastAudit from "@/components/audit/LastAudit";
 
 export default function PartnerDetailPage() {
   const router = useRouter();
@@ -125,27 +126,34 @@ export default function PartnerDetailPage() {
                 {partner.phone || "No phone number"}
               </p>
             </div>
+            <LastAudit
+              lastAudit={partner.lastAuditLog}
+              className="ml-2 hidden lg:inline-flex"
+            />
           </div>
         </div>
-        <div className="flex items-center gap-2">
-          {canUpdate("PARTNERS") && (
-            <Button
-              variant="outline"
-              onClick={() => router.push(`/partner/${partnerId}/edit`)}
-              className="rounded-full shadow-sm"
-            >
-              <Pencil className="mr-2 h-4 w-4" /> Edit
-            </Button>
-          )}
-          {canDelete("PARTNERS") && (
-            <Button
-              variant="destructive"
-              onClick={() => setOpenDelete(true)}
-              className="rounded-full shadow-sm"
-            >
-              <Trash2 className="mr-2 h-4 w-4" /> Delete
-            </Button>
-          )}
+        <div className="flex flex-col items-end gap-2">
+          <LastAudit lastAudit={partner.lastAuditLog} className="lg:hidden" />
+          <div className="flex items-center gap-2">
+            {canUpdate("PARTNERS") && (
+              <Button
+                variant="outline"
+                onClick={() => router.push(`/partner/${partnerId}/edit`)}
+                className="rounded-full shadow-sm"
+              >
+                <Pencil className="mr-2 h-4 w-4" /> Edit
+              </Button>
+            )}
+            {canDelete("PARTNERS") && (
+              <Button
+                variant="destructive"
+                onClick={() => setOpenDelete(true)}
+                className="rounded-full shadow-sm"
+              >
+                <Trash2 className="mr-2 h-4 w-4" /> Delete
+              </Button>
+            )}
+          </div>
         </div>
       </div>
 

@@ -51,6 +51,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import { formatDate } from "@/lib/formatter";
+import LastAudit from "@/components/audit/LastAudit";
 
 export default function WarehouseDetailPage() {
   const router = useRouter();
@@ -129,7 +130,15 @@ export default function WarehouseDetailPage() {
               {warehouse.location || "No location specified"}
             </p>
           </div>
+          <LastAudit
+            lastAudit={warehouse.lastAuditLog}
+            className="ml-2 hidden lg:inline-flex"
+          />
         </div>
+      </div>
+      \
+      <div className="flex flex-col items-end gap-2">
+        <LastAudit lastAudit={warehouse.lastAuditLog} className="lg:hidden" />
         <div className="flex items-center gap-2">
           {canUpdate("WAREHOUSES") && (
             <Button
@@ -151,7 +160,6 @@ export default function WarehouseDetailPage() {
           )}
         </div>
       </div>
-
       {/* Top Overview: Next to each other on desktop */}
       <div className="grid gap-6 md:grid-cols-2">
         <Card className="border-none shadow-sm bg-card rounded-2xl overflow-hidden font-medium">
@@ -240,7 +248,6 @@ export default function WarehouseDetailPage() {
           </CardContent>
         </Card>
       </div>
-
       {/* Bottom Section: Tabs widening the whole width */}
       <div className="w-full">
         <Tabs defaultValue="inventory" className="w-full">
@@ -449,7 +456,6 @@ export default function WarehouseDetailPage() {
           </TabsContent>
         </Tabs>
       </div>
-
       <AlertDialog open={openDelete} onOpenChange={setOpenDelete}>
         <AlertDialogContent className="rounded-2xl">
           <AlertDialogHeader>

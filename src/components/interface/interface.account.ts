@@ -1,3 +1,5 @@
+import { ILastAudit } from "./auditLog/interface.audit";
+
 export interface IAccount {
   id: string;
   name: string;
@@ -11,6 +13,7 @@ export interface IAccount {
   transactions: ITransaction[];
   createdAt: string;
   updatedAt: string;
+  lastAuditLog: ILastAudit;
 }
 
 export enum transferType {

@@ -8,6 +8,7 @@ import {
   IAccountTransfer,
   IAccountDetail,
   IAccountSelector,
+  IAccount,
 } from "../../interface/interface.account";
 import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
@@ -56,7 +57,7 @@ export default function TransferFundsForm({
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 py-2">
         <div className="bg-primary/5 p-4 rounded-2xl border border-primary/10">
           <SelectField
-            control={form.control}
+            control={form.control as any}
             name="toAccountId"
             label="Destination Account"
             placeholder="Select where to send"
@@ -65,7 +66,7 @@ export default function TransferFundsForm({
         </div>
 
         <NumericField
-          control={form.control}
+          control={form.control as any}
           name="amount"
           label="Transfer Amount"
           placeholder="0.00"

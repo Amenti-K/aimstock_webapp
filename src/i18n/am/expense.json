@@ -1,0 +1,50 @@
+{
+  "moduleName": "ወጪዎች",
+  "emptyExpense": "ምንም ወጪ አልተገኘም። በመጀመሪያ ወጪዎን በመጨመር ይጀምሩ",
+  "pendingExpense": "የወጪ ዝርዝሮች በመጫን ላይ...",
+  "errorExpense": "የወጪ ዝርዝሮችን መጫን አልተሳካም።",
+  "permissions": {
+    "view": "የወጪ መረጃ ለመመልከት ፈቃድ የሎትም።",
+    "create": "የወጪ መረጃ ለመፍጠር ፈቃድ የሎትም።",
+    "update": "የወጪ መረጃ ለማዘመን ፈቃድ የሎትም።",
+    "delete": "የወጪ መረጃ ለመሰረዝ ፈቃድ የሎትም።"
+  },
+  "card": {
+    "amount": "መጠን",
+    "description": "መግለጫ"
+  },
+  "detail": {
+    "title": "የወጪ ዝርዝር",
+    "totalAmt": "ጠቅላላ መጠን",
+    "paymentTitle": "የክፍያ መከፋፈል",
+    "bankPay": "የባንክ ክፍያዎች",
+    "unknownBank": "ያልታወቀ አካውንት",
+    "tatalBank": "ጠቅላላ ባንክ",
+    "cashPay": "የጥሬ ገንዘብ ክፍያ",
+    "cash": "ጥሬ ገንዘብ"
+  },
+  "form": {
+    "addExpense": "አዲስ ወጪ",
+    "editExpense": "ወጪ አርም",
+    "description": "መግለጫ (አማራጭ)",
+    "bankPay": {
+      "title": "የባንክ ክፍያዎች",
+      "index": "ክፍያ {index}",
+      "account": "አካውንት",
+      "selectAcc": "አካውንት ይምረጡ",
+      "amount": "መጠን",
+      "addPayment": "+ የባንክ ክፍያ ጨምር"
+    },
+    "cashPay": {
+      "title": "የጥሬ ገንዘብ ክፍያ (አማራጭ)",
+      "amount": "መጠን",
+      "addPayment": "ክፍያ ጨምር"
+    },
+    "total": {
+      "totalEx": "ጠቅላላ ወጪ",
+      "grand": "አጠቃላይ ጠቅላላ",
+      "paid": "የተከፈለው ጠቅላላ",
+      "loan": "የቀረው (ብድር)"
+    }
+  }
+}

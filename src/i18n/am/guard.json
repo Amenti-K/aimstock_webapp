@@ -1,0 +1,23 @@
+{
+  "permission": {
+    "accessRestricted": "መድረሻ ተገድቧል",
+    "accessDenied": "መድረሻ ተከልክሏል",
+    "module": "ሞጁል",
+    "accessDeniedMessage": "ይህን ሞጁል ለመድረስ ፈቃድ የሎትም።"
+  },
+  "maintenance": {
+    "title": "በጥገና ላይ",
+    "subtitle": "ነገሮችን ለእርስዎ የተሻለ እየሰራን ነው",
+    "message": "የእኛ ስርዓት በታቀደ ጥገና ላይ ነው። በቅርቡ እንመለሳለን።",
+    "checking": "የአገልግሎት ሁኔታ በመፈተሽ ላይ...",
+    "checkNow": "አሁን ፈትሽ",
+    "autoCheck": "በየሰዓቱ በራስ-ሰር በመፈተሽ ላይ",
+    "lastChecked": "በመጨረሻ የተረጋገጠው",
+    "statusOnline": "አገልግሎት እንደገና ተመልሷል!",
+    "statusOffline": "አሁንም በጥገና ላይ ነው",
+    "retry": "እንደገና ሞክር",
+    "justNow": "አሁን በትክክል",
+    "minutesAgo": "{count} ደቂቃ በፊት",
+    "hoursAgo": "{count} ሰዓት በፊት"
+  }
+}

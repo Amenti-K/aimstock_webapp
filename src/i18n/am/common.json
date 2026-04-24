@@ -1,0 +1,133 @@
+{
+  "confirmDelete": {
+    "title": "{entity} ሰርዝ",
+    "message": "ይህን {entity.toLowerCase()} መሰረዝ እንደሚፈልጉ እርግጠኛ ነዎት?"
+  },
+  "confirmLogout": {
+    "title": "ውጣ",
+    "message": "እርግጠኛ ነዎት መውጣት ይፈልጋሉ?"
+  },
+  "reportAcco": {
+    "title": "ዕለታዊ ሪፖርት",
+    "subtitle": "ለተመረጠው ቀን ማጠቃለያ",
+    "selectDate": "ቀን ምረጥ",
+    "loadingReport": "ዕለታዊ ሪፖርት በመጫን ላይ...",
+    "errorReport": "ዕለታዊ ሪፖርት በማቅረብ ላይ ስህተት",
+    "retry": "እንደገና ሞክር",
+    "totalPaidByBank": "በባንክ የተከፈለ",
+    "totalLoanAmount": "ጠቅላላ ብድር",
+    "totalPaidByCash": "በጥሬ ገንዘብ የተከፈለ"
+  },
+  "trade": {
+    "order": "ትዕዛዝ",
+    "description": "መግለጫ",
+    "id": "ID: {{id}}",
+    "total": "ጠቅላላ",
+    "financialOverview": "የፋይናንስ አጠቃላይ እይታ",
+    "paymentDetails": "የክፍያ ዝርዝሮች",
+    "paymentBreakdown": "የክፍያ ክፍፍል",
+    "bankPayments": "የባንክ ክፍያዎች",
+    "cashPayment": "የጥሬ ገንዘብ ክፍያ",
+    "loanFinancing": "የብድር ፋይናንስ",
+    "pettyCash": "የጥሬ ገንዘብ ክፍያ",
+    "handDelivered": "በእጅ የተሰጠ",
+    "outstanding": "ቀሪ ክፍያ",
+    "noItems": "ምንም እቃ አልተገኘም",
+    "inventorySummary": "{{itemCount}} {{itemUnit}} • {{warehouseCount}} መጋዘኖች",
+    "qty": "ብዛት",
+    "price": "ዋጋ",
+    "paid": "ክፍያ",
+    "unpaid": "ያልተከፈለው",
+    "partial": "ከፊል",
+    "paidByCash": "በጥሬ ገንዘብ የተከፈለው",
+    "paidByBank": "በባንክ የተከፈለው",
+    "amountPaid": "የተከፈለው መጠን",
+    "received": "ተቀብሏል",
+    "balance": "balance",
+    "remainingBalance": "ቀሪ ክፍያ",
+    "balanceDue": "ቀሪ ክፍያ",
+    "totalInvoice": "ጠቅላላ ክፍያ",
+    "cash&Bank": "ጥሬ ገንዘብ እና ባንክ"
+  },
+  "permission": {
+    "all": "ሁሉም",
+    "view": "መመልከት",
+    "create": "መፍጠር",
+    "update": "ማዘመን",
+    "delete": "መሰረዝ"
+  },
+  "unit": {
+    "items": "እቃዎች"
+  },
+  "others": "ሌሎች",
+  "share": "ድርሻ",
+  "select": "ይምረጡ",
+  "addNew": "አዲስ ጨምር",
+  "cash": "ጥሬ ገንዘብ",
+  "birr": "ብር",
+  "edit": "አርም",
+  "delete": "ሰርዝ",
+  "cancel": "ሰርዝ",
+  "save": "አስቀምጥ",
+  "create": "ፍጠር",
+  "update": "አዘምን",
+  "duplicate": "ድገም",
+  "void": "ሰርዝ",
+  "close": "ዝጋ",
+  "errorView": "የሆነ ችግር ተፈጥሯል",
+  "search": "ፈልግ...",
+  "loading": "በመጫን ላይ...",
+  "emptyView": "ምንም ውሂብ አልተገኘም",
+  "retry": "እንደገና ሞክር",
+  "back": "ወደኋላ",
+  "disable": "አሰናክል",
+  "success": "ተሳክቷል",
+  "layout": {
+    "drawer": {
+      "welcome": "እንኳን ተመልሰው መጡ!",
+      "footer": "AimStock - ተገንብቷል በ AIM Technologies",
+      "slogan": "ዘመናዊ ERP መፍትሄዎችን ወደ ህይወት ማምጣት",
+      "items": {
+        "dashboard": "ዳሽቦርድ",
+        "warehouse": "መጋዘን",
+        "partners": "አጋሮች",
+        "expense": "ወጪ",
+        "loan": "ብድር",
+        "employee": "ሰራተኛ",
+        "inventoryAdjustment": "ክምችት ማስተካከያ",
+        "rolesAndPermissions": "ሚናዎች እና ፈቃዶች",
+        "audit": "ምዝገባ",
+        "settings": "ቅንብሮች"
+      }
+    },
+    "header": {
+      "sales": "ሽያጭ",
+      "purchase": "ግዢ",
+      "dashboard": "ዳሽቦርድ",
+      "inventory": "ክምችት",
+      "account": "ሂሳብ"
+    },
+    "tabs": {
+      "sales": "ሽያጭ",
+      "purchase": "ግዢ",
+      "dashboard": "ዳሽቦርድ",
+      "home": "መነሻ",
+      "inventory": "ክምችት",
+      "account": "ሂሳብ"
+    },
+      "lockScreen": {
+        "locked": "AIM ተቆልፏል",
+        "enterPin": "ለመክፈት PIN ያስገቡ",
+        "incorrectPin": "የተሳሳተ PIN",
+        "forgot": "ረስተዋል?",
+        "unlock": "ክፈት",
+        "switchAccount": "መለያ ቀይር",
+        "forgotMessage": "PIN ረስተዋል? ይህ ለደህንነት ሲባል ከመለያዎ ያወጣዎታል።"
+      }
+  },
+  "network": {
+    "noInternet": "የበይነመረብ ግንኙነት የለም",
+    "checkNetwork": "እባክዎ የአውታረ መረብ ቅንብሮችዎን ያረጋግጡ እና እንደገና ለመሞከር ይሞክሩ",
+    "retry": "ግንኙነትን እንደገና ይሞክሩ"
+  }
+}

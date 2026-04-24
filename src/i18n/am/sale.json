@@ -1,0 +1,78 @@
+{
+  "moduleName": "ሽያጭ",
+  "emptySale": "ምንም ሽያጭ አልተገኘም። በመጀመሪያ ሽያጭዎን በመጨመር ይጀምሩ",
+  "pendingSale": "የሽያጭ ዝርዝሮች በመጫን ላይ...",
+  "errorSale": "የሽያጭ ዝርዝሮችን መጫን አልተሳካም።",
+  "permissions": {
+    "view": "የሽያጭ መረጃ ለመመልከት ፈቃድ የሎትም።",
+    "create": "የሽያጭ መረጃ ለመፍጠር ፈቃድ የሎትም።",
+    "update": "የሽያጭ መረጃ ለማዘመን ፈቃድ የሎትም።",
+    "delete": "የሽያጭ መረጃ ለመሰረዝ ፈቃድ የሎትም።"
+  },
+  "card": {
+    "customer": "ገዢ",
+    "walkingCust": "ተራ ደንበኛ",
+    "total": "ጠቅላላ",
+    "items": "እቃዎች",
+    "unitPrice": "የአንድ ዕቃ ዋጋ",
+    "qty": "ብዛት",
+    "subTotal": "ንዑስ ጠቅላላ",
+    "noItems": "ምንም እቃ የለም"
+  },
+  "detail": {
+    "title": "የሽያጭ ዝርዝሮች",
+    "itemsSold": "የተሸጡ እቃዎች",
+    "order": {
+      "title": "የሽያጭ ትዕዛዝ ዝርዝሮች",
+      "customer": "ደንበኛ"
+    },
+    "payment": {
+      "total": "የሽያጭ ጠቅላላ"
+    },
+    "accordion": {
+      "items": "የተሸጡ እቃዎች",
+      "payments": "ክፍያዎች",
+      "qty": "ብዛት",
+      "unitPrice": "የአንድ ዕቃ ዋጋ",
+      "subTotal": "ንዑስ ጠቅላላ"
+    }
+  },
+  "form": {
+    "addSale": "አዲስ ሽያጭ",
+    "editSale": "ሽያጭ አርም",
+    "customer": "ደንበኛ (አማራጭ)",
+    "loadingCustomers": "ደንበኞች በመጫን ላይ...",
+    "selectCustomer": "ደንበኛ ይምረጡ",
+    "description": "መግለጫ (አማራጭ)",
+    "items": {
+      "title": "የሽያጭ እቃዎች",
+      "index": "እቃ {{index}}",
+      "item": "እቃ",
+      "selectItem": "እቃ ይምረጡ",
+      "warehouse": "መጋዘን",
+      "selectWarehouse": "መጋዘን ይምረጡ",
+      "unitPrice": "አንድ ክፍል ዋጋ",
+      "qty": "ብዛት",
+      "subTotal": "ንዑስ ጠቅላላ",
+      "addItem": "+ እቃ ጨምር"
+    },
+    "cashPay": {
+      "title": "የጥሬ ገንዘብ ክፍያ (አማራጭ)",
+      "amount": "መጠን",
+      "addPayment": "ክፍያ ጨምር"
+    },
+    "bankPay": {
+      "title": "የባንክ ክፍያዎች (አማራጭ)",
+      "index": "ክፍያ {{index}}",
+      "account": "አካውንት",
+      "selectAcc": "አካውንት ይምረጡ",
+      "amount": "መጠን",
+      "addPayment": "+ የባንክ ክፍያ ጨምር"
+    },
+    "total": {
+      "grand": "አጠቃላይ ጠቅላላ",
+      "paid": "የተከፈለው ጠቅላላ",
+      "loan": "የቀረው (ብድር)"
+    }
+  }
+}

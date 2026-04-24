@@ -1,0 +1,90 @@
+{
+  "moduleName": "ክምችት",
+  "emptyInventory": "ምንም ክምችት አልተገኘም። በመጀመሪያ ክምችትዎን በመጨመር ይጀምሩ",
+  "noResults": "ለ{{query}} ምንም ውጤት አልተገኘም",
+  "pendingInvy": "የክምችት ዝርዝሮች በመጫን ላይ...",
+  "errorInvy": "የክምችት ዝርዝሮችን መጫን አልተሳካም።",
+  "permissions": {
+    "view": "የክምችት መረጃ ለመመልከት ፈቃድ የሎትም።",
+    "create": "የክምችት መረጃ ለመፍጠር ፈቃድ የሎትም።",
+    "update": "የክምችት መረጃ ለማዘመን ፈቃድ የሎትም።",
+    "delete": "የክምችት መረጃ ለመሰረዝ ፈቃድ የሎትም።"
+  },
+  "card": {
+    "sku": "SKU",
+    "name": "ስም",
+    "brand": "ብራንድ",
+    "boughtPrice": "የተገዛበት",
+    "sellingPrice": "የሚሸጥበት",
+    "quantity": "ብዛት",
+    "unitPrice": "የአንድ ዕቃ ዋጋ",
+    "lowStock": "ዝቅተኛ ክምችት",
+    "inStock": "በክምችት ውስጥ",
+    "reorder": "እንደገና ማዘዣ",
+    "lowStockMessage": "ዝቅተኛ ክምችት፣ እንደገና ማዘዥ ያስቡ"
+  },
+  "detail": {
+    "title": "የክምችት ዝርዝር",
+    "unit": "መለኪያ",
+    "boughtPrice": "የተገዛበት ዋጋ",
+    "sellingPrice": "የሚሸጥበት ዋጋ",
+    "initialQuantity": "የመጀመሪያ ብዛት",
+    "profitMargin": "የትርፍ ክፍያ",
+    "valuation": "የንብረት ግምት",
+    "analysis": {
+      "buttonTitle": "የ{{name}} ክምችት ትንተና",
+      "buttonDescription": "ጥልቅ ትንታኔዎችን፣ አዝማሚያዎችን እና የተሰባሰቡ እንቅስቃሴዎችን ይመልከቱ።",
+      "timeFrame": "የጊዜ ሰሌዳ",
+      "tabs": {
+        "analytics": "ትንታኔ",
+        "movement": "እንቅስቃሴ"
+      },
+      "metrics": {
+        "totalPurchase": "ጠቅላላ የተገዛ",
+        "totalSale": "ጠቅላላ የተሸጠ",
+        "netMovement": "የተጣራ እንቅስቃሴ",
+        "revenue": "ገቢ",
+        "COGS": "የሽያጭ ወጪ",
+        "profit": "የሚጠበቀው ትርፍ",
+        "avgSalePrice": "አማካይ የመሸጫ ዋጋ",
+        "avgPurchasePrice": "አማካይ የተገዛ ዋጋ",
+        "avgDailySales": "አማካይ የቀን ሽያጭ"
+      },
+      "warehousePerformance": "የመጋዘን አፈጻጸም"
+    }
+  },
+  "tab": {
+    "warehouse": "መጋዘኖች",
+    "emptyWare": "ለዚህ ክምችት ምንም መጋዘኖች አልተገኙም።",
+    "purchase": "ግዢዎች",
+    "emptyPurchase": "ለዚህ ክምችት ምንም ግዢ አልተገኘም።",
+    "sale": "ሽያጮች",
+    "emptySale": "ለዚህ ክምችት ምንም ሽያጭ አልተገኘም።"
+  },
+  "tabs": {
+    "all": "ሁሉም",
+    "low": "ዝቅተኛ",
+    "out": "ያለቀ"
+  },
+  "form": {
+    "searchPlaceholder": "ክምችቶችን ፈልግ...",
+    "add": "አዲስ ክምችት",
+    "edit": "ክምችት አዘምን",
+    "sku": "SKU (አማራጭ)",
+    "name": "ስም *",
+    "brand": "ብራንድ (አማራጭ)",
+    "boughtPrice": "የተገዛበት ዋጋ *",
+    "sellingPrice": "የሚሸጥበት ዋጋ *",
+    "initialQty": "የመጀመሪያ ብዛት *",
+    "unit": "መለኪያ(psc,kg,ltr,etc) *",
+    "wareInv": {
+      "title": "የመጋዘን ክምችቶች",
+      "ware": "መጋዘን",
+      "qty": "ብዛት",
+      "reorderQty": "እንደገና ማዘዣ ብዛት",
+      "selectWare": "መጋዘን ይምረጡ",
+      "loadingWare": "በመጫን ላይ...",
+      "addWare": "+ መጋዘን ጨምር"
+    }
+  }
+}

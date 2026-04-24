@@ -1,0 +1,48 @@
+{
+  "moduleName": "ትንታኔዎች",
+  "pendingAnalytics": "የትንታኔ መረጃ በመጫን ላይ...",
+  "errorAnalytics": "የትንታኔ መረጃ መጫን አልተሳካም።",
+  "permissions": {
+    "view": "የሂሳብ መረጃ ለመመልከት ፈቃድ የሎትም።"
+  },
+  "summary": {
+    "totalInv": {
+      "title": "ጠቅላላ የክምችት ዋጋ",
+      "empty": "ምንም የክምችት መረጃ የለም"
+    },
+    "bestSelling": {
+      "title": "በብዛት የሚሸጡ እቃዎች",
+      "sold": "ተሽጠዋል"
+    },
+    "lowStock": {
+      "title": "ዝቅተኛ ክምችት ያላቸው እቃዎች",
+      "left": "ቀርቷል"
+    },
+    "mostUnsold": {
+      "title": "በጣም ያልተሸጡ እቃዎች",
+      "items": "እቃዎች"
+    }
+  },
+  "chart": {
+    "emptyState": {
+      "unavailable": {
+        "title": "ምንም መረጃ የለም",
+        "message": "የትንታኔ መረጃ ከተገኘ በኋላ የአፈጻጸም መረጃ ይታያል።"
+      },
+      "noActivity": {
+        "title": "እስካሁን ምንም እንቅስቃሴ የለም",
+        "message": "ሽያጭ ወይም ግብይት ከጀመሩ በኋላ የአፈጻጸም ትንታኔ እዚህ ይታያል።"
+      }
+    },
+    "performance": {
+      "title": "በብዛት የሚሸጡ እቃዎች",
+      "description": "በዚህ ጊዜ ውስጥ ከተሸጡት አጠቃላይ ክፍሎች ውስጥ ድርሻ – ፈጣን እንቅስቃሴ ያላቸውን ክምችቶች ያሳያል"
+    },
+    "metrics": {
+      "revenue": "ጠቅላላ ገቢ",
+      "profit": "ጠቅላላ ትርፍ",
+      "spending": "ጠቅላላ ወጪ",
+      "cashFlow": "የተጣራ የገንዘብ እንቅስቃሴ"
+    }
+  }
+}

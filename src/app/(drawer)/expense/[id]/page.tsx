@@ -33,6 +33,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Separator } from "@/components/ui/separator";
+import LastAudit from "@/components/audit/LastAudit";
 
 export default function ExpenseDetailPage() {
   const router = useRouter();
@@ -92,6 +93,9 @@ export default function ExpenseDetailPage() {
             </Button>
           )}
         </div>
+      </div>
+      <div className="flex justify-center -mt-4">
+        <LastAudit lastAudit={expense.lastAuditLog} />
       </div>
 
       {/* Main Content */}

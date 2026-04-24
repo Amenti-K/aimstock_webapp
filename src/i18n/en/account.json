@@ -1,0 +1,83 @@
+{
+  "moduleName": "Accounts",
+  "emptyAcconts": "No accounts found. Start by adding your first account",
+  "emptyTranxs": "No transactions found. Start by adding your first transaction",
+  "pendingAcc": "Loading account details...",
+  "errorAcc": "Failed to load account details.",
+  "permissions": {
+    "view": "You do not have permission to view Accounts data.",
+    "create": "You do not have permission to create Accounts data.",
+    "update": "You do not have permission to update Accounts data.",
+    "delete": "You do not have permission to delete Accounts data."
+  },
+  "totalCard": {
+    "title": "Total Balance",
+    "subtitle": "Total balance across all accounts"
+  },
+  "accountCard": {
+    "cash": "Cash",
+    "branch": "Branch",
+    "accountNumber": "ACCOUNT NUMBER",
+    "holder": "CARD HOLDER",
+    "balance": "BALANCE"
+  },
+  "transfer": {
+    "title": "Transfer Funds",
+    "deposit": "Deposit Cash",
+    "to": "Transfer to",
+    "amount": "Amount",
+    "transfer": "Transfer",
+    "select": "Select account",
+    "loading": "Loading accounts...",
+    "error": "Failed to load accounts."
+  },
+  "tranxCard": {
+    "transaction": "Transaction",
+    "transactions": "Transactions",
+    "income": "Income",
+    "expense": "Expense"
+  },
+  "form": {
+    "add": "Add Account",
+    "select": "Select account",
+    "name": "Account Name",
+    "bank": "Bank *",
+    "branch": "Branch (optional)",
+    "number": "Account Number (optional)",
+    "balance": "Balance *",
+    "edit": "Edit Account",
+    "balanceEdit": "Balance (not editable)",
+    "loading": "Loading accounts...",
+    "error": "Failed to load accounts."
+  },
+  "bank": {
+    "TELEBIRR": "Telebirr",
+    "CBE": "Commercial Bank of Ethiopia",
+    "DBE": "Development Bank of Ethiopia",
+    "AWASH_BANK": "Awash Bank",
+    "DASHEN_BANK": "Dashen Bank",
+    "BANK_OF_ABYSSINIA": "Bank of Abyssinia",
+    "HIBRET_BANK": "Hibret Bank",
+    "NIB_INTERNATIONAL_BANK": "Nib International Bank",
+    "COOPERATIVE_BANK_OF_OROMIA": "Cooperative Bank of Oromia",
+    "OROMIA_INTERNATIONAL_BANK": "Oromia International Bank",
+    "WEGAGEN_BANK": "Wegagen Bank",
+    "ZEMEN_BANK": "Zemen Bank",
+    "BERHAN_BANK": "Berhan Bank",
+    "BUNNA_BANK": "Bunna Bank",
+    "LION_BANK": "Lion Bank",
+    "ABAY_BANK": "Abay Bank",
+    "ADDIS_INTERNATIONAL_BANK": "Addis International Bank",
+    "ENAT_BANK": "Enat Bank",
+    "GLOBAL_BANK_ETHIOPIA": "Global Bank Ethiopia",
+    "ZAMZAM_BANK": "ZamZam Bank",
+    "HIJRA_BANK": "Hijra Bank",
+    "AHADU_BANK": "Ahadu Bank",
+    "AMHARA_BANK": "Amhara Bank",
+    "SIINQEE_BANK": "Siinqee Bank",
+    "TSEDEY_BANK": "Tsedey Bank",
+    "GADAA_BANK": "Gadaa Bank",
+    "SHABELLE_BANK": "Shabelle Bank",
+    "others": "Others"
+  }
+}

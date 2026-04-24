@@ -1,0 +1,78 @@
+{
+  "moduleName": "Sales",
+  "emptySale": "No sales found. Start by adding your first sale",
+  "pendingSale": "Loading sale details...",
+  "errorSale": "Failed to load sale details.",
+  "permissions": {
+    "view": "You do not have permission to view Sales data.",
+    "create": "You do not have permission to create Sales data.",
+    "update": "You do not have permission to update Sales data.",
+    "delete": "You do not have permission to delete Sales data."
+  },
+  "card": {
+    "customer": "Buyer",
+    "walkingCust": "Walking Customer",
+    "total": "Total",
+    "items": "Items",
+    "unitPrice": "Unit Price",
+    "qty": "Qty",
+    "subTotal": "Sub Total",
+    "noItems": "No items"
+  },
+  "detail": {
+    "title": "Sale Details",
+    "itemsSold": "Items Sold",
+    "order": {
+      "title": "Sale Order Details",
+      "customer": "Customer"
+    },
+    "payment": {
+      "total": "Sale Total"
+    },
+    "accordion": {
+      "items": "Items Sold",
+      "payments": "Payments",
+      "qty": "Qty",
+      "unitPrice": "Unit Price",
+      "subTotal": "Sub Total"
+    }
+  },
+  "form": {
+    "addSale": "New Sale",
+    "editSale": "Edit Sale",
+    "customer": "Customer (optional)",
+    "loadingCustomers": "Loading customers...",
+    "selectCustomer": "Select customer",
+    "description": "Description (optional)",
+    "items": {
+      "title": "Sale Items",
+      "index": "Item {{index}}",
+      "item": "Item",
+      "selectItem": "Select item",
+      "warehouse": "Warehouse",
+      "selectWarehouse": "Select warehouse",
+      "unitPrice": "Unit Price",
+      "qty": "Qty",
+      "subTotal": "SubTotal",
+      "addItem": "+ Add Item"
+    },
+    "cashPay": {
+      "title": "Cash Payment (optional)",
+      "amount": "Amount",
+      "addPayment": "Add Payment"
+    },
+    "bankPay": {
+      "title": "Bank Payments (optional)",
+      "index": "Payment {{index}}",
+      "account": "Acount",
+      "selectAcc": "Select Account",
+      "amount": "Amount",
+      "addPayment": "+ Add bank Payment"
+    },
+    "total": {
+      "grand": "Grand Total",
+      "paid": "Total Paid",
+      "loan": "Remaining (Loan)"
+    }
+  }
+}
