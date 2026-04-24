@@ -16,20 +16,21 @@ const createNoopStorage = () => {
   };
 };
 
-const storage = typeof window !== "undefined" ? createWebStorage("local") : createNoopStorage();
+const storage =
+  typeof window !== "undefined"
+    ? createWebStorage("local")
+    : createNoopStorage();
 
-import authReducer from "./slices/authSlice";
 import userAuthReducer from "./slices/userAuthSlice";
 import permissionsReducer from "./slices/permissionsSlice";
 
 const rootPersistConfig = {
   key: "root",
   storage,
-  whitelist: ["userAuth", "adminAuth", "permissions"], // All major state persisted reliably to localStorage
+  whitelist: ["userAuth", "permissions"], // All major state persisted reliably to localStorage
 };
 
 const rootReducer = combineReducers({
-  adminAuth: authReducer,
   userAuth: userAuthReducer,
   permissions: permissionsReducer,
 });

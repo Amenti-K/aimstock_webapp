@@ -4,7 +4,7 @@ import React from "react";
 import { useParams, useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import PurchaseForm from "@/components/purchase/PurchaseForm";
+import PurchaseForm from "@/components/forms/purchase/PurchaseForm";
 import {
   useFetchPurchase,
   useUpdatePurchase,

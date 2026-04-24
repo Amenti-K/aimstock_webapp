@@ -16,6 +16,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertTriangle, Info, WifiOff, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { LockButton } from "@/components/security/LockButton";
 
 function NetworkBanner() {
   const [isOnline, setIsOnline] = React.useState(true);
@@ -90,6 +91,7 @@ export default function DrawerLayout({
         <header className="flex h-14 items-center gap-2 border-b bg-background px-4 sticky top-0 z-10 sm:pt-0 pt-[env(safe-area-inset-top)]">
           <SidebarTrigger className="-ml-1" />
           <Separator orientation="vertical" className="h-4" />
+          <LockButton />
           <h1 className="text-sm font-medium capitalize">{pageName}</h1>
         </header>
         <main className="flex-1 overflow-auto bg-muted/30 p-4 sm:p-5 space-y-4">

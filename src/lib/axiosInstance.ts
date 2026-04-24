@@ -9,6 +9,14 @@ export const AxiosInstance = axios.create({
 
 AxiosInstance.interceptors.request.use(
   async (config) => {
+    // Block API calls if session is locked
+    if ((window as any).__IS_LOCKED) {
+      return Promise.reject({
+        message: "Session locked. API call prevented.",
+        isLocked: true,
+      });
+    }
+
     const state = store.getState();
     const { accessToken, company } = state.userAuth;
 

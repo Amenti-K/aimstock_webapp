@@ -1,10 +1,10 @@
 "use client";
 
 import React from "react";
-import { UserInfo, CompanyInfo } from "@/redux/slices/userAuthSlice";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { User, Building } from "lucide-react";
+import { User, Building, Phone } from "lucide-react";
+import { CompanyInfo, UserInfo } from "../interface/user/user.interface";
 
 interface UserCardProps {
   user: UserInfo | null;
@@ -21,7 +21,9 @@ export const UserCard = ({ user, company }: UserCardProps) => {
           </AvatarFallback>
         </Avatar>
         <div className="flex flex-col gap-1">
-          <h2 className="text-xl font-bold tracking-tight">{user?.name || "User Name"}</h2>
+          <h2 className="text-xl font-bold tracking-tight">
+            {user?.name || "User Name"}
+          </h2>
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <User className="h-3 w-3" />
             <span>{user?.role.name || "Member"}</span>
@@ -30,17 +32,13 @@ export const UserCard = ({ user, company }: UserCardProps) => {
             <Building className="h-3 w-3" />
             <span>{company?.name || "Company Name"}</span>
           </div>
+          {user?.phoneNumber && (
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Phone className="h-3 w-3" />
+              <span>{user.phoneNumber}</span>
+            </div>
+          )}
         </div>
-      </div>
-      <div className="flex flex-wrap gap-2 pt-2 border-t mt-2">
-        <Badge variant="outline" className="bg-secondary/50">
-          ID: {user?.id.substring(0, 8)}...
-        </Badge>
-        {user?.phoneNumber && (
-          <Badge variant="outline" className="bg-secondary/50">
-            {user.phoneNumber}
-          </Badge>
-        )}
       </div>
     </div>
   );

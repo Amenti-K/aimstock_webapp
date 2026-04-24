@@ -23,6 +23,7 @@ interface Props {
   placeholder?: string;
   disabled?: boolean;
   options: Option[];
+  onValueChange?: (value: string) => void;
 }
 
 const SelectField = ({
@@ -32,6 +33,7 @@ const SelectField = ({
   placeholder,
   disabled = false,
   options,
+  onValueChange,
 }: Props) => {
   return (
     <Controller
@@ -40,7 +42,14 @@ const SelectField = ({
       render={({ field: { onChange, value }, fieldState: { error } }) => (
         <div className="space-y-2">
           {label && <Label htmlFor={name}>{label}</Label>}
-          <Select onValueChange={onChange} value={value} disabled={disabled}>
+          <Select 
+            onValueChange={(val) => {
+              onChange(val);
+              if (onValueChange) onValueChange(val);
+            }} 
+            value={value} 
+            disabled={disabled}
+          >
             <SelectTrigger className={`w-full ${error ? "border-red-500" : ""}`}>
               <SelectValue placeholder={placeholder} />
             </SelectTrigger>

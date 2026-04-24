@@ -3,25 +3,56 @@
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { User, ArrowLeft } from "lucide-react";
+import { User, ArrowLeft, Loader } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
+import TextField from "@/components/forms/fields/TextField";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { useUpdateUserProfile } from "@/api/setting/api.user";
+
+const profileSchema = z.object({
+  name: z.string().min(2, "Name is required"),
+  phoneNumber: z.string().min(2, "Phone number is required"),
+});
+
+type ProfileFormValues = z.infer<typeof profileSchema>;
 
 export default function ProfilePage() {
   const router = useRouter();
-  const { toast } = useToast();
   const { user } = useSelector((state: RootState) => state.userAuth);
-  const [name, setName] = useState(user?.name ?? "");
-  const [phoneNumber, setPhoneNumber] = useState(user?.phoneNumber ?? "");
 
-  const handleSave = () => {
-    toast({
-      title: "Profile saved locally",
-      description: "API wiring for this section will be connected next.",
+  const {
+    control,
+    handleSubmit,
+    formState: { isDirty },
+    reset,
+  } = useForm<ProfileFormValues>({
+    resolver: zodResolver(profileSchema),
+    defaultValues: {
+      name: user?.name || "",
+      phoneNumber: user?.phoneNumber || "",
+    },
+  });
+
+  const updateProfile = useUpdateUserProfile();
+
+  const handleSave = (data: ProfileFormValues) => {
+    updateProfile.mutate(data, {
+      onSuccess: () => {
+        reset(data);
+      },
     });
   };
 
@@ -40,19 +71,23 @@ export default function ProfilePage() {
             <User className="h-5 w-5" />
             Personal Information
           </CardTitle>
-          <CardDescription>Update your personal identity details.</CardDescription>
+          <CardDescription>
+            Update your personal identity details.
+          </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="name">Full Name</Label>
-            <Input id="name" value={name} onChange={(e) => setName(e.target.value)} />
+            <TextField
+              name="name"
+              control={control as any}
+              type="text"
+              label="Full Name"
+            />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="phone">Phone Number</Label>
-            <Input
-              id="phone"
-              value={phoneNumber}
-              onChange={(e) => setPhoneNumber(e.target.value)}
+            <TextField
+              name="phoneNumber"
+              control={control as any}
               disabled={user?.role.name !== "OWNER"}
             />
             {user?.role.name !== "OWNER" && (
@@ -61,7 +96,17 @@ export default function ProfilePage() {
               </p>
             )}
           </div>
-          <Button className="w-full sm:w-auto" onClick={handleSave}>Save Profile</Button>
+          <Button
+            className="w-full sm:w-auto"
+            onClick={handleSubmit(handleSave)}
+            disabled={updateProfile.isPending || !isDirty}
+          >
+            {updateProfile.isPending ? (
+              <Loader className="h-4 w-4 animate-spin" />
+            ) : (
+              "Save Profile"
+            )}
+          </Button>
         </CardContent>
       </Card>
     </div>

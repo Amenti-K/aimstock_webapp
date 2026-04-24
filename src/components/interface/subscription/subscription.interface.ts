@@ -1,17 +1,18 @@
 // Subscription interface
 export interface ISubscription {
   id: string;
-  status: SubscriptionStatus;
-  trialEndsAt: string; // Dates often come as strings from JSON
+  status: ISubscriptionStatus;
+  trialEndsAt: string;
   currentPeriodStart: string;
   currentPeriodEnd: string;
   cancelAtPeriodEnd: boolean;
   companyId: string;
   planId: string;
   plan: IPlan;
+  usages: IUsage[];
 }
 
-export enum SubscriptionStatus {
+export enum ISubscriptionStatus {
   TRIALING = "TRIALING",
   ACTIVE = "ACTIVE",
   EXPIRED = "EXPIRED",
@@ -64,24 +65,6 @@ export interface PlanFeature {
   feature: FeatureKey;
   enabled: boolean;
 }
-
-export interface ICancelSubscription {
-  companyId: string;
-}
-
-export interface INewSubscription extends ICancelSubscription {
-  planId: string;
-  duration: BillingInterval;
-  status?: SubscriptionStatus;
-  trialEndsAt?: Date;
-}
-
-export interface IActivateSubscription extends ICancelSubscription {
-  duration: BillingInterval;
-  planId?: string;
-}
-
-export type SubscriptionAction = "CREATE" | "ACTIVATE" | "EXTEND";
 
 export enum FeatureKey {
   ACCOUNT = "ACCOUNT",

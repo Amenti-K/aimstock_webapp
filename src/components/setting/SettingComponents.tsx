@@ -8,23 +8,42 @@ import { cn } from "@/lib/utils";
 interface SettingItemProps {
   icon: React.ReactNode;
   title: string;
-  href: string;
+  href?: string;
+  onClick?: () => void;
   last?: boolean;
 }
 
-export const SettingItem = ({ icon, title, href, last }: SettingItemProps) => {
+export const SettingItem = ({
+  icon,
+  title,
+  href,
+  onClick,
+  last,
+}: SettingItemProps) => {
+  const content = (
+    <div className="flex items-center gap-4">
+      <div className="text-muted-foreground">{icon}</div>
+      <span className="font-medium">{title}</span>
+    </div>
+  );
+
+  const className = cn(
+    "flex w-full items-center justify-between p-4 transition-colors hover:bg-muted/50 active:bg-muted text-left",
+    !last && "border-b",
+  );
+
+  if (onClick) {
+    return (
+      <button type="button" onClick={onClick} className={className}>
+        {content}
+        <ChevronRight className="h-4 w-4 text-muted-foreground/50" />
+      </button>
+    );
+  }
+
   return (
-    <Link
-      href={href}
-      className={cn(
-        "flex items-center justify-between p-4 transition-colors hover:bg-muted/50 active:bg-muted",
-        !last && "border-b"
-      )}
-    >
-      <div className="flex items-center gap-4">
-        <div className="text-muted-foreground">{icon}</div>
-        <span className="font-medium">{title}</span>
-      </div>
+    <Link href={href || "#"} className={className}>
+      {content}
       <ChevronRight className="h-4 w-4 text-muted-foreground/50" />
     </Link>
   );

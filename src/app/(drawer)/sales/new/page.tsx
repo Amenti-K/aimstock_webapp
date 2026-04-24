@@ -4,7 +4,7 @@ import React from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import SalesForm from "@/components/sales/SalesForm";
+import SalesForm from "@/components/forms/sales/SalesForm";
 import { useCreateSale } from "@/api/sale/api.sale";
 import { usePermissions } from "@/hooks/permission.hook";
 import { AccessDeniedView } from "@/components/guards/AccessDeniedView";

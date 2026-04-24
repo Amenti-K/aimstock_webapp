@@ -1,28 +1,10 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import Cookies from "js-cookie";
 import { ISubscription } from "@/components/interface/subscription/subscription.interface";
-
-// ─── Types ────────────────────────────────────────────────────────────────────
-
-export interface UserInfo {
-  id: string;
-  name: string;
-  phoneNumber: string;
-  companyId: string;
-  role: {
-    id: string;
-    name: string;
-    permissions: any[];
-  };
-}
-
-
-export interface CompanyInfo {
-  id: string;
-  name: string;
-  setupStep: number;
-  subscription: ISubscription | null;
-}
+import {
+  CompanyInfo,
+  UserInfo,
+} from "@/components/interface/user/user.interface";
 
 interface UserAuthState {
   accessToken: string | null;
@@ -109,7 +91,7 @@ const userAuthSlice = createSlice({
         refreshToken: string;
         user: UserInfo;
         company: CompanyInfo;
-      }>
+      }>,
     ) {
       state.accessToken = action.payload.accessToken;
       state.refreshToken = action.payload.refreshToken;
@@ -124,9 +106,24 @@ const userAuthSlice = createSlice({
       saveToCookie(state);
     },
 
+    updateUser(state, action: PayloadAction<UserInfo>) {
+      if (state.user) {
+        state.user.name = action.payload.name;
+        state.user.phoneNumber = action.payload.phoneNumber;
+        saveToCookie(state);
+      }
+    },
+
     setCompany(state, action: PayloadAction<CompanyInfo>) {
       state.company = action.payload;
       saveToCookie(state);
+    },
+
+    setCompanyName(state, action: PayloadAction<string>) {
+      if (state.company) {
+        state.company.name = action.payload;
+        saveToCookie(state);
+      }
     },
 
     setSubscription(state, action: PayloadAction<ISubscription | null>) {
@@ -157,6 +154,8 @@ const userAuthSlice = createSlice({
 export const {
   loginUser,
   updateUserToken,
+  updateUser,
+  setCompanyName,
   setCompany,
   setSubscription,
   setCompanyStep,

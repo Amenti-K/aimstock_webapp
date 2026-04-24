@@ -138,6 +138,63 @@ function AuthGuard({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }
 
+import { AuthLockProvider, useAuthLock } from "@/context/AuthLockContext";
+import { LockScreen } from "@/components/security/LockScreen";
+import { useIdleTimer } from "react-idle-timer";
+
+function SessionLockWrapper({ children }: { children: React.ReactNode }) {
+  const { lockSession, isLocked, hasPin, isLockEnabled } = useAuthLock();
+  const pathname = usePathname();
+
+  const canLock = hasPin && isLockEnabled;
+
+  // Idle Timer: 5 minutes
+  useIdleTimer({
+    timeout: 1000 * 60 * 5,
+    onIdle: () => {
+      if (canLock && !isLocked) {
+        lockSession();
+      }
+    },
+    debounce: 500,
+    disabled: !canLock,
+  });
+
+  // Tab Visibility: 30 seconds
+  useEffect(() => {
+    if (!canLock) return;
+
+    let timeoutId: NodeJS.Timeout;
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "hidden") {
+        // Start 30s timer when tab is hidden
+        timeoutId = setTimeout(() => {
+          if (canLock && !isLocked) {
+            lockSession();
+          }
+        }, 30000);
+      } else {
+        // Clear timer if tab becomes visible before 30s
+        clearTimeout(timeoutId);
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      clearTimeout(timeoutId);
+    };
+  }, [canLock, isLocked, lockSession]);
+
+  return (
+    <>
+      {children}
+      <LockScreen />
+    </>
+  );
+}
+
 export default function ClientProviders({
   children,
 }: {
@@ -153,9 +210,13 @@ export default function ClientProviders({
             enableSystem
             disableTransitionOnChange
           >
-            <SubscriptionProvider>
-              <AuthGuard>{children}</AuthGuard>
-            </SubscriptionProvider>
+            <AuthLockProvider>
+              <SubscriptionProvider>
+                <SessionLockWrapper>
+                  <AuthGuard>{children}</AuthGuard>
+                </SessionLockWrapper>
+              </SubscriptionProvider>
+            </AuthLockProvider>
             <Toaster />
             <SonnerToaster position="top-right" expand={true} richColors />
           </ThemeProvider>

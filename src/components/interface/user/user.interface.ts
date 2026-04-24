@@ -11,7 +11,7 @@ export interface IUser {
 }
 
 export interface UserInfo {
-  userId: string;
+  userId?: string;
   name: string;
   phoneNumber: string;
   role: IRole;

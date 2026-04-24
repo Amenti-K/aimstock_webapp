@@ -4,7 +4,7 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import { useFetchSubscription } from "@/api/subscription/api.subscription";
 import {
   ISubscription,
-  SubscriptionStatus,
+  ISubscriptionStatus,
 } from "@/components/interface/subscription/subscription.interface";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
@@ -39,10 +39,10 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({
   const shouldFetch =
     !!accessToken &&
     (!sub ||
-      (sub.status !== SubscriptionStatus.TRIALING &&
-        sub.status !== SubscriptionStatus.ACTIVE &&
-        sub.status !== SubscriptionStatus.EXPIRED &&
-        sub.status !== SubscriptionStatus.CANCELED));
+      (sub.status !== ISubscriptionStatus.TRIALING &&
+        sub.status !== ISubscriptionStatus.ACTIVE &&
+        sub.status !== ISubscriptionStatus.EXPIRED &&
+        sub.status !== ISubscriptionStatus.CANCELED));
 
   const {
     data,
@@ -84,7 +84,7 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({
   if (subscription) {
     const now = new Date();
     switch (subscription.status) {
-      case SubscriptionStatus.TRIALING:
+      case ISubscriptionStatus.TRIALING:
         isTrialing = true;
         if (subscription.trialEndsAt) {
           const trialEnd = new Date(subscription.trialEndsAt);
@@ -93,10 +93,10 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({
           );
         }
         break;
-      case SubscriptionStatus.ACTIVE:
+      case ISubscriptionStatus.ACTIVE:
         isActive = true;
         break;
-      case SubscriptionStatus.PAST_DUE:
+      case ISubscriptionStatus.PAST_DUE:
         isPastDue = true;
         if (subscription.currentPeriodEnd) {
           const periodEnd = new Date(subscription.currentPeriodEnd);
@@ -107,8 +107,8 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({
           );
         }
         break;
-      case SubscriptionStatus.CANCELED:
-      case SubscriptionStatus.EXPIRED:
+      case ISubscriptionStatus.CANCELED:
+      case ISubscriptionStatus.EXPIRED:
         isExpired = true;
         break;
     }
