@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { useEffect, useMemo } from "react";
 import { useFieldArray, useForm, useWatch } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 import { useFetchAccountSelector } from "@/api/account/api.account";
 import NumericField from "@/components/forms/fields/NumericField";
 import SelectField from "@/components/forms/fields/SelectField";
@@ -33,8 +34,9 @@ export default function ExpenseForm({
   onSubmit,
   onCancel,
   isPending,
-  submitLabel = "Save Expense",
+  submitLabel,
 }: Props) {
+  const { t } = useTranslation();
   const { control, handleSubmit, reset } = useForm<ExpenseFormValues>({
     resolver: zodResolver(expenseSchema),
     defaultValues: {
@@ -82,15 +84,15 @@ export default function ExpenseForm({
         <CardHeader className="bg-muted/30 pb-4">
           <div className="flex items-center gap-2">
             <ReceiptText className="h-5 w-5 text-primary" />
-            <CardTitle>Expense Information</CardTitle>
+            <CardTitle>{t("expense.detail.title")}</CardTitle>
           </div>
         </CardHeader>
         <CardContent className="p-6">
           <TextAreaField
             name="description"
-            control={control}
-            label="Description (Optional)"
-            placeholder="What was this expense for?"
+            control={control as any}
+            label={t("expense.form.description")}
+            placeholder={t("expense.form.description")}
           />
         </CardContent>
       </Card>
@@ -102,14 +104,14 @@ export default function ExpenseForm({
           <CardHeader className="bg-muted/30 pb-4">
             <div className="flex items-center gap-2">
               <Banknote className="h-5 w-5 text-green-600" />
-              <CardTitle>Cash Payment</CardTitle>
+              <CardTitle>{t("expense.form.cashPay.title")}</CardTitle>
             </div>
           </CardHeader>
           <CardContent className="p-6">
             <NumericField
               name="cashItem.amount"
-              control={control}
-              label="Amount Paid in Cash"
+              control={control as any}
+              label={t("expense.form.cashPay.amount")}
               placeholder="0.00"
             />
           </CardContent>
@@ -120,7 +122,7 @@ export default function ExpenseForm({
           <CardHeader className="bg-muted/30 pb-4 flex flex-row items-center justify-between">
             <div className="flex items-center gap-2">
               <CreditCard className="h-5 w-5 text-blue-600" />
-              <CardTitle>Bank Payments</CardTitle>
+              <CardTitle>{t("expense.form.bankPay.title")}</CardTitle>
             </div>
             <Button
               type="button"
@@ -130,13 +132,13 @@ export default function ExpenseForm({
               className="rounded-full shadow-sm hover:bg-primary hover:text-primary-foreground transition-all"
             >
               <PlusCircle className="mr-2 h-4 w-4" />
-              Add Account
+              {t("expense.form.bankPay.addPayment")}
             </Button>
           </CardHeader>
           <CardContent className="p-6">
             {fields.length === 0 ? (
               <div className="text-center py-6 border-2 border-dashed rounded-xl border-muted text-muted-foreground italic text-sm">
-                No bank accounts added for this expense.
+                {t("expense.emptyExpense")}
               </div>
             ) : (
               <div className="space-y-4">
@@ -146,16 +148,16 @@ export default function ExpenseForm({
                       <div className="md:col-span-7">
                         <SelectField
                           name={`paymentItems.${index}.accountId`}
-                          control={control}
-                          label="Source Account"
+                          control={control as any}
+                          label={t("expense.form.bankPay.account")}
                           options={accountOptions}
                         />
                       </div>
                       <div className="md:col-span-4">
                         <NumericField
                           name={`paymentItems.${index}.amount`}
-                          control={control}
-                          label="Amount"
+                          control={control as any}
+                          label={t("expense.form.bankPay.amount")}
                           placeholder="0.00"
                         />
                       </div>
@@ -190,7 +192,7 @@ export default function ExpenseForm({
                 </div>
                 <div>
                   <p className="text-sm font-medium text-muted-foreground">
-                    Total Expense Amount
+                    {t("expense.form.total.totalEx")}
                   </p>
                   <p className="text-3xl font-black text-foreground">
                     ETB{" "}
@@ -213,12 +215,12 @@ export default function ExpenseForm({
               onClick={onCancel}
               disabled={isPending}
             >
-              Discard Changes
+              {t("common.cancel")}
             </Button>
           )}
           <div className="flex-1 order-1 sm:order-2">
             <SubmitButton
-              title={submitLabel}
+              title={submitLabel || t("common.save")}
               loading={isPending}
               className="w-full h-12 rounded-xl text-base font-bold shadow-xl shadow-primary/20 hover:shadow-primary/30 transition-all"
             />

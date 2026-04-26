@@ -312,7 +312,7 @@ export default function PartnerDetailPage() {
       {/* Tabs and Data Section */}
       <div className="space-y-6">
         <Tabs defaultValue="sales" className="w-full">
-          <div className="flex justify-start mb-6">
+          <div className="flex justify-start">
             <TabsList className="bg-muted/50 p-1.5 rounded-2xl h-12 w-full max-w-md border border-muted-foreground/10 shadow-inner">
               <TabsTrigger
                 value="sales"

@@ -2,6 +2,7 @@
 
 import { ArrowLeft } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
+import { useTranslation } from "react-i18next";
 import {
   useFetchExpenseById,
   useUpdateExpense,
@@ -14,17 +15,21 @@ import { usePermissions } from "@/hooks/permission.hook";
 import { Button } from "@/components/ui/button";
 
 export default function EditExpensePage() {
+  const { t } = useTranslation();
   const router = useRouter();
   const { id } = useParams();
   const expenseId = id as string;
   const { canUpdate } = usePermissions();
-  if (!canUpdate("EXPENSE")) return <AccessDeniedView moduleName="Expenses" />;
+
+  if (!canUpdate("EXPENSE"))
+    return <AccessDeniedView moduleName={t("expense.moduleName")} />;
 
   const { data, isLoading, isError, refetch } = useFetchExpenseById(
     expenseId,
     true,
   );
   const updateExpense = useUpdateExpense(expenseId);
+
   if (isLoading) return <LoadingView />;
   if (isError || !data?.data) return <ErrorView refetch={refetch} />;
 
@@ -45,16 +50,18 @@ export default function EditExpensePage() {
           <ArrowLeft className="h-5 w-5" />
         </Button>
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Edit Expense</h1>
+          <h1 className="text-2xl font-bold tracking-tight">
+            {t("expense.form.editExpense")}
+          </h1>
           <p className="text-sm text-muted-foreground">
-            Update expense information.
+            {t("expense.detail.title")}
           </p>
         </div>
       </div>
       <ExpenseForm
         initialData={payload}
         isPending={updateExpense.isPending}
-        submitLabel="Save changes"
+        submitLabel={t("common.update")}
         onSubmit={(values: ExpenseFormValues) =>
           updateExpense.mutate(values as any, {
             onSuccess: () => router.push(`/expense/${expenseId}`),

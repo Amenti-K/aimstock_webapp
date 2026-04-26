@@ -1,7 +1,8 @@
 "use client";
 
-import React from "react";
+import React, { useMemo } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslation } from "react-i18next";
 import { useGetExpensesInfinite } from "@/api/expense/api.expense";
 import { LoadingView, ErrorView } from "@/components/common/StateView";
 import { AccessDeniedView } from "@/components/guards/AccessDeniedView";
@@ -11,9 +12,8 @@ import {
   Plus,
   ReceiptText,
   ChevronRight,
-  Calendar,
-  Tag,
-  Wallet,
+  ArrowRight,
+  Banknote,
 } from "lucide-react";
 import {
   Table,
@@ -23,11 +23,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
 import { formatDate, formatCurrency } from "@/lib/formatter";
-import { Card, CardContent } from "@/components/ui/card";
 
 export default function ExpensePage() {
+  const { t } = useTranslation();
   const router = useRouter();
   const { canView, canCreate } = usePermissions();
   const hasViewAccess = canView("EXPENSE");
@@ -43,65 +42,107 @@ export default function ExpensePage() {
     isFetchingNextPage,
   } = useGetExpensesInfinite({}, hasViewAccess);
 
-  const expenses = React.useMemo(() => {
+  const expenses = useMemo(() => {
     return data?.pages?.flatMap((page) => (page as any).data) ?? [];
   }, [data]);
 
   if (!hasViewAccess) {
-    return <AccessDeniedView moduleName="Expenses" />;
+    return <AccessDeniedView moduleName={t("expense.moduleName")} />;
   }
 
   if (isLoading) return <LoadingView />;
   if (isError) return <ErrorView refetch={refetch} />;
 
   return (
-    <div className="space-y-6 pb-10">
+    <div className="relative min-h-[calc(100vh-200px)] space-y-6 pb-20 md:pb-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between px-1">
         <div>
-          <h1 className="text-3xl font-extrabold tracking-tight text-foreground/90">
-            Expenses
-          </h1>
-          <p className="text-muted-foreground">
-            Track and manage your company operating costs.
+          <div className="flex items-center gap-2">
+            <div className="rounded-lg bg-primary/10 p-2 text-primary">
+              <ReceiptText className="h-6 w-6" />
+            </div>
+            <h1 className="text-2xl font-bold tracking-tight">
+              {t("expense.moduleName")}
+            </h1>
+          </div>
+          <p className="mt-1 text-sm text-muted-foreground">
+            {t("expense.emptyExpense")}
           </p>
         </div>
         {hasCreateAccess && (
           <Button
-            className="w-full sm:w-auto shadow-lg hover:shadow-xl transition-all duration-300"
+            className="hidden sm:flex bg-primary hover:bg-primary/90 shadow-sm"
             onClick={() => router.push("/expense/new")}
           >
-            <Plus className="mr-2 h-5 w-5" /> New Expense
+            <Plus className="mr-2 h-4 w-4" /> {t("expense.form.addExpense")}
           </Button>
         )}
       </div>
 
+      {/* Mobile Floating Action Button */}
+      {hasCreateAccess && (
+        <Button
+          className="fixed bottom-24 right-6 h-14 w-14 rounded-full shadow-2xl sm:hidden z-50 bg-primary hover:bg-primary/90"
+          size="icon"
+          onClick={() => router.push("/expense/new")}
+        >
+          <Plus className="h-6 w-6 text-white" />
+        </Button>
+      )}
+
+      {/* Mobile View: Cards */}
+      <div className="grid grid-cols-1 gap-4 md:hidden">
+        {expenses.length === 0 ? (
+          <div className="flex flex-col items-center justify-center p-8 text-center bg-card rounded-xl border border-dashed">
+            <ReceiptText className="h-10 w-10 text-muted-foreground mb-2" />
+            <p className="text-muted-foreground text-sm font-medium">
+              {t("expense.emptyExpense")}
+            </p>
+          </div>
+        ) : (
+          expenses.map((exp: any) => (
+            <ExpenseMobileCard
+              key={exp.id}
+              expense={exp}
+              onClick={() => router.push(`/expense/${exp.id}`)}
+              t={t}
+            />
+          ))
+        )}
+      </div>
+
       {/* Desktop Table View */}
-      <div className="hidden md:block rounded-xl border bg-card/50 backdrop-blur-sm overflow-hidden shadow-sm">
+      <div className="hidden md:block rounded-xl border bg-card shadow-sm overflow-hidden">
         <Table>
           <TableHeader className="bg-muted/50">
-            <TableRow className="hover:bg-transparent border-none">
-              <TableHead className="font-semibold px-6 py-4">Date</TableHead>
-              <TableHead className="font-semibold">Description</TableHead>
-              <TableHead className="font-semibold text-right px-6">
-                Amount
+            <TableRow>
+              <TableHead className="font-semibold px-6 py-4">
+                {t("common.date")}
               </TableHead>
+              <TableHead className="font-semibold">
+                {t("expense.card.description")}
+              </TableHead>
+              <TableHead className="font-semibold text-right px-6">
+                {t("expense.card.amount")}
+              </TableHead>
+              <TableHead className="w-[50px]"></TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {expenses.length === 0 ? (
               <TableRow>
                 <TableCell
-                  colSpan={3}
-                  className="h-48 text-center text-muted-foreground italic"
+                  colSpan={4}
+                  className="h-32 text-center text-muted-foreground"
                 >
-                  No expenses recorded yet.
+                  {t("expense.emptyExpense")}
                 </TableCell>
               </TableRow>
             ) : (
               expenses.map((exp: any) => (
                 <TableRow
                   key={exp.id}
-                  className="cursor-pointer transition-colors hover:bg-muted/30 group border-muted/20"
+                  className="cursor-pointer hover:bg-muted/50 transition-colors group"
                   onClick={() => router.push(`/expense/${exp.id}`)}
                 >
                   <TableCell className="px-6 py-4">
@@ -117,17 +158,17 @@ export default function ExpensePage() {
                   <TableCell>
                     <div className="flex flex-col gap-0.5 max-w-[400px]">
                       <span className="text-sm font-medium leading-none text-foreground/90 truncate">
-                        {exp.description || "Uncategorized Expense"}
+                        {exp.description || t("expense.detail.unknownBank")}
                       </span>
                     </div>
                   </TableCell>
                   <TableCell className="text-right px-6">
-                    <div className="flex items-center justify-end gap-3 group-hover:translate-x-1 transition-transform">
-                      <span className="font-bold text-red-600 dark:text-red-400 text-lg">
-                        {formatCurrency(exp.amount)}
-                      </span>
-                      <ChevronRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
-                    </div>
+                    <span className="font-bold text-red-600 dark:text-red-400">
+                      {formatCurrency(exp.amount)}
+                    </span>
+                  </TableCell>
+                  <TableCell>
+                    <ChevronRight className="h-4 w-4 text-muted-foreground/30 group-hover:text-primary transition-colors" />
                   </TableCell>
                 </TableRow>
               ))
@@ -136,67 +177,57 @@ export default function ExpensePage() {
         </Table>
       </div>
 
-      {/* Mobile Card View */}
-      <div className="grid grid-cols-1 gap-4 md:hidden">
-        {expenses.length === 0 ? (
-          <div className="text-center py-10 text-muted-foreground italic">
-            No expenses recorded yet.
-          </div>
-        ) : (
-          expenses.map((exp: any) => (
-            <Card
-              key={exp.id}
-              className="overflow-hidden border-none shadow-md active:scale-[0.98] transition-all bg-card/80 backdrop-blur-sm"
-              onClick={() => router.push(`/expense/${exp.id}`)}
-            >
-              <CardContent className="p-0">
-                <div className="flex items-center p-4">
-                  <div className="mr-4 p-3 rounded-full bg-red-100 dark:bg-red-900/20 text-red-600 dark:text-red-400">
-                    <ReceiptText className="h-5 w-5" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between mb-1">
-                      <p className="text-sm font-bold text-foreground truncate max-w-[70%]">
-                        {exp.description || "General Expense"}
-                      </p>
-                      <p className="text-base font-black text-red-600 dark:text-red-400">
-                        {formatCurrency(exp.amount)}
-                      </p>
-                    </div>
-                    <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                      <div className="flex items-center gap-1">
-                        <Calendar className="h-3 w-3" />
-                        {formatDate(exp.createdAt)}
-                      </div>
-                    </div>
-                  </div>
-                  <ChevronRight className="ml-2 h-4 w-4 text-muted-foreground/30" />
-                </div>
-              </CardContent>
-            </Card>
-          ))
-        )}
-      </div>
-
       {hasNextPage && (
-        <div className="flex justify-center pt-8">
+        <div className="flex justify-center p-4">
           <Button
             variant="ghost"
-            className="text-primary font-semibold hover:bg-primary/5 px-8 py-6 rounded-full border border-primary/20 shadow-sm"
+            className="text-primary font-medium hover:bg-primary/5 rounded-full"
             onClick={() => fetchNextPage()}
             disabled={isFetchingNextPage}
           >
-            {isFetchingNextPage ? (
-              <div className="flex items-center gap-2">
-                <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent" />
-                Loading...
-              </div>
-            ) : (
-              "View More Expenses"
-            )}
+            {isFetchingNextPage ? t("common.loading") : t("common.showMore")}
           </Button>
         </div>
       )}
+    </div>
+  );
+}
+
+function ExpenseMobileCard({
+  expense,
+  onClick,
+  t,
+}: {
+  expense: any;
+  onClick: () => void;
+  t: any;
+}) {
+  return (
+    <div
+      className="bg-card rounded-2xl p-4 shadow-sm border-none flex flex-col gap-4 active:scale-[0.98] transition-all cursor-pointer relative overflow-hidden group"
+      onClick={onClick}
+    >
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-red-100 dark:bg-red-900/20 text-red-600 dark:text-red-400">
+            <ReceiptText className="h-8 w-8" />
+          </div>
+          <div className="flex flex-col">
+            <h3 className="font-bold text-lg leading-none truncate max-w-[150px]">
+              {expense.description || t("expense.moduleName")}
+            </h3>
+            <span className="text-xs text-muted-foreground mt-1.5 font-medium">
+              {formatDate(expense.createdAt)}
+            </span>
+          </div>
+        </div>
+        <div className="flex flex-col items-end">
+          <span className="font-black text-lg text-red-600 dark:text-red-400">
+            {formatCurrency(expense.amount)}
+          </span>
+          <ArrowRight className="h-5 w-5 text-muted-foreground/30 group-hover:text-primary transition-colors" />
+        </div>
+      </div>
     </div>
   );
 }

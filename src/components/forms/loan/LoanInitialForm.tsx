@@ -11,10 +11,7 @@ import NumericField from "@/components/forms/fields/NumericField";
 import SelectField from "@/components/forms/fields/SelectField";
 import SubmitButton from "@/components/forms/fields/SubmitButton";
 
-import {
-  loanInitialSchema,
-  InitialLoanData,
-} from "./loan.schema";
+import { loanInitialSchema, InitialLoanData } from "./loan.schema";
 import { useCreateLoanTranx } from "@/api/loan/api.loan";
 import { LoanTxType } from "@/components/interface/loan/loan.interface";
 import { useFetchAccountSelector } from "@/api/account/api.account";
@@ -153,7 +150,7 @@ export default function LoanInitialForm({
       <div className="grid grid-cols-1 gap-6">
         <SelectField
           name="partnerId"
-          control={control}
+          control={control as any}
           label="Partner"
           options={partnerOptions}
           placeholder={
@@ -169,7 +166,7 @@ export default function LoanInitialForm({
           <div className="space-y-4">
             <SelectField
               name="txType"
-              control={control}
+              control={control as any}
               options={[
                 { label: "Loan Given", value: LoanTxType.LOAN_GIVEN },
                 { label: "Loan Taken", value: LoanTxType.LOAN_TAKEN },
@@ -200,7 +197,7 @@ export default function LoanInitialForm({
                     <div className="flex-1">
                       <SelectField
                         name={`paymentItems.${index}.accountId`}
-                        control={control}
+                        control={control as any}
                         options={accountOptions}
                         placeholder={
                           loadingAccounts ? "Loading..." : "Select Account"
@@ -211,7 +208,7 @@ export default function LoanInitialForm({
                     <div className="flex-1">
                       <NumericField
                         name={`paymentItems.${index}.amount`}
-                        control={control}
+                        control={control as any}
                         placeholder="0"
                         label="Amount"
                       />
@@ -235,7 +232,7 @@ export default function LoanInitialForm({
               <h4 className="text-sm font-semibold mb-3">Cash Payments</h4>
               <NumericField
                 name="loanCashPayment.amount"
-                control={control}
+                control={control as any}
                 placeholder="0"
                 label="Amount"
               />
@@ -243,14 +240,14 @@ export default function LoanInitialForm({
 
             <TextField
               name="dueDate"
-              control={control}
+              control={control as any}
               type="date"
               label="Due Date"
             />
 
             <TextField
               name="note"
-              control={control}
+              control={control as any}
               label="Note"
               placeholder="Additional notes"
               multiLine
@@ -259,7 +256,7 @@ export default function LoanInitialForm({
         </div>
       </div>
 
-      <LoanInitialSummary control={control} />
+      <LoanInitialSummary control={control as any} />
 
       <div className="flex gap-4 items-center">
         <SubmitButton

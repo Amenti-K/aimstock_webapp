@@ -6,10 +6,10 @@ import { LoadingView, ErrorView } from "@/components/common/StateView";
 import { AccessDeniedView } from "@/components/guards/AccessDeniedView";
 import { usePermissions } from "@/hooks/permission.hook";
 import { Button } from "@/components/ui/button";
-import { Plus, Search, MoreHorizontal, HandCoins } from "lucide-react";
+import { Plus, MoreHorizontal, HandCoins } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { LoanSettlingModal } from "../../../components/loan/LoanSettlingModal";
+import { LoanSettlingModal } from "@/components/loan/LoanSettlingModal";
 import {
   Table,
   TableBody,
@@ -24,7 +24,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
 
 export default function LoanPage() {
   const router = useRouter();
@@ -284,6 +283,18 @@ export default function LoanPage() {
                       </span>
                     </div>
                   </div>
+                  {balance !== 0 && (
+                    <Button
+                      className="w-fit text-sm"
+                      variant={balance < 0 ? "destructive" : "default"}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSettlePartner(lp);
+                      }}
+                    >
+                      Settle {balance < 0 ? "Payment" : "Receipt"}
+                    </Button>
+                  )}
                   <div className="flex flex-col items-end">
                     <span
                       className={`font-bold ${balance < 0 ? "text-red-600" : "text-emerald-600"}`}
@@ -299,18 +310,6 @@ export default function LoanPage() {
                     </span>
                   </div>
                 </div>
-                {balance !== 0 && (
-                  <Button
-                    className="w-full h-9 text-sm mt-1"
-                    variant={balance < 0 ? "destructive" : "default"}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setSettlePartner(lp);
-                    }}
-                  >
-                    Settle {balance < 0 ? "Payment" : "Receipt"}
-                  </Button>
-                )}
               </div>
             );
           })

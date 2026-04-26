@@ -84,7 +84,7 @@ export default function WarehousePage() {
       {/* Mobile Floating Action Button */}
       {hasCreateAccess && (
         <Button
-          className="fixed bottom-24 right-6 h-14 w-14 rounded-full shadow-2xl sm:hidden z-50 bg-primary hover:bg-primary/90"
+          className="fixed bottom-24 right-6 z-50 h-14 w-14 rounded-full shadow-2xl sm:hidden bg-primary hover:bg-primary/90"
           size="icon"
           onClick={() => router.push("/warehouse/new")}
         >
