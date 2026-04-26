@@ -51,7 +51,8 @@
     "remainingBalance": "ቀሪ ክፍያ",
     "balanceDue": "ቀሪ ክፍያ",
     "totalInvoice": "ጠቅላላ ክፍያ",
-    "cash&Bank": "ጥሬ ገንዘብ እና ባንክ"
+    "cash&Bank": "ጥሬ ገንዘብ እና ባንክ",
+    "referenceId": "ማጣቀሻ ID"
   },
   "permission": {
     "all": "ሁሉም",
@@ -63,6 +64,7 @@
   "unit": {
     "items": "እቃዎች"
   },
+  "date": "ቀን",
   "others": "ሌሎች",
   "share": "ድርሻ",
   "select": "ይምረጡ",
@@ -86,6 +88,10 @@
   "back": "ወደኋላ",
   "disable": "አሰናክል",
   "success": "ተሳክቷል",
+  "type": "ዓይነት",
+  "notSpecified": "አልተገለጸም",
+  "noContact": "መገናኛ የለም",
+  "showMore": "ተጨማሪ አሳይ",
   "layout": {
     "drawer": {
       "welcome": "እንኳን ተመልሰው መጡ!",

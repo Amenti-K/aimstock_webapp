@@ -1,5 +1,6 @@
 {
   "moduleName": "Warehouses",
+  "description": "Manage your storage locations and inventory distribution.",
   "emptyWare": "No warehouses found. Start by adding your first warehouse",
   "pendingWare": "Loading warehouse details...",
   "errorWare": "Failed to load warehouse details.",

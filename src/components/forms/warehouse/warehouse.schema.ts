@@ -10,7 +10,7 @@ export const warehouseSchema = z.object({
       "Phone number must be a valid Ethiopian number",
     ),
   description: z.string().optional(),
-  isInternal: z.boolean().default(false),
+  isInternal: z.boolean().default(false).optional(),
 });
 
 export type WarehouseFormValues = z.infer<typeof warehouseSchema>;

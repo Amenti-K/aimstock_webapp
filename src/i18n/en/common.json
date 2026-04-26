@@ -51,7 +51,8 @@
     "remainingBalance": "Remaining Balance",
     "balanceDue": "Balance Due",
     "totalInvoice": "Invoice Total",
-    "cash&Bank": "Cash & Bank"
+    "cash&Bank": "Cash & Bank",
+    "referenceId": "Reference ID"
   },
   "permission": {
     "all": "All",
@@ -63,6 +64,7 @@
   "unit": {
     "items": "items"
   },
+  "date": "Date",
   "others": "Others",
   "share": "Share",
   "select": "Select",
@@ -86,6 +88,10 @@
   "back": "Back",
   "disable": "Disable",
   "success": "Success",
+  "type": "Type",
+  "notSpecified": "Not specified",
+  "noContact": "No contact",
+  "showMore": "Show more",
   "layout": {
     "drawer": {
       "welcome": "Welcome Back!",
@@ -119,15 +125,15 @@
       "inventory": "Inventory",
       "account": "Account"
     },
-      "lockScreen": {
-        "locked": "AIM Locked",
-        "enterPin": "Enter PIN to unlock",
-        "incorrectPin": "Incorrect PIN",
-        "forgot": "Forgot?",
-        "unlock": "Unlock Session",
-        "switchAccount": "Switch Account",
-        "forgotMessage": "Forgot PIN? This will log you out of the system for security."
-      }
+    "lockScreen": {
+      "locked": "AIM Locked",
+      "enterPin": "Enter PIN to unlock",
+      "incorrectPin": "Incorrect PIN",
+      "forgot": "Forgot?",
+      "unlock": "Unlock Session",
+      "switchAccount": "Switch Account",
+      "forgotMessage": "Forgot PIN? This will log you out of the system for security."
+    }
   },
   "network": {
     "noInternet": "No Internet Connection",

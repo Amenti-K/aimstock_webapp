@@ -2,6 +2,7 @@
 
 import { ArrowLeft } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
+import { useTranslation } from "react-i18next";
 import {
   useFetchWarehouseById,
   useUpdateWarehouse,
@@ -14,12 +15,13 @@ import { usePermissions } from "@/hooks/permission.hook";
 import { Button } from "@/components/ui/button";
 
 export default function EditWarehousePage() {
+  const { t } = useTranslation("warehouse");
   const router = useRouter();
   const { id } = useParams();
   const warehouseId = id as string;
   const { canUpdate } = usePermissions();
   if (!canUpdate("WAREHOUSES"))
-    return <AccessDeniedView moduleName="Warehouses" />;
+    return <AccessDeniedView moduleName={t("moduleName")} />;
 
   const { data, isLoading, isError, refetch } = useFetchWarehouseById(
     warehouseId,
@@ -36,16 +38,18 @@ export default function EditWarehousePage() {
           <ArrowLeft className="h-5 w-5" />
         </Button>
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Edit Warehouse</h1>
+          <h1 className="text-2xl font-bold tracking-tight">
+            {t("form.editWare")}
+          </h1>
           <p className="text-sm text-muted-foreground">
-            Update warehouse information.
+            {t("detail.title") || "Update warehouse information."}
           </p>
         </div>
       </div>
       <WarehouseForm
         initialData={data.data}
         isPending={updateWarehouse.isPending}
-        submitLabel="Save changes"
+        submitLabel={t("form.editWare")}
         onSubmit={(values: WarehouseFormValues) =>
           updateWarehouse.mutate(values as any, {
             onSuccess: () => router.push(`/warehouse/${warehouseId}`),

@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import React, { useMemo } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslation } from "react-i18next";
 import { useGetWarehousesInfinite } from "@/api/warehouse/api.warehouse";
 import { LoadingView, ErrorView } from "@/components/common/StateView";
 import { AccessDeniedView } from "@/components/guards/AccessDeniedView";
@@ -25,12 +26,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
 import { IWarehouse } from "@/components/interface/warehouse/warehouse.interface";
 
 export default function WarehousePage() {
+  const { t } = useTranslation();
   const router = useRouter();
   const { canView, canCreate } = usePermissions();
   const hasViewAccess = canView("WAREHOUSES");
@@ -50,33 +50,47 @@ export default function WarehousePage() {
     [data],
   );
 
-  if (!hasViewAccess) return <AccessDeniedView moduleName="Warehouses" />;
+  if (!hasViewAccess)
+    return <AccessDeniedView moduleName={t("warehouse.moduleName")} />;
   if (isLoading) return <LoadingView />;
   if (isError) return <ErrorView refetch={refetch} />;
 
   return (
-    <div className="space-y-6 pb-20 md:pb-6">
+    <div className="relative min-h-[calc(100vh-200px)] space-y-6 pb-20 md:pb-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <div className="flex items-center gap-2">
             <div className="rounded-lg bg-primary/10 p-2 text-primary">
               <Warehouse className="h-6 w-6" />
             </div>
-            <h1 className="text-2xl font-bold tracking-tight">Warehouses</h1>
+            <h1 className="text-2xl font-bold tracking-tight">
+              {t("warehouse.moduleName")}
+            </h1>
           </div>
           <p className="mt-1 text-sm text-muted-foreground">
-            Manage your storage locations and inventory distribution.
+            {t("warehouse.description")}
           </p>
         </div>
         {hasCreateAccess && (
           <Button
-            className="w-full sm:w-auto bg-primary hover:bg-primary/90 shadow-sm"
+            className="hidden sm:flex bg-primary hover:bg-primary/90 shadow-sm"
             onClick={() => router.push("/warehouse/new")}
           >
-            <Plus className="mr-2 h-4 w-4" /> Add Warehouse
+            <Plus className="mr-2 h-4 w-4" /> {t("warehouse.form.addWare")}
           </Button>
         )}
       </div>
+
+      {/* Mobile Floating Action Button */}
+      {hasCreateAccess && (
+        <Button
+          className="fixed bottom-24 right-6 h-14 w-14 rounded-full shadow-2xl sm:hidden z-50 bg-primary hover:bg-primary/90"
+          size="icon"
+          onClick={() => router.push("/warehouse/new")}
+        >
+          <Plus className="h-6 w-6 text-white" />
+        </Button>
+      )}
 
       {/* Mobile View: Cards */}
       <div className="grid grid-cols-1 gap-4 md:hidden">
@@ -84,7 +98,7 @@ export default function WarehousePage() {
           <div className="flex flex-col items-center justify-center p-8 text-center bg-card rounded-xl border border-dashed">
             <Warehouse className="h-10 w-10 text-muted-foreground mb-2" />
             <p className="text-muted-foreground text-sm font-medium">
-              No warehouses found.
+              {t("warehouse.emptyWare")}
             </p>
           </div>
         ) : (
@@ -93,6 +107,7 @@ export default function WarehousePage() {
               key={warehouse.id}
               warehouse={warehouse}
               onClick={() => router.push(`/warehouse/${warehouse.id}`)}
+              t={t}
             />
           ))
         )}
@@ -103,10 +118,18 @@ export default function WarehousePage() {
         <Table>
           <TableHeader className="bg-muted/50">
             <TableRow>
-              <TableHead className="font-semibold">Warehouse</TableHead>
-              <TableHead className="font-semibold">Type</TableHead>
-              <TableHead className="font-semibold">Location</TableHead>
-              <TableHead className="font-semibold">Contact</TableHead>
+              <TableHead className="font-semibold">
+                {t("warehouse.form.name")}
+              </TableHead>
+              <TableHead className="font-semibold">
+                {t("common.type")}
+              </TableHead>
+              <TableHead className="font-semibold">
+                {t("warehouse.form.location")}
+              </TableHead>
+              <TableHead className="font-semibold">
+                {t("warehouse.form.contactPhone")}
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -116,7 +139,7 @@ export default function WarehousePage() {
                   colSpan={4}
                   className="h-32 text-center text-muted-foreground"
                 >
-                  No warehouses found.
+                  {t("warehouse.emptyWare")}
                 </TableCell>
               </TableRow>
             ) : (
@@ -142,27 +165,27 @@ export default function WarehousePage() {
                         variant="secondary"
                         className="bg-green-100 text-green-700 border-none rounded-full px-3 text-[10px] font-bold"
                       >
-                        INTERNAL
+                        {t("warehouse.card.isInternal").toUpperCase()}
                       </Badge>
                     ) : (
                       <Badge
                         variant="outline"
                         className="text-muted-foreground border-muted-foreground/20 rounded-full px-3 text-[10px] font-bold"
                       >
-                        EXTERNAL
+                        {t("warehouse.card.isExternal").toUpperCase()}
                       </Badge>
                     )}
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
                       <MapPin className="h-3 w-3" />
-                      {warehouse.location || "Not specified"}
+                      {warehouse.location || t("common.notSpecified")}
                     </div>
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2 text-sm font-medium">
                       <Phone className="h-3.5 w-3.5 text-primary/70" />
-                      {warehouse.contactPhone || "No contact"}
+                      {warehouse.contactPhone || t("common.noContact")}
                     </div>
                   </TableCell>
                 </TableRow>
@@ -180,7 +203,7 @@ export default function WarehousePage() {
             disabled={isFetchingNextPage}
             className="text-primary font-medium hover:bg-primary/5 rounded-full"
           >
-            {isFetchingNextPage ? "Loading more..." : "Show more warehouses"}
+            {isFetchingNextPage ? t("common.loading") : t("common.showMore")}
           </Button>
         </div>
       )}
@@ -191,9 +214,11 @@ export default function WarehousePage() {
 function WarehouseMobileCard({
   warehouse,
   onClick,
+  t,
 }: {
   warehouse: IWarehouse;
   onClick: () => void;
+  t: any;
 }) {
   return (
     <div
@@ -213,12 +238,12 @@ function WarehouseMobileCard({
               {warehouse.isInternal ? (
                 <div className="flex items-center gap-1 text-[10px] font-bold text-green-600 uppercase">
                   <ShieldCheck className="h-3 w-3" />
-                  Internal
+                  {t("warehouse.card.isInternal")}
                 </div>
               ) : (
                 <div className="flex items-center gap-1 text-[10px] font-bold text-muted-foreground uppercase">
                   <Globe className="h-3 w-3" />
-                  External
+                  {t("warehouse.card.isExternal")}
                 </div>
               )}
             </div>
@@ -231,12 +256,14 @@ function WarehouseMobileCard({
         <div className="flex items-center gap-3 text-sm text-muted-foreground bg-muted/30 p-2.5 rounded-xl border border-muted/50">
           <MapPin className="h-4 w-4 text-primary/60" />
           <span className="truncate">
-            {warehouse.location || "No location specified"}
+            {warehouse.location || t("warehouse.form.location")}
           </span>
         </div>
         <div className="flex items-center gap-3 text-sm font-semibold p-2.5 rounded-xl bg-primary/5 text-primary/80 border border-primary/10">
           <Phone className="h-4 w-4" />
-          <span>{warehouse.contactPhone || "No contact phone"}</span>
+          <span>
+            {warehouse.contactPhone || t("warehouse.form.contactPhone")}
+          </span>
         </div>
       </div>
     </div>
