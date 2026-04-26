@@ -2,6 +2,7 @@
 
 import { ArrowLeft } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
+import { useTranslation } from "react-i18next";
 import {
   useFetchPartnerById,
   useUpdatePartner,
@@ -14,11 +15,13 @@ import { usePermissions } from "@/hooks/permission.hook";
 import { Button } from "@/components/ui/button";
 
 export default function EditPartnerPage() {
+  const { t } = useTranslation();
   const router = useRouter();
   const { id } = useParams();
   const partnerId = id as string;
   const { canUpdate } = usePermissions();
-  if (!canUpdate("PARTNERS")) return <AccessDeniedView moduleName="Partners" />;
+  if (!canUpdate("PARTNERS"))
+    return <AccessDeniedView moduleName={t("partners.moduleName")} />;
 
   const { data, isLoading, isError, refetch } = useFetchPartnerById(
     partnerId,
@@ -35,16 +38,18 @@ export default function EditPartnerPage() {
           <ArrowLeft className="h-5 w-5" />
         </Button>
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Edit Partner</h1>
+          <h1 className="text-2xl font-bold tracking-tight">
+            {t("partners.form.editPartner")}
+          </h1>
           <p className="text-sm text-muted-foreground">
-            Update partner information.
+            {t("partners.detail.title")}
           </p>
         </div>
       </div>
       <PartnerForm
         initialData={data.data}
         isPending={updatePartner.isPending}
-        submitLabel="Save changes"
+        submitLabel={t("common.update")}
         onSubmit={(values: PartnerFormValues) =>
           updatePartner.mutate(values as any, {
             onSuccess: () => router.push(`/partner/${partnerId}`),

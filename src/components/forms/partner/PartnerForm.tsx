@@ -3,6 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 import TextField from "@/components/forms/fields/TextField";
 import SubmitButton from "@/components/forms/fields/SubmitButton";
 import { Button } from "@/components/ui/button";
@@ -21,8 +22,9 @@ export default function PartnerForm({
   onSubmit,
   onCancel,
   isPending,
-  submitLabel = "Save",
+  submitLabel,
 }: Props) {
+  const { t } = useTranslation();
   const { control, handleSubmit, reset } = useForm<PartnerFormValues>({
     resolver: zodResolver(partnerSchema),
     defaultValues: { name: "", phone: "", address: "" },
@@ -39,11 +41,29 @@ export default function PartnerForm({
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-      <TextField name="name" control={control} label="Name" placeholder="Partner name" />
-      <TextField name="phone" control={control} label="Phone" placeholder="Phone number" />
-      <TextField name="address" control={control} label="Address" placeholder="Address" />
+      <TextField
+        name="name"
+        control={control as any}
+        label={t("partners.form.name")}
+        placeholder={t("partners.form.name")}
+      />
+      <TextField
+        name="phone"
+        control={control as any}
+        label={t("partners.form.phoneNum")}
+        placeholder="0911xxxxxx"
+      />
+      <TextField
+        name="address"
+        control={control as any}
+        label={t("partners.form.address")}
+        placeholder={t("partners.form.address")}
+      />
       <div className="flex gap-3">
-        <SubmitButton title={submitLabel} loading={isPending} />
+        <SubmitButton
+          title={submitLabel || t("common.save")}
+          loading={isPending}
+        />
         {onCancel && (
           <Button
             type="button"
@@ -52,7 +72,7 @@ export default function PartnerForm({
             onClick={onCancel}
             disabled={isPending}
           >
-            Cancel
+            {t("common.cancel")}
           </Button>
         )}
       </div>

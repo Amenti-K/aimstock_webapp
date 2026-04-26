@@ -283,7 +283,7 @@ export default function WarehouseDetailPage() {
 
             <div className="flex flex-col">
               <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-1">
-                Total Transactions
+                {t("common.trade.total")}
               </span>
               <span className="text-4xl font-black text-primary tracking-tighter">
                 {(warehouse.purchaseItems?.length || 0) +

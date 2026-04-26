@@ -1,5 +1,6 @@
 {
   "moduleName": "Partners",
+  "description": "Customers and suppliers you do business with.",
   "emptyPartner": "No partners found. Start by adding your first partner",
   "pendingPartner": "Loading partner details...",
   "errorPartner": "Failed to load partner details.",
