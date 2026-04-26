@@ -1,5 +1,6 @@
 {
   "moduleName": "Purchase",
+  "description": "Monitor and manage your supply chain transactions.",
   "emptyPur": "No purchases found. Start by adding your first purchase",
   "pendingPur": "Loading purchase details...",
   "errorPur": "Failed to load purchase details.",
@@ -17,6 +18,12 @@
     "qty": "Qty",
     "subTotal": "Sub Total",
     "noItems": "No items"
+  },
+  "table": {
+    "supplierAndId": "Supplier & ID",
+    "items": "Product Details",
+    "date": "Date",
+    "total": "Total Amount"
   },
   "detail": {
     "title": "Purchase Details",

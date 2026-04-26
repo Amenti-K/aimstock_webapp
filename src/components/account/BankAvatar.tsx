@@ -1,6 +1,9 @@
 import React from "react";
 import Image from "next/image";
-import { EthiopianFinancialInstitution, AccountType } from "../interface/interface.account";
+import {
+  EthiopianFinancialInstitution,
+  AccountType,
+} from "../interface/interface.account";
 import { Wallet } from "lucide-react";
 
 interface BankAvatarProps {
@@ -25,7 +28,7 @@ const bankLogos: Record<string, string> = {
   ZEMEN_BANK: "/bank-logos/Zemen.jpg",
   BERHAN_BANK: "/bank-logos/Birhan.jpg",
   BUNNA_BANK: "/bank-logos/Anbesa.jpg", // Assuming Bunna is Anbesa or similar, or mapping it correctly
-  LION_BANK: "/bank-logos/Anbesa.jpg", 
+  LION_BANK: "/bank-logos/Anbesa.jpg",
   ABAY_BANK: "/bank-logos/Abay.jpg",
   ADDIS_INTERNATIONAL_BANK: "/bank-logos/Addis.jpg",
   ENAT_BANK: "/bank-logos/Enat.jpg",
@@ -40,7 +43,13 @@ const bankLogos: Record<string, string> = {
   SHABELLE_BANK: "/bank-logos/Global.jpg", // Fallback
 };
 
-const colors = ["bg-blue-500", "bg-emerald-500", "bg-amber-500", "bg-rose-500", "bg-violet-500"];
+const colors = [
+  "bg-blue-500",
+  "bg-emerald-500",
+  "bg-amber-500",
+  "bg-rose-500",
+  "bg-violet-500",
+];
 
 export const BankAvatar: React.FC<BankAvatarProps> = ({
   name,
@@ -63,7 +72,7 @@ export const BankAvatar: React.FC<BankAvatarProps> = ({
 
   if (logoUrl) {
     return (
-      <div 
+      <div
         className="relative overflow-hidden rounded-full border bg-white flex items-center justify-center p-1"
         style={{ width: size, height: size }}
       >

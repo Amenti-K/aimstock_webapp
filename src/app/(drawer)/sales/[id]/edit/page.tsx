@@ -10,10 +10,12 @@ import { usePermissions } from "@/hooks/permission.hook";
 import { AccessDeniedView } from "@/components/guards/AccessDeniedView";
 import { LoadingView, ErrorView } from "@/components/common/StateView";
 import { INewSale } from "@/components/interface/sales/interface.sale";
+import { useLanguage } from "@/hooks/language.hook";
 
 export default function EditSalesPage() {
   const { id } = useParams();
   const router = useRouter();
+  const { t } = useLanguage();
   const saleId = id as string;
   const { canUpdate } = usePermissions();
   const hasUpdateAccess = canUpdate("SALES");
@@ -42,9 +44,9 @@ export default function EditSalesPage() {
           <ArrowLeft className="h-5 w-5" />
         </Button>
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Edit Sale</h1>
+          <h1 className="text-2xl font-bold tracking-tight">{t("sales.form.editSale")}</h1>
           <p className="text-sm text-muted-foreground">
-            Update sale data for this transaction.
+            {t("sales.description")}
           </p>
         </div>
       </div>

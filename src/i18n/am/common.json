@@ -7,6 +7,10 @@
     "title": "ውጣ",
     "message": "እርግጠኛ ነዎት መውጣት ይፈልጋሉ?"
   },
+  "formHints": {
+    "noBankPayments": "ምንም የባንክ ክፍያ አልተጨመረም። እባክዎ ከላይ ያለውን 'የባንክ ክፍያ ጨምር' የሚለውን ይጫኑ።",
+    "balanceUpdateWarning": "የክምችት እና የደንበኛ ቀሪ ሂሳቦች ወዲያውኑ ይዘመናሉ።"
+  },
   "reportAcco": {
     "title": "ዕለታዊ ሪፖርት",
     "subtitle": "ለተመረጠው ቀን ማጠቃለያ",
@@ -19,7 +23,7 @@
     "totalPaidByCash": "በጥሬ ገንዘብ የተከፈለ"
   },
   "trade": {
-    "order": "ትዕዛዝ",
+    "order": "{{type}} ትዕዛዝ",
     "description": "መግለጫ",
     "id": "ID: {{id}}",
     "total": "ጠቅላላ",
@@ -115,19 +119,25 @@
       "inventory": "ክምችት",
       "account": "ሂሳብ"
     },
-      "lockScreen": {
-        "locked": "AIM ተቆልፏል",
-        "enterPin": "ለመክፈት PIN ያስገቡ",
-        "incorrectPin": "የተሳሳተ PIN",
-        "forgot": "ረስተዋል?",
-        "unlock": "ክፈት",
-        "switchAccount": "መለያ ቀይር",
-        "forgotMessage": "PIN ረስተዋል? ይህ ለደህንነት ሲባል ከመለያዎ ያወጣዎታል።"
-      }
+    "lockScreen": {
+      "locked": "AIM ተቆልፏል",
+      "enterPin": "ለመክፈት PIN ያስገቡ",
+      "incorrectPin": "የተሳሳተ PIN",
+      "forgot": "ረስተዋል?",
+      "unlock": "ክፈት",
+      "switchAccount": "መለያ ቀይር",
+      "forgotMessage": "PIN ረስተዋል? ይህ ለደህንነት ሲባል ከመለያዎ ያወጣዎታል።"
+    }
   },
   "network": {
     "noInternet": "የበይነመረብ ግንኙነት የለም",
     "checkNetwork": "እባክዎ የአውታረ መረብ ቅንብሮችዎን ያረጋግጡ እና እንደገና ለመሞከር ይሞክሩ",
     "retry": "ግንኙነትን እንደገና ይሞክሩ"
+  },
+  "timeFrame": {
+    "30days": "30 ቀናት",
+    "90days": "90 ቀናት",
+    "6months": "6 ወራት",
+    "1year": "1 ዓመት"
   }
 }

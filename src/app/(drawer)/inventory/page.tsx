@@ -12,13 +12,8 @@ import { Button } from "@/components/ui/button";
 import {
   Plus,
   Search,
-  MoreHorizontal,
   Package,
-  Eye,
-  Pencil,
-  Trash2,
   Boxes,
-  Tag,
   TrendingUp,
   TrendingDown,
 } from "lucide-react";
@@ -30,15 +25,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { useRouter } from "next/navigation";
+import { useTranslation } from "react-i18next";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -58,6 +48,7 @@ import { cn } from "@/lib/utils";
 
 export default function InventoryPage() {
   const router = useRouter();
+  const { t } = useTranslation();
   const { canView, canCreate, canUpdate, canDelete } = usePermissions();
   const hasViewAccess = canView("INVENTORY");
   const hasCreateAccess = canCreate("INVENTORY");
@@ -113,7 +104,7 @@ export default function InventoryPage() {
   };
 
   if (!hasViewAccess) {
-    return <AccessDeniedView moduleName="Inventory" />;
+    return <AccessDeniedView moduleName={t("inventory.moduleName")} />;
   }
 
   if (isLoading) return <LoadingView />;
@@ -121,16 +112,18 @@ export default function InventoryPage() {
 
   return (
     <div className="space-y-6 pb-20 md:pb-6">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <div className="hidden md:flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <div className="flex items-center gap-2">
             <div className="rounded-lg bg-primary/10 p-2 text-primary">
               <Boxes className="h-6 w-6" />
             </div>
-            <h1 className="text-2xl font-bold tracking-tight">Inventory</h1>
+            <h1 className="text-2xl font-bold tracking-tight">
+              {t("inventory.moduleName")}
+            </h1>
           </div>
           <p className="mt-1 text-sm text-muted-foreground">
-            Monitor and manage your stock across all warehouses.
+            {t("inventory.description")}
           </p>
         </div>
         {hasCreateAccess && (
@@ -138,7 +131,7 @@ export default function InventoryPage() {
             className="w-full sm:w-auto bg-primary hover:bg-primary/90 shadow-sm"
             onClick={() => router.push("/inventory/new")}
           >
-            <Plus className="mr-2 h-4 w-4" /> Add Item
+            <Plus className="mr-2 h-4 w-4" /> {t("common.addNew")}
           </Button>
         )}
       </div>
@@ -147,7 +140,7 @@ export default function InventoryPage() {
         <div className="relative flex-1 max-w-sm">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Search inventory..."
+            placeholder={t("inventory.form.searchPlaceholder")}
             className="pl-8 bg-card border-none shadow-sm focus-visible:ring-1"
             value={searchText}
             onChange={(e) => setSearchText(e.target.value)}
@@ -155,9 +148,9 @@ export default function InventoryPage() {
         </div>
         <div className="flex flex-wrap gap-2">
           {[
-            { label: "All Items", value: StockStatus.ALL },
-            { label: "Low Stock", value: StockStatus.LOW },
-            { label: "Out of Stock", value: StockStatus.OUT },
+            { label: t("inventory.tabs.all"), value: StockStatus.ALL },
+            { label: t("inventory.tabs.low"), value: StockStatus.LOW },
+            { label: t("inventory.tabs.out"), value: StockStatus.OUT },
           ].map((tab) => (
             <Button
               key={tab.value}
@@ -183,7 +176,7 @@ export default function InventoryPage() {
           <div className="flex flex-col items-center justify-center p-8 text-center bg-card rounded-xl border border-dashed">
             <Package className="h-10 w-10 text-muted-foreground mb-2" />
             <p className="text-muted-foreground text-sm font-medium">
-              No inventory items found.
+              {t("inventory.emptyInventory")}
             </p>
           </div>
         ) : (
@@ -208,18 +201,24 @@ export default function InventoryPage() {
         <Table>
           <TableHeader className="bg-muted/50">
             <TableRow>
-              <TableHead className="font-semibold">Item</TableHead>
-              <TableHead className="font-semibold">SKU</TableHead>
-              <TableHead className="font-semibold text-right">
-                Stock Level
+              <TableHead className="font-semibold">
+                {t("inventory.table.item")}
+              </TableHead>
+              <TableHead className="font-semibold">
+                {t("inventory.table.sku")}
               </TableHead>
               <TableHead className="font-semibold text-right">
-                Cost Price
+                {t("inventory.table.stockLevel")}
               </TableHead>
               <TableHead className="font-semibold text-right">
-                Selling Price
+                {t("inventory.table.costPrice")}
               </TableHead>
-              <TableHead className="font-semibold">Status</TableHead>
+              <TableHead className="font-semibold text-right">
+                {t("inventory.table.sellingPrice")}
+              </TableHead>
+              <TableHead className="font-semibold">
+                {t("inventory.table.status")}
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -229,7 +228,7 @@ export default function InventoryPage() {
                   colSpan={6}
                   className="h-32 text-center text-muted-foreground"
                 >
-                  No inventory items found.
+                  {t("inventory.emptyInventory")}
                 </TableCell>
               </TableRow>
             ) : (
@@ -272,7 +271,7 @@ export default function InventoryPage() {
                     </TableCell>
                     <TableCell>
                       <code className="text-[10px] font-mono bg-muted px-1.5 py-0.5 rounded text-muted-foreground">
-                        {item.sku || "NO-SKU"}
+                        {item.sku || t("inventory.card.noSku")}
                       </code>
                     </TableCell>
                     <TableCell className="text-right">
@@ -308,21 +307,21 @@ export default function InventoryPage() {
                           variant="destructive"
                           className="rounded-full px-3 text-[10px] font-bold"
                         >
-                          OUT OF STOCK
+                          {t("inventory.card.outOfStock")}
                         </Badge>
                       ) : lowStock ? (
                         <Badge
                           variant="secondary"
                           className="bg-yellow-100 text-yellow-700 border-none rounded-full px-3 text-[10px] font-bold"
                         >
-                          LOW STOCK
+                          {t("inventory.card.lowStock")}
                         </Badge>
                       ) : (
                         <Badge
                           variant="secondary"
                           className="bg-green-100 text-green-700 border-none rounded-full px-3 text-[10px] font-bold"
                         >
-                          IN STOCK
+                          {t("inventory.card.inStock")}
                         </Badge>
                       )}
                     </TableCell>
@@ -342,7 +341,9 @@ export default function InventoryPage() {
             disabled={isFetchingNextPage}
             className="text-primary font-medium hover:bg-primary/5 rounded-full"
           >
-            {isFetchingNextPage ? "Loading more..." : "Show more items"}
+            {isFetchingNextPage
+              ? t("inventory.table.loadingMore")
+              : t("inventory.table.showMore")}
           </Button>
         </div>
       )}
@@ -350,25 +351,39 @@ export default function InventoryPage() {
       <AlertDialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
         <AlertDialogContent className="rounded-2xl">
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete inventory?</AlertDialogTitle>
+            <AlertDialogTitle>
+              {t("common.confirmDelete.title", {
+                entity: t("inventory.moduleName"),
+              })}
+            </AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. The selected inventory item will be
-              permanently deleted.
+              {t("common.confirmDelete.message", {
+                entity: t("inventory.moduleName"),
+              })}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel className="rounded-full">
-              Cancel
+              {t("common.cancel")}
             </AlertDialogCancel>
             <AlertDialogAction
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90 rounded-full"
               onClick={handleDelete}
             >
-              Delete
+              {t("common.delete")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {hasCreateAccess && (
+        <Button
+          className="md:hidden fixed bottom-24 right-6 z-50 h-14 w-14 rounded-full bg-primary hover:bg-primary/90 shadow-lg p-0 flex items-center justify-center"
+          onClick={() => router.push("/inventory/new")}
+        >
+          <Plus className="h-6 w-6 text-primary-foreground" />
+        </Button>
+      )}
     </div>
   );
 }
@@ -387,6 +402,7 @@ function InventoryMobileCard({
   onDelete: (id: string) => void;
 }) {
   const router = useRouter();
+  const { t } = useTranslation();
   const totalQuant = item.warehouseInventories.reduce(
     (acc, warehouseInventory) => acc + Number(warehouseInventory.quantity),
     0,
@@ -416,11 +432,11 @@ function InventoryMobileCard({
           </div>
           <div className="flex items-center gap-2 mt-1.5">
             <code className="text-[10px] font-mono bg-muted px-1.5 py-0.5 rounded-md text-muted-foreground border">
-              {item.sku || "NO-SKU"}
+              {item.sku || t("inventory.card.noSku")}
             </code>
             <span className="text-xs text-muted-foreground">•</span>
             <span className="text-xs text-muted-foreground font-medium">
-              {item.brand || "Generics"}
+              {item.brand || t("inventory.card.generics")}
             </span>
           </div>
         </div>
@@ -431,7 +447,7 @@ function InventoryMobileCard({
           <div className="flex items-center gap-1.5 text-muted-foreground">
             <TrendingDown className="h-3 w-3" />
             <span className="text-[10px] font-bold uppercase tracking-wider">
-              Bought
+              {t("inventory.card.boughtPrice")}
             </span>
           </div>
           <span className="text-sm font-bold">
@@ -442,7 +458,7 @@ function InventoryMobileCard({
           <div className="flex items-center gap-1.5 text-primary/70">
             <TrendingUp className="h-3 w-3" />
             <span className="text-[10px] font-bold uppercase tracking-wider">
-              Selling
+              {t("inventory.card.sellingPrice")}
             </span>
           </div>
           <span className="text-sm font-bold text-primary">
@@ -471,7 +487,7 @@ function InventoryMobileCard({
             </span>
           </div>
           <span className="text-[10px] text-muted-foreground font-semibold">
-            Current Stock
+            {t("inventory.card.currentStock")}
           </span>
         </div>
 
@@ -480,21 +496,21 @@ function InventoryMobileCard({
             variant="destructive"
             className="rounded-full px-4 h-7 text-[10px] font-bold shadow-sm shadow-destructive/20"
           >
-            OUT OF STOCK
+            {t("inventory.card.outOfStock")}
           </Badge>
         ) : lowStock ? (
           <Badge
             variant="secondary"
             className="bg-yellow-100 text-yellow-700 border-none rounded-full px-4 h-7 text-[10px] font-bold shadow-sm shadow-yellow-200"
           >
-            LOW STOCK
+            {t("inventory.card.lowStock")}
           </Badge>
         ) : (
           <Badge
             variant="secondary"
             className="bg-green-100 text-green-700 border-none rounded-full px-4 h-7 text-[10px] font-bold shadow-sm shadow-green-200"
           >
-            IN STOCK
+            {t("inventory.card.inStock")}
           </Badge>
         )}
       </div>

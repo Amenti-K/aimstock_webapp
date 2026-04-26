@@ -10,7 +10,7 @@ export const formatCurrency = (amount: number | string) => {
 export const formatDate = (date: string | Date) => {
   return new Date(date).toLocaleDateString("en-US", {
     year: "numeric",
-    month: "2-digit",
+    month: "short",
     day: "2-digit",
   });
 };

@@ -2,8 +2,23 @@
 
 import React from "react";
 import { formatCurrency } from "@/lib/formatter";
-import { Package, Warehouse, Hash } from "lucide-react";
-import { cn } from "@/lib/utils";
+import {
+  Package,
+  Warehouse,
+  ChevronDown,
+  ChevronUp,
+  Package2,
+  Pin,
+  Map,
+  MapPin,
+} from "lucide-react";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
+import { Button } from "@/components/ui/button";
+import { useLanguage } from "@/hooks/language.hook";
 
 interface ItemListProps {
   items: any[];
@@ -11,57 +26,79 @@ interface ItemListProps {
 }
 
 export function ItemList({ items, type }: ItemListProps) {
-  const isPurchase = type === "purchase";
+  const { t } = useLanguage();
+  const [isOpen, setIsOpen] = React.useState(true);
+  const warehouseCount = new Set(items.map((i) => i.warehouse?.id)).size;
 
   return (
-    <div className="flex flex-col gap-4">
+    <Collapsible
+      open={isOpen}
+      onOpenChange={setIsOpen}
+      className="flex flex-col gap-4 rounded-2xl border bg-card p-4 shadow-sm"
+    >
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-bold tracking-tight flex items-center gap-2">
-          <Package className="h-5 w-5 text-primary" />
-          Items List
-          <span className="ml-2 text-xs font-medium bg-muted px-2 py-0.5 rounded-full text-muted-foreground">
-            {items.length} {items.length === 1 ? 'item' : 'items'}
-          </span>
-        </h3>
+        <div className="flex flex-col gap-1">
+          <h3 className="text-lg font-bold tracking-tight flex items-center gap-2">
+            <Package className="h-5 w-5 text-primary" />
+            {t(type === "purchase" ? "purchase.detail.accordion.items" : "sales.detail.accordion.items")}
+          </h3>
+          <p className="text-xs text-muted-foreground">
+            {t("common.trade.inventorySummary", {
+              itemCount: items.length,
+              warehouseCount,
+              itemUnit: t("common.unit.items"),
+            })}
+          </p>
+        </div>
+        <CollapsibleTrigger asChild>
+          <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+            {isOpen ? (
+              <ChevronUp className="h-4 w-4" />
+            ) : (
+              <ChevronDown className="h-4 w-4" />
+            )}
+          </Button>
+        </CollapsibleTrigger>
       </div>
 
-      <div className="grid grid-cols-1 gap-3">
-        {items.map((item, index) => (
-          <div 
-            key={item.id || index}
-            className="flex flex-col gap-3 rounded-2xl border bg-card p-4 shadow-sm transition-hover hover:border-primary/20"
-          >
-            <div className="flex items-start justify-between gap-4">
-              <div className="flex flex-col gap-1">
-                <span className="text-sm font-bold text-foreground sm:text-base">
-                  {item.inventory?.name || "Unknown Product"}
-                </span>
-                <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                  <div className="flex items-center gap-1">
-                    <Warehouse className="h-3 w-3" />
-                    <span>{item.warehouse?.name || "Default Warehouse"}</span>
+      <CollapsibleContent className="border-t">
+        <div className="grid grid-cols-1">
+          {items.map((item, index) => (
+            <div
+              key={item.id || index}
+              className="flex flex-col gap-2 border-b bg-muted/20 p-3"
+            >
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex flex-row gap-x-2">
+                  <div className="flex items-center justify-center">
+                    <Package2 className="h-6 w-6 text-primary" />
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-sm font-bold text-foreground">
+                      {item.inventory?.name || "Unknown Product"}
+                    </span>
+                    <div className="flex items-center gap-1.5 text-xs text-muted-foreground mt-1">
+                      <MapPin className="h-3 w-3" />
+                      <span>{item.warehouse?.name || "Default Warehouse"}</span>
+                    </div>
+                  </div>
+                </div>
+                <div className="text-right flex flex-col items-end">
+                  <span className="text-sm font-bold text-foreground">
+                    {formatCurrency(
+                      Number(item.unitPrice) * Number(item.quantity),
+                    )}
+                  </span>
+                  <div className="flex items-center gap-1.5 text-xs text-muted-foreground mt-1">
+                    {formatCurrency(item.unitPrice)} × {item.quantity}{" "}
+                    {t("common.unit.items")}
                   </div>
                 </div>
               </div>
-              <div className="text-right">
-                <p className="text-sm font-bold text-foreground">
-                  {formatCurrency(Number(item.unitPrice) * Number(item.quantity))}
-                </p>
-                <p className="text-xs text-muted-foreground mt-0.5">
-                  at {formatCurrency(item.unitPrice)} / unit
-                </p>
-              </div>
             </div>
-
-            <div className="flex items-center gap-2 border-t pt-2 mt-1">
-              <div className="flex items-center gap-1.5 rounded-lg bg-muted px-3 py-1 text-xs font-semibold text-foreground">
-                <Hash className="h-3.5 w-3.5 text-muted-foreground" />
-                <span>Quantity: {item.quantity}</span>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
+          ))}
+        </div>
+      </CollapsibleContent>
+    </Collapsible>
   );
 }

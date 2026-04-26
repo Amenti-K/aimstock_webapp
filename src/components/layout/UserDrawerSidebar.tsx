@@ -40,6 +40,14 @@ export function UserDrawerSidebar(props: React.ComponentProps<typeof Sidebar>) {
     }
   };
 
+  const mobileTabHrefs = ["/sales", "/purchase", "/inventory", "/account"];
+  const displayItems = drawerNavItems.filter((item) => {
+    if (isMobile && mobileTabHrefs.includes(item.href)) {
+      return false;
+    }
+    return true;
+  });
+
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader className="border-b border-sidebar-border px-1 sm:px-2 py-6 sm:py-4 pt-[calc(env(safe-area-inset-top)+1.5rem)] sm:pt-4 bg-sidebar/50 backdrop-blur-sm transition-all duration-300">
@@ -66,7 +74,7 @@ export function UserDrawerSidebar(props: React.ComponentProps<typeof Sidebar>) {
 
       <SidebarContent className="p-3">
         <SidebarMenu className="gap-1.5">
-          {drawerNavItems.map((item: any) => (
+          {displayItems.map((item: any) => (
             <SidebarMenuItem key={item.href}>
               <SidebarMenuButton asChild tooltip={t(item.translationKey || "")}>
                 <NavLink
@@ -120,7 +128,7 @@ export function UserDrawerSidebar(props: React.ComponentProps<typeof Sidebar>) {
                     className="cursor-pointer gap-2.5 text-destructive focus:text-destructive focus:bg-destructive/5 rounded-lg py-2.5 font-medium transition-colors"
                   >
                     <LogOut className="size-4" />
-                    <span>{t("confirmLogout.title")}</span>
+                    <span>{t("common.confirmLogout.title")}</span>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>

@@ -1,9 +1,10 @@
 "use client";
 
 import React from "react";
-import { formatCurrency, formatDate } from "@/lib/formatter";
-import { CreditCard, Wallet, Landmark, Receipt, ArrowRight } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { formatCurrency } from "@/lib/formatter";
+import { CreditCard, Wallet, Landmark, Receipt } from "lucide-react";
+import { BankAvatar } from "@/components/account/BankAvatar";
+import { useLanguage } from "@/hooks/language.hook";
 
 interface PaymentListProps {
   payments?: any[];
@@ -12,7 +13,13 @@ interface PaymentListProps {
   type: "purchase" | "sale";
 }
 
-export function PaymentList({ payments = [], cashPayment, loan, type }: PaymentListProps) {
+export function PaymentList({
+  payments = [],
+  cashPayment,
+  loan,
+  type,
+}: PaymentListProps) {
+  const { t } = useLanguage();
   const hasPayments = payments.length > 0 || cashPayment || loan;
 
   if (!hasPayments) return null;
@@ -21,107 +28,98 @@ export function PaymentList({ payments = [], cashPayment, loan, type }: PaymentL
     <div className="flex flex-col gap-4">
       <h3 className="text-lg font-bold tracking-tight flex items-center gap-2">
         <CreditCard className="h-5 w-5 text-primary" />
-        Payment Details
+        {t("common.trade.paymentDetails")}
       </h3>
 
       <div className="space-y-3">
-        {/* Bank Payments */}
-        {payments.map((payment, index) => (
-          <PaymentItem
-            key={payment.id || index}
-            icon={<Landmark className="h-4 w-4" />}
-            label={payment.account?.name || "Bank Account"}
-            amount={payment.amount}
-            date={payment.createdAt}
-            description={payment.description}
-            type="bank"
-          />
-        ))}
-
-        {/* Cash Payment */}
+        {/* Cash Payment Card */}
         {cashPayment && (
-          <PaymentItem
-            icon={<Wallet className="h-4 w-4" />}
-            label="Cash Payment"
-            amount={cashPayment.amount}
-            description={cashPayment.description}
-            type="cash"
-          />
+          <div className="rounded-2xl border bg-card p-4 shadow-sm flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="rounded-full p-2 bg-emerald-100 text-emerald-600">
+                <Wallet className="h-4 w-4" />
+              </div>
+              <span className="text-sm font-bold text-foreground">
+                {t("common.trade.cashPayment")}
+              </span>
+            </div>
+            <span className="text-base font-bold text-foreground">
+              {formatCurrency(cashPayment.amount)}
+            </span>
+          </div>
         )}
 
-        {/* Loan */}
+        {/* Bank Payments Group Card */}
+        {payments.length > 0 && (
+          <div className="rounded-2xl border bg-card p-4 shadow-sm flex flex-col gap-3">
+            <h4 className="text-sm font-bold flex items-center gap-2">
+              <Landmark className="h-6 w-6 text-primary" />
+              <span className="text-sm font-bold text-foreground">
+                {t("common.trade.bankPayments")}
+              </span>
+            </h4>
+            <div className="flex flex-col border-t border-border/50">
+              {payments.map((p, idx) => (
+                <div
+                  key={p.id || idx}
+                  className="flex justify-between items-center bg-muted/20 p-3 rounded-xl border-b border-border/50"
+                >
+                  <div className="flex items-center gap-3">
+                    <BankAvatar
+                      name={p.account?.bank}
+                      type={p.account?.type}
+                      size={36}
+                    />
+                    <div className="flex flex-col gap-0.5">
+                      <span className="text-sm font-bold text-foreground">
+                        {p.account?.name || "Bank Account"}
+                      </span>
+                      {p.account?.bank && (
+                        <span className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">
+                          {p.account.bank.replace(/_/g, " ")}{" "}
+                          {p.account.accountNumber
+                            ? `• ${p.account.accountNumber}`
+                            : ""}
+                        </span>
+                      )}
+                      {p.description && (
+                        <span className="text-[10px] text-muted-foreground italic mt-0.5 line-clamp-1">
+                          "{p.description}"
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  <div className="text-right flex flex-col items-end">
+                    <span className="font-bold text-base text-foreground">
+                      {formatCurrency(p.amount)}
+                    </span>
+                    <span className="text-[10px] font-bold text-muted-foreground uppercase">
+                      {t("common.trade.received")}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Loan Card */}
         {loan && (
-          <PaymentItem
-            icon={<Receipt className="h-4 w-4" />}
-            label="Loan / Deferred"
-            amount={loan.amount}
-            description={loan.description}
-            type="loan"
-            isStatus
-          />
+          <div className="rounded-2xl border bg-rose-500/10 p-4 shadow-sm flex items-center justify-between border-rose-500/20 dark:border-rose-400/30">
+            <div className="flex items-center gap-3">
+              <div className="rounded-full p-2 bg-rose-100 text-rose-600">
+                <Receipt className="h-4 w-4" />
+              </div>
+              <span className="text-sm font-bold text-foreground">
+                {t("common.trade.outstanding")}
+              </span>
+            </div>
+            <span className="text-base font-bold text-rose-600">
+              {formatCurrency(loan.amount)}
+            </span>
+          </div>
         )}
       </div>
-    </div>
-  );
-}
-
-function PaymentItem({ 
-  icon, 
-  label, 
-  amount, 
-  date, 
-  description, 
-  type,
-  isStatus
-}: { 
-  icon: React.ReactNode; 
-  label: string; 
-  amount: number; 
-  date?: string | Date;
-  description?: string;
-  type: 'bank' | 'cash' | 'loan';
-  isStatus?: boolean;
-}) {
-  const isLoan = type === 'loan';
-  
-  return (
-    <div className={cn(
-      "flex flex-col gap-2 rounded-2xl border p-4 shadow-sm",
-      isLoan ? "bg-rose-50/30 border-rose-100" : "bg-card"
-    )}>
-      <div className="flex items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
-          <div className={cn(
-            "rounded-full p-2",
-            type === 'bank' && "bg-blue-100 text-blue-600",
-            type === 'cash' && "bg-emerald-100 text-emerald-600",
-            type === 'loan' && "bg-rose-100 text-rose-600"
-          )}>
-            {icon}
-          </div>
-          <div className="flex flex-col">
-            <span className="text-sm font-bold text-foreground">{label}</span>
-            {date && (
-              <span className="text-xs text-muted-foreground">{formatDate(date)}</span>
-            )}
-          </div>
-        </div>
-        <div className="text-right">
-          <span className={cn(
-            "text-base font-bold",
-            isLoan ? "text-rose-600" : "text-foreground"
-          )}>
-            {formatCurrency(amount)}
-          </span>
-        </div>
-      </div>
-      
-      {description && (
-        <div className="mt-1 flex items-start gap-2 text-xs text-muted-foreground border-t pt-2 italic">
-          <ArrowRight className="h-3 w-3 mt-0.5 flex-shrink-0" />
-          <span>{description}</span>
-        </div>
-      )}
     </div>
   );
 }

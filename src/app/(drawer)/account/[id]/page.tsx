@@ -4,36 +4,36 @@ import React, { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import {
   useGetAccount,
-  useTransferFunds,
   useFetchAccountSelector,
-  useUpdateAccount,
+  useTransferFunds,
   useDeleteAccount,
 } from "@/api/account/api.account";
 import { LoadingView, ErrorView } from "@/components/common/StateView";
+import { usePermissions } from "@/hooks/permission.hook";
 import { Button } from "@/components/ui/button";
 import {
   ArrowLeft,
-  ArrowLeftRight,
-  Calendar,
-  Building2,
-  Hash,
-  Pencil,
-  Trash2,
   ShoppingBag,
   TrendingUp,
   Receipt,
+  ArrowLeftRight,
   HandCoins,
   History,
+  Pencil,
+  Trash2,
+  Hash,
   CheckCircle2,
-  XCircle,
+  EyeOff,
+  Eye,
 } from "lucide-react";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
+  CardDescription,
 } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import {
   Table,
   TableBody,
@@ -48,11 +48,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import TransferFundsForm from "@/components/forms/account/TransferFundsForm";
-import AccountForm from "@/components/forms/account/AccountForm";
-import { Badge } from "@/components/ui/badge";
-import { formatDate } from "@/lib/formatter";
-import { usePermissions } from "@/hooks/permission.hook";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -63,19 +58,36 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { BankAvatar } from "@/components/account/BankAvatar";
+import { useLanguage } from "@/hooks/language.hook";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { cn } from "@/lib/utils";
 import LastAudit from "@/components/audit/LastAudit";
+import TransferFundsForm from "@/components/forms/account/TransferFundsForm";
+import { formatCurrency, formatDate } from "@/lib/formatter";
+import { MoreVertical } from "lucide-react";
+import { useAppSelector } from "@/redux/hooks";
 
 export default function AccountDetailPage() {
   const { id } = useParams();
   const router = useRouter();
+  const { t } = useLanguage();
+  const { company } = useAppSelector((state) => state.userAuth);
+
+  const isMobile = useIsMobile();
   const { canUpdate, canDelete } = usePermissions();
   const hasUpdateAccess = canUpdate("ACCOUNT");
   const hasDeleteAccess = canDelete("ACCOUNT");
 
   const [isTransferOpen, setIsTransferOpen] = useState(false);
-  const [isEditOpen, setIsEditOpen] = useState(false);
   const [isDeleteAlertOpen, setIsDeleteAlertOpen] = useState(false);
+  const [showBalance, setShowBalance] = useState(true);
 
   const {
     data: accountData,
@@ -85,7 +97,6 @@ export default function AccountDetailPage() {
   } = useGetAccount(id as string);
   const { data: accountsData } = useFetchAccountSelector();
   const transferFunds = useTransferFunds();
-  const updateAccount = useUpdateAccount();
   const deleteAccount = useDeleteAccount();
 
   if (isLoading) return <LoadingView />;
@@ -100,15 +111,6 @@ export default function AccountDetailPage() {
     transferFunds.mutate(data, {
       onSuccess: () => {
         setIsTransferOpen(false);
-        refetch();
-      },
-    });
-  };
-
-  const handleUpdate = (formData: any) => {
-    updateAccount.mutate(formData, {
-      onSuccess: () => {
-        setIsEditOpen(false);
         refetch();
       },
     });
@@ -143,255 +145,295 @@ export default function AccountDetailPage() {
     }
   };
 
+  const formatAccountNumber = (num: string | undefined) => {
+    if (!num) return "**** **** **** ****";
+    const last4 = num.slice(-4);
+    return `•••• •••• •••• ${last4}`;
+  };
+
   return (
-    <div className="space-y-6 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <div className="space-y-8 max-w-7xl mx-auto px-4 ">
+      {/* 1. Top Part: Header with Back Button and Actions */}
+      <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           <Button
-            variant="outline"
+            variant="ghost"
             size="icon"
             onClick={() => router.back()}
-            className="rounded-full"
+            className="rounded-full h-11 w-11 bg-background shadow-sm border border-muted hover:bg-muted/50 transition-all"
           >
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-3xl font-extrabold tracking-tight">
-                {account.name}
-              </h1>
-              {/* <Badge variant={account.isActive ? "default" : "secondary"} className="rounded-full px-3">
-                  {account.isActive ? "Active" : "Inactive"}
-               </Badge> */}
+            <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-foreground">
+              {account.name}
+            </h1>
+            <div className="flex items-center gap-2 mt-1">
+              <LastAudit
+                lastAudit={account.lastAuditLog}
+                className="opacity-80"
+              />
             </div>
-            <p className="text-sm text-muted-foreground mt-1">
-              Account Overview & Transaction History
-            </p>
           </div>
-          <LastAudit
-            lastAudit={account.lastAuditLog}
-            className="ml-2 hidden lg:inline-flex"
-          />
+        </div>
+
+        <div className="flex items-center gap-2">
+          {/* Desktop Actions */}
+          <div className="hidden sm:flex items-center gap-2">
+            {!isCashAccount && hasUpdateAccess && (
+              <Button
+                variant="outline"
+                size="sm"
+                className="rounded-xl h-10 px-4 font-bold border-muted-foreground/10 hover:bg-primary/5 hover:text-primary transition-all"
+                onClick={() => router.push(`/account/${id}/edit`)}
+              >
+                <Pencil className="mr-2 h-4 w-4" />
+                {t("common:edit")}
+              </Button>
+            )}
+            {!isCashAccount && hasDeleteAccess && (
+              <Button
+                variant="outline"
+                size="sm"
+                className="rounded-xl h-10 px-4 font-bold text-destructive border-destructive/10 hover:bg-destructive/5 transition-all"
+                onClick={() => setIsDeleteAlertOpen(true)}
+              >
+                <Trash2 className="mr-2 h-4 w-4" />
+                {t("common:delete")}
+              </Button>
+            )}
+          </div>
+
+          {/* Mobile Actions More Button */}
+          <div className="sm:hidden">
+            {!isCashAccount && (hasUpdateAccess || hasDeleteAccess) && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="h-10 w-10 rounded-xl"
+                  >
+                    <MoreVertical className="h-5 w-5" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent
+                  align="end"
+                  className="w-40 rounded-xl bg-card border-muted-foreground/10 shadow-xl"
+                >
+                  {hasUpdateAccess && (
+                    <DropdownMenuItem
+                      className="rounded-lg m-1 py-2.5 font-bold"
+                      onClick={() => router.push(`/account/${id}/edit`)}
+                    >
+                      <Pencil className="mr-2 h-4 w-4" /> {t("common:edit")}
+                    </DropdownMenuItem>
+                  )}
+                  {hasDeleteAccess && (
+                    <DropdownMenuItem
+                      className="rounded-lg m-1 py-2.5 text-destructive font-bold"
+                      onClick={() => setIsDeleteAlertOpen(true)}
+                    >
+                      <Trash2 className="mr-2 h-4 w-4" /> {t("common:delete")}
+                    </DropdownMenuItem>
+                  )}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
+          </div>
         </div>
       </div>
 
-      <div className="flex flex-col items-end gap-2">
-        <LastAudit lastAudit={account.lastAuditLog} className="lg:hidden" />
-        <div className="flex gap-2">
-          {!isCashAccount && hasUpdateAccess && (
-            <Button
-              variant="outline"
-              className="rounded-full px-5"
-              onClick={() => setIsEditOpen(true)}
-            >
-              <Pencil className="mr-2 h-4 w-4" /> Edit
-            </Button>
-          )}
-          {!isCashAccount && hasDeleteAccess && (
-            <Button
-              variant="outline"
-              className="text-destructive hover:bg-destructive/10 border-destructive/20 rounded-full px-5"
-              onClick={() => setIsDeleteAlertOpen(true)}
-            >
-              <Trash2 className="mr-2 h-4 w-4" /> Delete
-            </Button>
-          )}
-          <Button
-            className="rounded-full px-6 shadow-sm"
-            onClick={() => setIsTransferOpen(true)}
-          >
-            <ArrowLeftRight className="mr-2 h-4 w-4" /> Transfer
-          </Button>
-        </div>
-      </div>
+      {/* 2. Middle Part: Virtual Card and Transfer Form Next to Each Other */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+        {/* Virtual Card */}
+        <div className="relative h-64 sm:h-72 w-full max-w-md mx-auto lg:mx-0 rounded-[2.5rem] overflow-hidden shadow-2xl group cursor-pointer">
+          <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary to-[#ef4444] transition-transform duration-700 group-hover:scale-110" />
 
-      <div className="grid gap-6 md:grid-cols-3">
-        <Card className="md:col-span-2 overflow-hidden border-none shadow-md bg-card relative group">
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent pointer-events-none" />
-          <CardHeader>
-            <CardTitle className="text-lg font-bold">
-              Account Information
-            </CardTitle>
-            <CardDescription>
-              Details for your {account.type} account
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="grid gap-6 lg:gap-8 lg:grid-cols-2">
-            <div className="space-y-6">
+          {/* Decorative Elements */}
+          <div className="absolute -top-12 -right-12 w-48 h-48 bg-white/10 rounded-full blur-3xl" />
+          <div className="absolute -bottom-12 -left-12 w-48 h-48 bg-black/10 rounded-full blur-3xl" />
+
+          <div className="relative h-full p-8 sm:p-10 flex flex-col text-white">
+            <div className="flex justify-between items-start">
               <div className="flex items-center gap-4">
-                <div className="p-3 rounded-2xl bg-muted/50 text-primary border border-primary/5">
+                {isCashAccount ? (
+                  <div className="p-3 bg-white/20 backdrop-blur-md rounded-2xl border border-white/30 shadow-lg">
+                    <History className="h-8 w-8 text-white" />
+                  </div>
+                ) : (
                   <BankAvatar
                     name={account.bank}
                     type={account.type}
-                    size={44}
+                    size={64}
                   />
-                </div>
+                )}
                 <div>
-                  <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-widest leading-tight mb-1">
-                    Financial Institution
+                  <p className="text-lg sm:text-xl font-bold tracking-wide">
+                    {isCashAccount
+                      ? t("accounts.accountCard.cash")
+                      : t(`accounts.bank.${account.bank}`)}
                   </p>
-                  <p className="font-bold text-lg capitalize leading-none">
-                    {account.bank?.toLowerCase().replace(/_/g, " ") ||
-                      "Internal"}
+                  <p className="text-xs text-white/70 font-medium tracking-wider">
+                    {account.branch || t("accounts.accountCard.headquarters")}
                   </p>
                 </div>
               </div>
-              <div className="flex items-center gap-4">
-                <div className="p-3.5 rounded-2xl bg-muted/50 text-primary border border-primary/5">
-                  <Hash className="h-5 w-5" />
-                </div>
-                <div>
-                  <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-widest leading-tight mb-1">
-                    Account Number
-                  </p>
-                  <p className="font-mono text-lg font-bold leading-none">
-                    {account.number || "Not Provided"}
-                  </p>
-                </div>
+              <div className="relative">
+                <div className="absolute inset-0 bg-[#ffd9007a] blur-lg opacity-50" />
+                <Hash className="h-10 w-10 text-white/40 rotate-12 relative" />
               </div>
             </div>
-            <div className="flex flex-col justify-center items-center lg:items-end bg-primary/5 rounded-3xl p-6 border border-primary/10">
-              <p className="text-xs text-muted-foreground font-semibold uppercase tracking-wider mb-2">
-                Available Balance
-              </p>
-              <div className="flex items-baseline gap-2">
-                <span className="text-4xl xs:text-5xl font-black text-primary tracking-tighter">
-                  {Number(account.balance).toLocaleString()}
-                </span>
-                <span className="text-base font-medium opacity-70 text-primary uppercase">
-                  ETB
-                </span>
-              </div>
-              <div className="mt-4 flex items-center gap-2 text-xs text-emerald-600 font-medium px-3 py-1.5 bg-emerald-50 rounded-full border border-emerald-100">
-                <CheckCircle2 className="h-3.5 w-3.5" /> Verified Balance
-              </div>
-            </div>
-          </CardContent>
-        </Card>
 
-        <Card className="shadow-md border-none lg:h-full flex flex-col">
-          <CardHeader>
-            <CardTitle className="text-lg font-bold">Activity Volume</CardTitle>
-            <CardDescription>Lifetime summary</CardDescription>
-          </CardHeader>
-          <CardContent className="grid gap-4 flex-grow">
-            <div className="flex justify-between items-center p-4 rounded-2xl bg-emerald-50 border border-emerald-100 dark:bg-emerald-500/5 dark:border-emerald-500/10 group hover:scale-[1.02] transition-transform">
-              <div className="flex flex-col">
-                <p className="text-[10px] font-bold text-emerald-600 uppercase tracking-widest leading-tight">
-                  Total Inflow
+            <div className="mt-auto space-y-6">
+              <div>
+                <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-white/50 mb-0">
+                  {t("accounts.accountCard.accountNumber")}
                 </p>
-                <p className="text-xl font-black text-emerald-700 dark:text-emerald-400">
-                  +
-                  {Number(
-                    transactions
-                      .filter((t: any) => t.direction === "in")
-                      .reduce(
-                        (acc: number, t: any) => acc + Number(t.amount),
-                        0,
-                      ),
-                  ).toLocaleString()}
+                <p className="text-xl sm:text-2xl font-mono tracking-[0.2em] text-white/90">
+                  {formatAccountNumber(account.number)}
                 </p>
               </div>
-              <div className="bg-emerald-500/10 p-2 rounded-xl">
-                <TrendingUp className="h-6 w-6 text-emerald-500" />
-              </div>
-            </div>
-            <div className="flex justify-between items-center p-4 rounded-2xl bg-rose-50 border border-rose-100 dark:bg-rose-500/5 dark:border-rose-500/10 group hover:scale-[1.02] transition-transform">
-              <div className="flex flex-col">
-                <p className="text-[10px] font-bold text-rose-600 uppercase tracking-widest leading-tight">
-                  Total Outflow
-                </p>
-                <p className="text-xl font-black text-rose-700 dark:text-rose-400">
-                  -
-                  {Number(
-                    transactions
-                      .filter((t: any) => t.direction === "out")
-                      .reduce(
-                        (acc: number, t: any) => acc + Number(t.amount),
-                        0,
-                      ),
-                  ).toLocaleString()}
-                </p>
-              </div>
-              <div className="bg-rose-500/10 p-2 rounded-xl">
-                <TrendingUp className="h-6 w-6 text-rose-500 rotate-180" />
+
+              <div className="flex justify-between items-end">
+                <div>
+                  <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-white/50 mb-0">
+                    {t("accounts.accountCard.holder")}
+                  </p>
+                  <p className="text-sm font-bold tracking-wider text-white/80">
+                    {company?.name}
+                  </p>
+                </div>
+                <div className="text-right">
+                  <div className="flex items-center justify-end gap-2 mb-1">
+                    <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-white/50">
+                      {t("accounts.accountCard.balance")}
+                    </p>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setShowBalance(!showBalance);
+                      }}
+                      className="hover:text-white/100 transition-colors bg-white/10 p-1 rounded-md"
+                    >
+                      {showBalance ? (
+                        <EyeOff className="h-3 w-3" />
+                      ) : (
+                        <Eye className="h-3 w-3" />
+                      )}
+                    </button>
+                  </div>
+                  <p className="text-2xl sm:text-3xl font-black tabular-nums tracking-tighter">
+                    {showBalance
+                      ? formatCurrency(Number(account.balance))
+                      : "••••••••"}
+                  </p>
+                </div>
               </div>
             </div>
-            <div className="pt-2 flex items-center justify-center gap-2 text-muted-foreground border-t border-dashed mt-auto">
-              <History className="h-4 w-4 opacity-50" />
-              <span className="text-xs font-medium">
-                {transactions.length} Transactions recorded
-              </span>
+          </div>
+        </div>
+
+        {/* Transfer Form or Button */}
+        <div className="w-full h-full flex flex-col">
+          {isMobile ? (
+            <Button
+              onClick={() => setIsTransferOpen(true)}
+              className="w-full h-16 rounded-[2rem] font-black text-lg shadow-xl shadow-primary/20 transition-all active:scale-95 group"
+            >
+              <ArrowLeftRight className="mr-3 h-6 w-6 group-hover:rotate-180 transition-transform duration-500" />
+              {t("accounts.transfer.transfer")}
+            </Button>
+          ) : (
+            <div className="p-0 border-none shadow-xl rounded-[1.5rem] overflow-hidden bg-primary/5 border border-primary/10 h-full">
+              <CardHeader className="p-4 text-primary-foreground">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-white/20 rounded-xl backdrop-blur-md">
+                    <ArrowLeftRight className="h-5 w-5" />
+                  </div>
+                  <CardTitle className="text-lg font-black tracking-tight uppercase">
+                    {t("accounts.transfer.title")}
+                  </CardTitle>
+                </div>
+              </CardHeader>
+              <CardContent className="pb-4">
+                <TransferFundsForm
+                  fromAccountId={account.id}
+                  accounts={accounts}
+                  onTransfer={handleTransfer}
+                  loading={transferFunds.isPending}
+                />
+              </CardContent>
             </div>
-          </CardContent>
-        </Card>
+          )}
+        </div>
       </div>
 
-      <Card className="shadow-md border-none overflow-hidden sm:rounded-2xl mt-6">
-        <CardHeader className="bg-muted/30 flex flex-row items-center justify-between pb-4">
+      {/* 3. Bottom Part: Ledger List (Responsive Table/Cards) */}
+      <div className="border-none shadow-xl rounded-[1.5rem] overflow-hidden">
+        <CardHeader className="bg-muted/30 px-6 py-6 sm:px-10 flex flex-row items-center justify-between">
           <div>
-            <CardTitle className="text-lg font-bold">
-              Recent Transactions
+            <CardTitle className="text-xl font-black tracking-tight">
+              {t("accounts.tranxCard.transactions")}
             </CardTitle>
-            <CardDescription>Last activities on this account</CardDescription>
+            <CardDescription className="text-xs font-medium">
+              {t("accounts.tranxCard.subtitle")}
+            </CardDescription>
           </div>
-          <Badge
-            variant="outline"
-            className="bg-background/50 border-muted-foreground/10 px-3 font-semibold rounded-full hidden sm:flex"
-          >
-            {transactions.length} Records
+          <Badge className="rounded-full bg-primary/10 text-primary border-none font-bold px-4 h-8">
+            {transactions.length} {t("accounts.tranxCard.records")}
           </Badge>
         </CardHeader>
         <CardContent className="p-0 sm:p-2">
-          {/* Card list for mobile (hidden on medium-up) */}
-          <div className="block sm:hidden divide-y divide-muted-foreground/10 px-4">
+          {/* Card list for mobile */}
+          <div className="block sm:hidden divide-y divide-muted px-4">
             {transactions.length === 0 ? (
-              <div className="h-48 flex flex-col items-center justify-center text-muted-foreground gap-2">
-                <History className="h-10 w-10 opacity-20" />
-                <p>No transactions found.</p>
+              <div className="py-20 text-center space-y-3">
+                <History className="h-12 w-12 mx-auto text-muted-foreground/30" />
+                <p className="text-muted-foreground font-medium italic">
+                  {t("accounts.emptyTranxs")}
+                </p>
               </div>
             ) : (
               transactions.map((tx: any) => (
                 <div
                   key={tx.id}
-                  className="py-5 group active:bg-muted/50 transition-colors"
+                  className="py-5 flex items-center justify-between gap-4"
                 >
-                  <div className="flex justify-between items-start mb-2">
-                    <div className="flex items-center gap-3">
-                      <div className="p-2 rounded-xl bg-muted group-active:bg-background">
-                        {getTransactionIcon(tx.source)}
-                      </div>
-                      <div className="flex flex-col">
-                        <span className="font-bold text-sm capitalize">
-                          {tx.source.replace(/_/g, " ")}
-                        </span>
-                        <span className="text-[10px] text-muted-foreground font-semibold">
-                          {formatDate(tx.createdAt)}
-                        </span>
-                      </div>
-                    </div>
-                    <Badge
-                      variant="outline"
-                      className={`text-[10px] h-4.5 px-1.5 rounded-sm font-bold border-none ${tx.direction === "in" ? "text-emerald-600 bg-emerald-50" : "text-rose-600 bg-rose-50"}`}
+                  <div className="flex items-center gap-4 min-w-0">
+                    <div
+                      className={cn(
+                        "p-3 rounded-2xl border shrink-0",
+                        tx.direction === "in"
+                          ? "bg-emerald-50 border-emerald-100"
+                          : "bg-rose-50 border-rose-100",
+                      )}
                     >
-                      {tx.direction === "in" ? "RECEIVED" : "SENT"}
-                    </Badge>
-                  </div>
-
-                  <div className="flex justify-between items-end gap-4 pl-12">
-                    <div className="flex flex-col gap-1 overflow-hidden">
-                      <p className="text-xs font-medium text-foreground line-clamp-1">
-                        {tx.description || "No description"}
+                      {getTransactionIcon(tx.source)}
+                    </div>
+                    <div className="min-w-0">
+                      <p className="font-bold text-sm text-foreground truncate capitalize">
+                        {tx.source.replace(/_/g, " ")}
                       </p>
-                      <p className="text-[10px] text-muted-foreground font-bold truncate">
-                        Partner: {tx.relatedName || "Generic"}
+                      <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider">
+                        {formatDate(tx.createdAt)}
                       </p>
                     </div>
+                  </div>
+                  <div className="text-right shrink-0">
                     <p
-                      className={`text-base font-black whitespace-nowrap ${tx.direction === "in" ? "text-emerald-600" : "text-rose-600"}`}
+                      className={cn(
+                        "text-base font-black tabular-nums",
+                        tx.direction === "in"
+                          ? "text-emerald-600"
+                          : "text-rose-600",
+                      )}
                     >
                       {tx.direction === "in" ? "+" : "-"}{" "}
                       {Number(tx.amount).toLocaleString()}
+                    </p>
+                    <p className="text-[10px] font-bold text-muted-foreground/60 italic truncate max-w-[100px]">
+                      {tx.description || "---"}
                     </p>
                   </div>
                 </div>
@@ -399,85 +441,84 @@ export default function AccountDetailPage() {
             )}
           </div>
 
-          {/* Table for larger screens (hidden on mobile) */}
+          {/* Table view for desktop */}
           <div className="hidden sm:block">
             <Table>
-              <TableHeader className="bg-muted/50 border-none">
+              <TableHeader className="bg-muted/10 border-none">
                 <TableRow className="hover:bg-transparent border-none">
-                  <TableHead className="font-bold py-4 pl-6 text-xs uppercase tracking-wider text-muted-foreground/70">
-                    Transaction
+                  <TableHead className="py-5 pl-10 text-[10px] uppercase font-black tracking-[0.2em] text-muted-foreground/50">
+                    {t("accounts.tranxCard.transaction")}
                   </TableHead>
-                  <TableHead className="font-bold py-4 text-xs uppercase tracking-wider text-muted-foreground/70">
-                    Description
+                  <TableHead className="py-5 text-[10px] uppercase font-black tracking-[0.2em] text-muted-foreground/50">
+                    {t("accounts.tranxCard.description")}
                   </TableHead>
-                  <TableHead className="font-bold py-4 text-xs uppercase tracking-wider text-muted-foreground/70">
-                    Related Party
-                  </TableHead>
-                  <TableHead className="font-bold py-4 text-right text-xs uppercase tracking-wider text-muted-foreground/70">
-                    Amount
-                  </TableHead>
-                  <TableHead className="font-bold py-4 text-center pr-6 text-xs uppercase tracking-wider text-muted-foreground/70">
-                    Date
+                  <TableHead className="py-5 text-right pr-10 text-[10px] uppercase font-black tracking-[0.2em] text-muted-foreground/50">
+                    {t("accounts.tranxCard.amount")}
                   </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {transactions.length === 0 ? (
                   <TableRow>
-                    <TableCell
-                      colSpan={5}
-                      className="h-48 text-center text-muted-foreground border-none"
-                    >
-                      <div className="flex flex-col items-center gap-2">
-                        <History className="h-10 w-10 opacity-20" />
-                        <p>No transactions found.</p>
-                      </div>
+                    <TableCell colSpan={3} className="py-24 text-center">
+                      <History className="h-16 w-16 mx-auto text-muted-foreground/20 mb-4" />
+                      <p className="text-muted-foreground font-bold italic">
+                        {t("accounts.emptyTranxs")}
+                      </p>
                     </TableCell>
                   </TableRow>
                 ) : (
                   transactions.map((tx: any) => (
                     <TableRow
                       key={tx.id}
-                      className="hover:bg-muted/30 transition-colors border-muted-foreground/10 group"
+                      className="hover:bg-muted/20 border-b border-muted/50 last:border-0 transition-colors group"
                     >
-                      <TableCell className="py-4 pl-6">
-                        <div className="flex items-center gap-3">
-                          <div className="p-2.5 rounded-xl bg-muted flex items-center justify-center shadow-sm border border-black/5 group-hover:bg-background transition-colors">
+                      <TableCell className="py-6 pl-10">
+                        <div className="flex items-center gap-4">
+                          <div
+                            className={cn(
+                              "p-3 rounded-2xl border transition-transform group-hover:scale-110",
+                              tx.direction === "in"
+                                ? "bg-emerald-50 border-emerald-100"
+                                : "bg-rose-50 border-rose-100",
+                            )}
+                          >
                             {getTransactionIcon(tx.source)}
                           </div>
-                          <div className="flex flex-col">
-                            <span className="font-bold text-sm capitalize group-hover:text-primary transition-colors">
+                          <div>
+                            <p className="font-bold text-sm text-foreground capitalize leading-tight mb-1">
                               {tx.source.replace(/_/g, " ")}
-                            </span>
-                            <Badge
-                              variant="outline"
-                              className={`text-[9px] h-4 px-1.5 w-fit rounded-sm font-bold border-none ${tx.direction === "in" ? "text-emerald-600 bg-emerald-50/50" : "text-rose-600 bg-rose-50/50"}`}
-                            >
-                              {tx.direction === "in" ? "RECEIVE" : "SEND"}
-                            </Badge>
+                            </p>
+                            <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest">
+                              {formatDate(tx.createdAt)}
+                            </p>
                           </div>
                         </div>
                       </TableCell>
-                      <TableCell className="py-4 font-medium text-xs sm:text-sm text-foreground/80 max-w-[200px]">
-                        <p className="line-clamp-1">{tx.description || "-"}</p>
+                      <TableCell className="py-6">
+                        <p className="text-xs font-semibold text-muted-foreground italic line-clamp-1 max-w-[250px]">
+                          {tx.description ||
+                            t("accounts.tranxCard.noDescription")}
+                        </p>
                       </TableCell>
-                      <TableCell className="py-4 font-bold text-xs sm:text-sm text-muted-foreground">
-                        {tx.relatedName || "Generic"}
-                      </TableCell>
-                      <TableCell
-                        className={`py-4 text-right font-black text-sm sm:text-lg tabular-nums ${tx.direction === "in" ? "text-emerald-600" : "text-rose-600"}`}
-                      >
-                        {tx.direction === "in" ? "+" : "-"}{" "}
-                        {Number(tx.amount).toLocaleString()}
-                      </TableCell>
-                      <TableCell className="py-4 text-center pr-6">
-                        <div className="flex flex-col items-center">
-                          <span className="text-xs font-bold text-muted-foreground whitespace-nowrap">
-                            {formatDate(tx.createdAt)}
-                          </span>
-                          <span className="text-[10px] text-muted-foreground font-black opacity-30 uppercase tracking-widest hidden lg:block">
-                            VERIFIED
-                          </span>
+                      <TableCell className="py-6 text-right pr-10">
+                        <div className="flex flex-col items-end">
+                          <p
+                            className={cn(
+                              "text-lg font-black tabular-nums tracking-tight",
+                              tx.direction === "in"
+                                ? "text-emerald-600"
+                                : "text-rose-600",
+                            )}
+                          >
+                            {tx.direction === "in" ? "+" : "-"}{" "}
+                            {Number(tx.amount).toLocaleString()}
+                          </p>
+                          <p className="text-[10px] font-bold text-muted-foreground/40 tracking-wider">
+                            {tx.direction === "in"
+                              ? t("accounts.tranxCard.received")
+                              : t("accounts.tranxCard.sent")}
+                          </p>
                         </div>
                       </TableCell>
                     </TableRow>
@@ -487,67 +528,53 @@ export default function AccountDetailPage() {
             </Table>
           </div>
         </CardContent>
-      </Card>
+      </div>
 
-      {/* Transfer Dialog */}
+      {/* Modals & Dialogs */}
       <Dialog open={isTransferOpen} onOpenChange={setIsTransferOpen}>
-        <DialogContent className="sm:max-w-md rounded-2xl">
-          <DialogHeader>
-            <DialogTitle className="text-xl font-bold">
-              Transfer Funds
-            </DialogTitle>
-          </DialogHeader>
-          <TransferFundsForm
-            fromAccountId={account.id}
-            accounts={accounts}
-            onTransfer={handleTransfer}
-            loading={transferFunds.isPending}
-          />
+        <DialogContent className="sm:max-w-md rounded-2xl sm:rounded-[2rem] p-0 overflow-hidden border-none shadow-2xl max-h-[95vh] flex flex-col">
+          <div className="bg-primary px-5 sm:px-6 py-6 sm:py-8 text-primary-foreground shrink-0">
+            <DialogHeader>
+              <DialogTitle className="text-xl sm:text-2xl font-black tracking-tight">
+                {t("accounts.transfer.title")}
+              </DialogTitle>
+              <p className="text-primary-foreground/70 text-xs sm:text-sm mt-2">
+                {t("accounts.transfer.subtitle")}
+              </p>
+            </DialogHeader>
+          </div>
+          <div className="p-5 sm:p-6 overflow-y-auto">
+            <TransferFundsForm
+              fromAccountId={account.id}
+              accounts={accounts}
+              onTransfer={handleTransfer}
+              loading={transferFunds.isPending}
+            />
+          </div>
         </DialogContent>
       </Dialog>
 
-      {/* Edit Dialog */}
-      <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
-        <DialogContent className="sm:max-w-md rounded-2xl">
-          <DialogHeader>
-            <DialogTitle className="text-xl font-bold">
-              Edit Account
-            </DialogTitle>
-          </DialogHeader>
-          <AccountForm
-            mode="edit"
-            data={account}
-            onSave={handleUpdate}
-            loading={updateAccount.isPending}
-          />
-        </DialogContent>
-      </Dialog>
-
-      {/* Delete Confirmation */}
       <AlertDialog open={isDeleteAlertOpen} onOpenChange={setIsDeleteAlertOpen}>
-        <AlertDialogContent className="rounded-2xl">
+        <AlertDialogContent className="rounded-2xl max-w-[90vw] sm:max-w-md">
           <AlertDialogHeader>
             <AlertDialogTitle className="text-xl font-bold">
-              Confirm Deletion
+              {t("common:confirmDelete.title", {
+                entity: t("accounts.moduleName"),
+              })}
             </AlertDialogTitle>
-            <AlertDialogDescription className="text-base text-muted-foreground">
-              Are you sure you want to delete{" "}
-              <span className="font-bold text-foreground">
-                "{account.name}"
-              </span>
-              ? This will remove all associated transaction history. This action
-              cannot be undone.
+            <AlertDialogDescription className="text-sm sm:text-base text-muted-foreground">
+              {t("common:confirmDelete.message", { entity: account.name })}
             </AlertDialogDescription>
           </AlertDialogHeader>
-          <AlertDialogFooter className="gap-2 sm:gap-0">
-            <AlertDialogCancel className="rounded-full">
-              Cancel
+          <AlertDialogFooter className="gap-2 sm:gap-0 mt-4">
+            <AlertDialogCancel className="rounded-full h-11 text-xs font-bold shrink-0">
+              {t("common:cancel")}
             </AlertDialogCancel>
             <AlertDialogAction
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90 rounded-full px-6"
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90 rounded-full h-11 px-6 text-xs font-bold shadow-lg shadow-destructive/20 shrink-0"
               onClick={handleDelete}
             >
-              Delete Account
+              {t("common:delete")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

@@ -9,7 +9,10 @@ import {
   ISaleView,
   ISale,
 } from "@/components/interface/sales/interface.sale";
-import { IResponse } from "@/components/interface/common.interface";
+import {
+  IPaginatedResponse,
+  IResponse,
+} from "@/components/interface/common.interface";
 
 const onErrorNotification = (error: any) => {
   toast.error(
@@ -48,7 +51,7 @@ export const useInfiniteSales = (
   enabled: boolean,
   filters: Record<string, any> = {},
 ) => {
-  return useInfiniteFetch<ISaleResponse>(endpoints.SALE, {
+  return useInfiniteFetch<IPaginatedResponse<ISale>>(endpoints.SALE, {
     queryKey: queryKeys.sales.list(filters),
     params: { ...filters, limit: 10 },
     enabled,

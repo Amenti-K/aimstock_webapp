@@ -94,9 +94,6 @@ export default function ExpenseDetailPage() {
           )}
         </div>
       </div>
-      <div className="flex justify-center -mt-4">
-        <LastAudit lastAudit={expense.lastAuditLog} />
-      </div>
 
       {/* Main Content */}
       <div className="space-y-6">
@@ -111,9 +108,12 @@ export default function ExpenseDetailPage() {
           <p className="text-5xl font-black text-foreground tracking-tighter">
             {formatCurrency(expense.amount)}
           </p>
-          <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground mt-4">
-            <Calendar className="h-4 w-4" />
-            <span>{formatDate(expense.createdAt)}</span>
+          <div className="flex items-center justify-center gap-4 text-[10px] sm:text-sm text-muted-foreground mt-4 flex-wrap">
+            <div className="flex items-center gap-2">
+              <Calendar className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+              <span>{formatDate(expense.createdAt)}</span>
+            </div>
+            <LastAudit lastAudit={expense.lastAuditLog} className="opacity-80" />
           </div>
         </div>
 

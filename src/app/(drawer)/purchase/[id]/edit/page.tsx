@@ -13,10 +13,12 @@ import { usePermissions } from "@/hooks/permission.hook";
 import { AccessDeniedView } from "@/components/guards/AccessDeniedView";
 import { LoadingView, ErrorView } from "@/components/common/StateView";
 import { INewPurchase } from "@/components/interface/purchase/purchase.interface";
+import { useLanguage } from "@/hooks/language.hook";
 
 export default function EditPurchasePage() {
   const { id } = useParams();
   const router = useRouter();
+  const { t } = useLanguage();
   const purchaseId = id as string;
   const { canUpdate } = usePermissions();
   const hasUpdateAccess = canUpdate("PURCHASE");
@@ -45,9 +47,9 @@ export default function EditPurchasePage() {
           <ArrowLeft className="h-5 w-5" />
         </Button>
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Edit Purchase</h1>
+          <h1 className="text-2xl font-bold tracking-tight">{t("purchase.form.editPur")}</h1>
           <p className="text-sm text-muted-foreground">
-            Update purchase data for this transaction.
+            {t("purchase.description")}
           </p>
         </div>
       </div>

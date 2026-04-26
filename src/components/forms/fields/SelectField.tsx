@@ -43,11 +43,12 @@ const SelectField = ({
         <div className="space-y-2">
           {label && <Label htmlFor={name}>{label}</Label>}
           <Select 
+            key={options.length ? `loaded-${options.length}` : 'loading'}
             onValueChange={(val) => {
               onChange(val);
               if (onValueChange) onValueChange(val);
             }} 
-            value={value} 
+            value={value !== undefined && value !== null && value !== "" ? String(value) : undefined} 
             disabled={disabled}
           >
             <SelectTrigger className={`w-full ${error ? "border-red-500" : ""}`}>
@@ -55,7 +56,7 @@ const SelectField = ({
             </SelectTrigger>
             <SelectContent className="bg-background">
               {options.map((option) => (
-                <SelectItem key={option.value} value={option.value}>
+                <SelectItem key={String(option.value)} value={String(option.value)}>
                   {option.label}
                 </SelectItem>
               ))}

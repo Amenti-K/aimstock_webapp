@@ -1,5 +1,6 @@
 {
   "moduleName": "ክምችት",
+  "description": "በሁሉም መጋዘኖች ላይ ክምችትዎን ይከታተሉ እና ያስተዳድሩ።",
   "emptyInventory": "ምንም ክምችት አልተገኘም። በመጀመሪያ ክምችትዎን በመጨመር ይጀምሩ",
   "noResults": "ለ{{query}} ምንም ውጤት አልተገኘም",
   "pendingInvy": "የክምችት ዝርዝሮች በመጫን ላይ...",
@@ -20,8 +21,12 @@
     "unitPrice": "የአንድ ዕቃ ዋጋ",
     "lowStock": "ዝቅተኛ ክምችት",
     "inStock": "በክምችት ውስጥ",
+    "outOfStock": "ያለቀ",
     "reorder": "እንደገና ማዘዣ",
-    "lowStockMessage": "ዝቅተኛ ክምችት፣ እንደገና ማዘዥ ያስቡ"
+    "lowStockMessage": "ዝቅተኛ ክምችት፣ እንደገና ማዘዥ ያስቡ",
+    "noSku": "SKU የለውም",
+    "generics": "አጠቃላይ",
+    "currentStock": "አሁን ያለ ክምችት"
   },
   "detail": {
     "title": "የክምችት ዝርዝር",
@@ -66,6 +71,16 @@
     "low": "ዝቅተኛ",
     "out": "ያለቀ"
   },
+  "table": {
+    "item": "ዕቃ",
+    "sku": "SKU",
+    "stockLevel": "የክምችት መጠን",
+    "costPrice": "የወጪ ዋጋ",
+    "sellingPrice": "የመሸጫ ዋጋ",
+    "status": "ሁኔታ",
+    "showMore": "ተጨማሪ ዕቃዎችን አሳይ",
+    "loadingMore": "ተጨማሪ በማምጣት ላይ..."
+  },
   "form": {
     "searchPlaceholder": "ክምችቶችን ፈልግ...",
     "add": "አዲስ ክምችት",
@@ -77,8 +92,11 @@
     "sellingPrice": "የሚሸጥበት ዋጋ *",
     "initialQty": "የመጀመሪያ ብዛት *",
     "unit": "መለኪያ(psc,kg,ltr,etc) *",
+    "inventoryInfo": "የክምችት መረጃ",
+    "inventoryInfoDesc": "መሰረታዊ የዕቃ ዝርዝሮችን እና ዋጋዎችን ያስገቡ",
     "wareInv": {
       "title": "የመጋዘን ክምችቶች",
+      "description": "ክምችቱን በተለያዩ ቦታዎች ላይ ያከፋፍሉ",
       "ware": "መጋዘን",
       "qty": "ብዛት",
       "reorderQty": "እንደገና ማዘዣ ብዛት",

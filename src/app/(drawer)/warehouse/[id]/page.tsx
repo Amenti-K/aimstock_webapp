@@ -109,7 +109,7 @@ export default function WarehouseDetailPage() {
           </Button>
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-2xl md:text-3xl font-black tracking-tight">
+              <h1 className="text-xl sm:text-2xl md:text-3xl font-black tracking-tight leading-tight">
                 {warehouse.name}
               </h1>
               {warehouse.isInternal ? (
@@ -125,20 +125,15 @@ export default function WarehouseDetailPage() {
                 </Badge>
               )}
             </div>
-            <p className="text-sm text-muted-foreground flex items-center gap-1.5 mt-1">
-              <MapPin className="h-3.5 w-3.5" />
-              {warehouse.location || "No location specified"}
-            </p>
+            <div className="flex items-center gap-3 flex-wrap mt-1">
+              <p className="text-xs sm:text-sm text-muted-foreground flex items-center gap-1.5">
+                <MapPin className="h-3.5 w-3.5" />
+                {warehouse.location || "No location specified"}
+              </p>
+              <LastAudit lastAudit={warehouse.lastAuditLog} className="opacity-80" />
+            </div>
           </div>
-          <LastAudit
-            lastAudit={warehouse.lastAuditLog}
-            className="ml-2 hidden lg:inline-flex"
-          />
         </div>
-      </div>
-      \
-      <div className="flex flex-col items-end gap-2">
-        <LastAudit lastAudit={warehouse.lastAuditLog} className="lg:hidden" />
         <div className="flex items-center gap-2">
           {canUpdate("WAREHOUSES") && (
             <Button

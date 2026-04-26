@@ -65,7 +65,7 @@ export interface ISaleDailyResponse {
 }
 
 export interface ISaleView extends ISale {
-  partner?: IPartner;
+  partner: IPartner;
   saleItems: SaleItem[];
   salePayments: ISalePaymentItem[];
   saleCashPayment?: ICashPayment;

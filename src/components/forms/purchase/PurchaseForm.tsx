@@ -22,6 +22,7 @@ import { useFetchPartnerSelector } from "@/api/partner/api.partner";
 import { useGetInventoriesInfinite } from "@/api/inventory/api.inventory";
 import { useFetchAccountSelector } from "@/api/account/api.account";
 import { formatCurrency } from "@/lib/formatter";
+import { useLanguage } from "@/hooks/language.hook";
 import {
   INewPurchase,
   IPurchaseView,
@@ -63,6 +64,7 @@ export default function PurchaseForm({
   onSubmit,
   isLoading = false,
 }: PurchaseFormProps) {
+  const { t } = useLanguage();
   const form = useForm<PurchaseFormValues>({ defaultValues });
   const { control, handleSubmit, setError, reset, watch, setValue } = form;
 
@@ -123,7 +125,11 @@ export default function PurchaseForm({
     if (!initialData) return;
 
     reset({
-      partnerId: initialData.partner?.id || initialData.partnerId || "",
+      partnerId: initialData.partnerId
+        ? String(initialData.partnerId)
+        : initialData.partner?.id
+          ? String(initialData.partner.id)
+          : "",
       description: initialData.description || "",
       purchaseItems:
         initialData.purchaseItems?.map((item: any) => ({
@@ -211,22 +217,22 @@ export default function PurchaseForm({
               <CardHeader className="border-b">
                 <CardTitle className="text-base flex items-center gap-2">
                   <Receipt className="h-4 w-4 text-primary" />
-                  General Information
+                  {t("purchase.detail.title")}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
                 <SelectField
                   name="partnerId"
                   control={control as any}
-                  label="Supplier"
-                  placeholder="Select supplier"
+                  label={t("purchase.form.supplier")}
+                  placeholder={t("purchase.form.selectPartner")}
                   options={partnerOptions}
                 />
                 <TextAreaField
                   name="description"
                   control={control as any}
-                  label="Order Description"
-                  placeholder="Notes for the entire order..."
+                  label={t("purchase.form.description")}
+                  placeholder={t("purchase.form.description")}
                 />
               </CardContent>
             </Card>
@@ -236,7 +242,7 @@ export default function PurchaseForm({
               <CardHeader className="flex flex-row items-center justify-between pb-3 border-b">
                 <CardTitle className="text-base flex items-center gap-2">
                   <Plus className="h-4 w-4 text-primary" />
-                  Purchase Items
+                  {t("purchase.form.items.title")}
                 </CardTitle>
                 <Button
                   type="button"
@@ -247,18 +253,18 @@ export default function PurchaseForm({
                     appendItem({ inventoryId: "", quantity: 1, unitPrice: 0 })
                   }
                 >
-                  Add Item
+                  {t("purchase.form.items.addItem")}
                 </Button>
               </CardHeader>
               <CardContent className="overflow-x-auto">
                 <div className="min-w-[750px] space-y-3">
                   {/* Header Row */}
                   <div className="grid grid-cols-11 gap-3 px-2 text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
-                    <div className="col-span-4">Inventory Item</div>
-                    <div className="col-span-2">Quantity</div>
-                    <div className="col-span-2">Unit Price</div>
-                    <div className="col-span-2">Subtotal</div>
-                    <div className="col-span-1 text-center">Action</div>
+                    <div className="col-span-4">{t("purchase.form.items.item")}</div>
+                    <div className="col-span-2">{t("purchase.form.items.qty")}</div>
+                    <div className="col-span-2">{t("purchase.form.items.unitPrice")}</div>
+                    <div className="col-span-2">{t("purchase.form.items.subTotal")}</div>
+                    <div className="col-span-1 text-center">{t("common.action")}</div>
                   </div>
 
                   {itemFields.map((field, index) => {
@@ -275,8 +281,7 @@ export default function PurchaseForm({
                           <SelectField
                             name={`purchaseItems.${index}.inventoryId`}
                             control={control as any}
-                            // label={`Item #${index + 1}`}
-                            placeholder={`Select item #${index + 1}`}
+                            placeholder={t("purchase.form.items.selectItem")}
                             options={inventoryOptions}
                             onValueChange={(val) => {
                               const item = allInventories.find(
@@ -336,7 +341,7 @@ export default function PurchaseForm({
               <CardHeader className="pb-3 border-b">
                 <CardTitle className="text-base flex items-center gap-2">
                   <CreditCard className="h-4 w-4 text-primary" />
-                  Payment Information
+                  {t("purchase.detail.accordion.payments")}
                 </CardTitle>
               </CardHeader>
 
@@ -345,7 +350,7 @@ export default function PurchaseForm({
                 <div className="flex justify-between items-center gap-2 space-x-2">
                   <div className="flex items-center gap-2 text-xs font-bold text-emerald-600 uppercase tracking-wider">
                     <Banknote className="h-5 w-5" />
-                    Cash Payment
+                    {t("purchase.form.cashPay.title")}
                   </div>
                   <div className="w-[40%]">
                     <NumericField
@@ -360,7 +365,7 @@ export default function PurchaseForm({
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2 text-xs font-bold text-blue-600 uppercase tracking-wider">
                       <Building2 className="h-5 w-5" />
-                      Bank Payments
+                      {t("purchase.form.bankPay.title")}
                     </div>
                     <Button
                       type="button"
@@ -372,13 +377,13 @@ export default function PurchaseForm({
                       }
                     >
                       <Plus className="h-3 w-3 mr-1" />
-                      Add Bank Payment
+                      {t("purchase.form.bankPay.addPayment")}
                     </Button>
                   </div>
 
                   {paymentFields.length === 0 && (
                     <div className="py-6 text-center text-muted-foreground text-[10px] font-medium border border-dashed rounded-lg bg-muted/20">
-                      No bank payments added. Click "Add Bank Payment" above.
+                      {t("common.formHints.noBankPayments")}
                     </div>
                   )}
 
@@ -393,7 +398,7 @@ export default function PurchaseForm({
                             <SelectField
                               name={`purchasePayments.${index}.accountId`}
                               control={control as any}
-                              placeholder={`Select Account #${index + 1}`}
+                              placeholder={t("purchase.form.bankPay.selectAcc")}
                               options={accountOptions}
                             />
                           </div>
@@ -428,13 +433,13 @@ export default function PurchaseForm({
               <CardHeader className="pb-4 border-b">
                 <CardTitle className="text-base flex items-center gap-2">
                   <Calculator className="h-4 w-4 text-primary" />
-                  Settlement Summary
+                  {t("purchase.detail.payment.total")}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-5 pt-5">
                 <div className="space-y-1">
                   <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                    Total Order Amount
+                    {t("purchase.form.total.grand")}
                   </div>
                   <div className="text-2xl font-black text-primary">
                     {formatCurrency(grandTotal)}
@@ -444,7 +449,7 @@ export default function PurchaseForm({
                 <div className="space-y-3">
                   <div className="flex justify-between items-center p-3 rounded-lg bg-emerald-50 border border-emerald-100">
                     <span className="text-xs font-bold text-emerald-600 uppercase tracking-wider">
-                      Total Paid
+                      {t("purchase.form.total.paid")}
                     </span>
                     <span className="text-lg font-bold text-emerald-700">
                       {formatCurrency(totalPaid)}
@@ -457,7 +462,7 @@ export default function PurchaseForm({
                     <span
                       className={`text-xs font-bold uppercase tracking-wider ${outstandingBalance > 0 ? "text-rose-600" : "text-muted-foreground"}`}
                     >
-                      Remaining Loan
+                      {t("purchase.form.total.loan")}
                     </span>
                     <span
                       className={`text-lg font-bold ${outstandingBalance > 0 ? "text-rose-700" : "text-muted-foreground"}`}
@@ -469,13 +474,12 @@ export default function PurchaseForm({
 
                 <div className="pt-2 space-y-3">
                   <SubmitButton
-                    title={initialData ? "Update Purchase" : "Confirm Purchase"}
+                    title={initialData ? t("purchase.form.editPur") : t("purchase.form.addPur")}
                     loading={isLoading}
                     className="w-full py-5 text-base font-bold shadow-md shadow-primary/10"
                   />
                   <p className="text-[10px] text-center text-muted-foreground leading-tight px-4">
-                    Confirming will update inventory levels and supplier
-                    balances instantly.
+                    {t("common.formHints.balanceUpdateWarning")}
                   </p>
                 </div>
               </CardContent>

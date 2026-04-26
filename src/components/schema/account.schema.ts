@@ -7,7 +7,7 @@ export const accountSchema = z.object({
   bank: z.enum(EthiopianFinancialInstitution),
   branch: z.string().optional(),
   number: z.string().optional(),
-  balance: z.coerce
+  balance: z
     .number("Balance must be a number")
     .nonnegative("Balance cannot be negative"),
 });

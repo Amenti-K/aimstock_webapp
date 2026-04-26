@@ -32,15 +32,17 @@ import { TimeFrame } from "@/components/interface/inventory/inventory.interface"
 import { usePermissions } from "@/hooks/permission.hook";
 import { AccessDeniedView } from "@/components/guards/AccessDeniedView";
 import { cn } from "@/lib/utils";
-
-const timeFrameOptions = [
-  { label: "30 Days", value: TimeFrame.LAST_30_DAYS },
-  { label: "90 Days", value: TimeFrame.LAST_90_DAYS },
-  { label: "6 Months", value: TimeFrame.LAST_180_DAYS },
-  { label: "1 Year", value: TimeFrame.LAST_365_DAYS },
-];
+import { useTranslation } from "react-i18next";
 
 export default function DashboardPage() {
+  const { t } = useTranslation();
+
+  const timeFrameOptions = [
+    { label: t("common.timeFrame.30days"), value: TimeFrame.LAST_30_DAYS },
+    { label: t("common.timeFrame.90days"), value: TimeFrame.LAST_90_DAYS },
+    { label: t("common.timeFrame.6months"), value: TimeFrame.LAST_180_DAYS },
+    { label: t("common.timeFrame.1year"), value: TimeFrame.LAST_365_DAYS },
+  ];
   const { canView } = usePermissions();
   const hasViewAccess = canView("ANALYTICS");
   const [timeFrame, setTimeFrame] = useState<TimeFrame>(TimeFrame.LAST_30_DAYS);
@@ -73,13 +75,18 @@ export default function DashboardPage() {
   };
 
   if (!hasViewAccess) {
-    return <AccessDeniedView moduleName="Analytics" />;
+    return (
+      <AccessDeniedView
+        moduleName={t("analytics.moduleName")}
+        message={t("analytics.permissions.view")}
+      />
+    );
   }
 
   if (isSummaryLoading || isPieLoading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px]">
-        <LoadingView message="Tailoring your analytics dashboard..." />
+        <LoadingView message={t("analytics.pendingAnalytics")} />
       </div>
     );
   }
@@ -88,7 +95,7 @@ export default function DashboardPage() {
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px]">
         <ErrorView
-          message="We couldn't load your analytics. Please try again."
+          message={t("analytics.errorAnalytics")}
           refetch={handleRefresh}
         />
       </div>
@@ -101,28 +108,28 @@ export default function DashboardPage() {
 
   const quickStats = [
     {
-      title: "Best Selling",
+      title: t("analytics.summary.bestSelling.title"),
       value: pie?.bestSelling?.inventory || "N/A",
       subtitle: pie?.bestSelling?.quantity
-        ? `${pie.bestSelling.quantity} sold`
-        : "No sales data",
+        ? `${pie.bestSelling.quantity} ${t("analytics.summary.bestSelling.sold")}`
+        : t("analytics.summary.bestSelling.noData"),
       icon: <TrendingUp className="h-4 w-4 text-blue-600" />,
     },
     {
-      title: "Most Unsold",
+      title: t("analytics.summary.mostUnsold.title"),
       value: pie?.mostUnsold?.inventory || "N/A",
       subtitle: pie?.mostUnsold?.quantity
-        ? `${pie.mostUnsold.quantity} units`
-        : "In stock",
+        ? `${pie.mostUnsold.quantity} ${t("analytics.summary.mostUnsold.items")}`
+        : t("analytics.summary.mostUnsold.inStock"),
       icon: <Clock3 className="h-4 w-4 text-slate-500" />,
     },
     {
-      title: "Revenue",
+      title: t("analytics.chart.metrics.revenue"),
       value: formatCurrency(pie?.totalRevenue || 0),
       icon: <DollarSign className="h-4 w-4 text-emerald-600" />,
     },
     {
-      title: "Profit",
+      title: t("analytics.chart.metrics.profit"),
       value: formatCurrency(pie?.totalProfit || 0),
       icon: <Activity className="h-4 w-4 text-violet-600" />,
     },
@@ -132,7 +139,7 @@ export default function DashboardPage() {
     <section className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold tracking-tight">
-          Dashboard Overview
+          {t("analytics.dashboardOverview")}
         </h1>
         <Button variant="ghost" size="icon" onClick={handleRefresh}>
           <RefreshCcw className="h-4 w-4" />
@@ -144,7 +151,7 @@ export default function DashboardPage() {
           <CardHeader className="p-3 sm:p-6 pb-2 sm:pb-3">
             <CardDescription className="flex items-center gap-1.5 text-[9px] sm:text-[10px] uppercase tracking-wider font-bold text-primary/70">
               <Box className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
-              Inventory Value
+              {t("analytics.summary.totalInv.title")}
             </CardDescription>
             <CardTitle className="text-xl sm:text-3xl font-extrabold tracking-tight mt-1 truncate">
               {formatCurrency(summary?.totalInventoryValue || 0)}
@@ -152,7 +159,7 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent className="px-3 sm:px-6 pb-3 sm:pb-4 pt-0">
             <p className="text-[10px] sm:text-xs text-muted-foreground leading-tight line-clamp-1 sm:line-clamp-none">
-              Live valuation based on stock levels
+              {t("analytics.summary.totalInv.description")}
             </p>
           </CardContent>
         </Card>
@@ -161,17 +168,18 @@ export default function DashboardPage() {
           <CardHeader className="p-3 sm:p-6 pb-2 sm:pb-3">
             <CardDescription className="flex items-center gap-1.5 text-[9px] sm:text-[10px] uppercase tracking-wider font-bold text-amber-600 dark:text-amber-400">
               <AlertTriangle className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
-              Stock Alert
+              {t("analytics.summary.lowStock.title")}
             </CardDescription>
             <CardTitle className="text-xl sm:text-3xl font-extrabold tracking-tight mt-1 truncate">
-              {summary?.lowestStock?.inventory || "Optimal"}
+              {summary?.lowestStock?.inventory ||
+                t("analytics.summary.lowStock.optimal")}
             </CardTitle>
           </CardHeader>
           <CardContent className="px-3 sm:px-6 pb-3 sm:pb-4 pt-0">
             <p className="text-[10px] sm:text-xs text-amber-600/80 dark:text-amber-400/80 leading-tight line-clamp-1 sm:line-clamp-none font-medium">
               {summary?.lowestStock
-                ? `${summary.lowestStock.quantity} units left`
-                : "Levels are healthy"}
+                ? `${summary.lowestStock.quantity} ${t("analytics.summary.lowStock.left")}`
+                : t("analytics.summary.lowStock.healthy")}
             </p>
           </CardContent>
         </Card>
@@ -231,10 +239,10 @@ export default function DashboardPage() {
         <Card className="overflow-hidden border-none bg-card/50">
           <CardHeader className="pb-0">
             <CardTitle className="text-sm font-semibold uppercase tracking-tight text-muted-foreground">
-              Performance Breakdown
+              {t("analytics.chart.performance.title")}
             </CardTitle>
             <CardDescription>
-              Top product distribution by quantity
+              {t("analytics.chart.performance.description")}
             </CardDescription>
           </CardHeader>
           <CardContent className="pt-4 px-0">

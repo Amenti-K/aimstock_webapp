@@ -19,7 +19,8 @@
     "branch": "ቅርንጫፍ",
     "accountNumber": "የሂሳብ ቁጥር",
     "holder": "የባለቤቱ ስም",
-    "balance": "ቀሪ ሒሳብ"
+    "balance": "ቀሪ ሒሳብ",
+    "headquarters": "ዋና መስሪያ ቤት"
   },
   "transfer": {
     "title": "ገንዘብ ያስተላልፉ",
@@ -29,13 +30,21 @@
     "transfer": "አስተላልፍ",
     "select": "ሂሳብ ይምረጡ",
     "loading": "ሂሳቦች በመጫን ላይ...",
-    "error": "ሂሳቦችን መጫን አልተሳካም።"
+    "error": "ሂሳቦችን መጫን አልተሳካም።",
+    "subtitle": "በፋይናንሺያል ሂሳቦችዎ መካከል ገንዘብን ደህንነቱ በተጠበቀ ሁኔታ ያንቀሳቅሱ።"
   },
   "tranxCard": {
     "transaction": "ግብይት",
     "transactions": "ግብይቶች",
     "income": "ገቢ",
-    "expense": "ወጪ"
+    "expense": "ወጪ",
+    "subtitle": "የገቢ እና የወጪዎች ሙሉ ታሪክ",
+    "records": "መዝገቦች",
+    "description": "መግለጫ",
+    "amount": "መጠን",
+    "noDescription": "ምንም መግለጫ አልተሰጠም",
+    "received": "ገቢ",
+    "sent": "ወጪ"
   },
   "form": {
     "add": "ሂሳብ ጨምር",
@@ -48,7 +57,11 @@
     "edit": "ሂሳብ አርም",
     "balanceEdit": "ቀሪ ሒሳብ (ሊቀየር አይችልም)",
     "loading": "ሂሳቦች በመጫን ላይ...",
-    "error": "ሂሳቦችን መጫን አልተሳካም።"
+    "error": "ሂሳቦችን መጫን አልተሳካም።",
+    "addSubtitle": "አዲስ የፋይናንስ ሂሳብ ለመፍጠር ዝርዝሮችን ይሙሉ.",
+    "editSubtitle": "ለሂሳብዎ \"{{name}}\" ዝርዝሮችን ያዘምኑ።",
+    "detailsSubtitleNew": "ሂሳብዎን ደህንነቱ በተጠበቀ ሁኔታ ለማዋቀር አስፈላጊውን መረጃ ያቅርቡ።",
+    "detailsSubtitleEdit": "ከታች ያለውን የሂሳብ መረጃ ይለውጡ እና ለውጦችዎን ያስቀምጡ።"
   },
   "bank": {
     "TELEBIRR": "ቴሌብር",
@@ -79,5 +92,21 @@
     "GADAA_BANK": "ጋዳ ባንክ",
     "SHABELLE_BANK": "ሸበሌ ባንክ",
     "others": "ሌሎች"
+  },
+  "details": {
+    "title": "የሂሳብ መረጃ",
+    "subtitle": "ለ{{type}} ሂሳብዎ ዝርዝሮች",
+    "institution": "የፋይናንስ ተቋም",
+    "number": "የሂሳብ ቁጥር",
+    "balance": "ያለው ቀሪ ሂሳብ",
+    "verified": "የተረጋገጠ ቀሪ ሂሳብ",
+    "noNumber": "አልተጠቀሰም"
+  },
+  "activity": {
+    "title": "የእንቅስቃሴ መጠን",
+    "subtitle": "አጠቃላይ ማጠቃለያ",
+    "inflow": "ጠቅላላ ገቢ",
+    "outflow": "ጠቅላላ ወጪ",
+    "records": "{{count}} ግብይቶች ተመዝግበዋል"
   }
 }

@@ -27,10 +27,12 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useLanguage } from "@/hooks/language.hook";
 
 export default function SalesDetailPage() {
   const { id } = useParams();
   const router = useRouter();
+  const { t } = useLanguage();
   const saleId = id as string;
   const { canView, canUpdate, canDelete } = usePermissions();
   const hasViewAccess = canView("SALES");
@@ -87,8 +89,10 @@ export default function SalesDetailPage() {
           className="rounded-xl hover:bg-card"
         >
           <ArrowLeft className="mr-2 h-4 w-4" />
-          <span className="hidden sm:inline">Back to Sales</span>
-          <span className="sm:hidden">Back</span>
+          <span className="hidden sm:inline">
+            {t("common.back")} to {t("sales.moduleName")}
+          </span>
+          <span className="sm:hidden">{t("common.back")}</span>
         </Button>
 
         <div className="flex items-center gap-2">
@@ -102,7 +106,7 @@ export default function SalesDetailPage() {
                 onClick={() => router.push(`/sales/${saleId}/edit`)}
               >
                 <Pencil className="mr-2 h-4 w-4" />
-                Edit
+                {t("common.edit")}
               </Button>
             )}
             {hasDeleteAccess && (
@@ -113,7 +117,7 @@ export default function SalesDetailPage() {
                 onClick={() => setIsDeleteOpen(true)}
               >
                 <Trash2 className="mr-2 h-4 w-4" />
-                Delete
+                {t("common.delete")}
               </Button>
             )}
           </div>
@@ -130,12 +134,15 @@ export default function SalesDetailPage() {
                   <MoreVertical className="h-5 w-5" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-40 rounded-xl">
+              <DropdownMenuContent
+                align="end"
+                className="w-40 rounded-xl bg-card"
+              >
                 {hasUpdateAccess && (
                   <DropdownMenuItem
                     onClick={() => router.push(`/sales/${saleId}/edit`)}
                   >
-                    <Pencil className="mr-2 h-4 w-4" /> Edit
+                    <Pencil className="mr-2 h-4 w-4" /> {t("common.edit")}
                   </DropdownMenuItem>
                 )}
                 {hasDeleteAccess && (
@@ -143,7 +150,7 @@ export default function SalesDetailPage() {
                     className="text-destructive font-medium"
                     onClick={() => setIsDeleteOpen(true)}
                   >
-                    <Trash2 className="mr-2 h-4 w-4" /> Delete
+                    <Trash2 className="mr-2 h-4 w-4" /> {t("common.delete")}
                   </DropdownMenuItem>
                 )}
               </DropdownMenuContent>
@@ -166,9 +173,9 @@ export default function SalesDetailPage() {
           lastAuditLog={sale.lastAuditLog}
         />
 
-        <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-10">
           {/* Items List */}
-          <div className="lg:col-span-7">
+          <div className="lg:col-span-5">
             <ItemList items={saleItems} type="sale" />
           </div>
 
@@ -187,23 +194,26 @@ export default function SalesDetailPage() {
       <AlertDialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
         <AlertDialogContent className="rounded-2xl">
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete permanently?</AlertDialogTitle>
+            <AlertDialogTitle>
+              {t("common.confirmDelete.title", {
+                entity: t("sales.moduleName"),
+              })}
+            </AlertDialogTitle>
             <AlertDialogDescription>
-              You are about to delete sale{" "}
-              <span className="font-bold text-foreground">{soNumber}</span>.
-              This will also remove associated inventory increments and
-              financial records. This action is irreversible.
+              {t("common.confirmDelete.message", {
+                entity: t("sales.moduleName"),
+              })}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="gap-2 sm:gap-0">
             <AlertDialogCancel className="rounded-xl">
-              Keep Sale
+              {t("common.cancel")}
             </AlertDialogCancel>
             <AlertDialogAction
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90 rounded-xl"
               onClick={handleDelete}
             >
-              Confirm Delete
+              {t("common.delete")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

@@ -7,6 +7,10 @@
     "title": "Logout",
     "message": "Are you sure you want to logout?"
   },
+  "formHints": {
+    "noBankPayments": "No bank payments added. Click 'Add Bank Payment' above.",
+    "balanceUpdateWarning": "Inventory and customer balances will be updated immediately."
+  },
   "reportAcco": {
     "title": "Daily Report",
     "subtitle": "Summary for selected date",
@@ -129,5 +133,11 @@
     "noInternet": "No Internet Connection",
     "checkNetwork": "Please check your network settings and try again to continue using the app.",
     "retry": "Retry Connection"
+  },
+  "timeFrame": {
+    "30days": "30 Days",
+    "90days": "90 Days",
+    "6months": "6 Months",
+    "1year": "1 Year"
   }
 }

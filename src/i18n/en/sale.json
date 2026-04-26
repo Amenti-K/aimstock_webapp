@@ -1,5 +1,6 @@
 {
   "moduleName": "Sales",
+  "description": "Manage your outgoing stocks and revenue",
   "emptySale": "No sales found. Start by adding your first sale",
   "pendingSale": "Loading sale details...",
   "errorSale": "Failed to load sale details.",
@@ -18,6 +19,12 @@
     "qty": "Qty",
     "subTotal": "Sub Total",
     "noItems": "No items"
+  },
+  "table": {
+    "customerAndId": "Customer & ID",
+    "items": "Items",
+    "date": "Date",
+    "revenue": "Revenue"
   },
   "detail": {
     "title": "Sale Details",

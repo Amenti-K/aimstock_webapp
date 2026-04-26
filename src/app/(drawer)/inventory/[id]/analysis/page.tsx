@@ -25,6 +25,7 @@ import {
 import { usePermissions } from "@/hooks/permission.hook";
 import { AccessDeniedView } from "@/components/guards/AccessDeniedView";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useTranslation } from "react-i18next";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { formatCurrency, formatDate } from "@/lib/formatter";
 import { Badge } from "@/components/ui/badge";
@@ -34,6 +35,7 @@ import { cn } from "@/lib/utils";
 export default function InventoryAnalysisPage() {
   const { id } = useParams();
   const router = useRouter();
+  const { t } = useTranslation();
   const inventoryId = id as string;
   const { canView } = usePermissions();
   const hasViewAccess = canView("INVENTORY");
@@ -52,7 +54,7 @@ export default function InventoryAnalysisPage() {
   const analyticsData = data?.data;
 
   if (!hasViewAccess) {
-    return <AccessDeniedView moduleName="Inventory" />;
+    return <AccessDeniedView moduleName={t("inventory.moduleName")} />;
   }
   if (isLoading) return <LoadingView />;
   if (isError || !analyticsData) return <ErrorView refetch={refetch} />;
@@ -91,10 +93,13 @@ export default function InventoryAnalysisPage() {
           </Button>
           <div className="flex flex-col">
             <h1 className="text-2xl font-black tracking-tight leading-none">
-              Inventory Analysis
+              {t("inventory.detail.analysis.buttonTitle", { name: "" }).replace(
+                "  ",
+                " ",
+              )}
             </h1>
             <p className="text-sm text-muted-foreground mt-1 font-medium">
-              {inventory?.name || "Inventory Item"}
+              {inventory?.name || t("inventory.card.name")}
             </p>
           </div>
         </div>
@@ -118,18 +123,18 @@ export default function InventoryAnalysisPage() {
       </div>
 
       <Tabs defaultValue="analytics" className="w-full">
-        <TabsList className="flex w-full md:w-fit bg-muted/30 p-1.5 rounded-2xl h-auto gap-1 mb-8">
+        <TabsList className="flex w-full md:w-fit bg-muted/30 p-1.5 rounded-2xl h-auto gap-1 mb-1">
           <TabsTrigger
             value="analytics"
             className="flex-1 md:px-8 py-2.5 rounded-xl data-[state=active]:bg-card data-[state=active]:text-primary data-[state=active]:shadow-sm border-none font-bold text-xs"
           >
-            Financial Analytics
+            {t("inventory.detail.analysis.tabs.analytics")}
           </TabsTrigger>
           <TabsTrigger
             value="movement"
             className="flex-1 md:px-8 py-2.5 rounded-xl data-[state=active]:bg-card data-[state=active]:text-primary data-[state=active]:shadow-sm border-none font-bold text-xs"
           >
-            Movement History
+            {t("inventory.detail.analysis.tabs.movement")}
           </TabsTrigger>
         </TabsList>
 
@@ -138,30 +143,30 @@ export default function InventoryAnalysisPage() {
           className="space-y-8 animate-in fade-in duration-500"
         >
           {/* Main Financials */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <MetricCard
-              title="Revenue"
+              title={t("inventory.detail.analysis.metrics.revenue")}
               value={analytics.financials.totalRevenue}
               icon={<TrendingUp className="h-4 w-4" />}
               color="#10b981"
               isCurrency
             />
             <MetricCard
-              title="COGS"
+              title={t("inventory.detail.analysis.metrics.COGS")}
               value={analytics.financials.totalCOGS}
               icon={<Briefcase className="h-4 w-4" />}
               color="#f59e0b"
               isCurrency
             />
             <MetricCard
-              title="Profit"
+              title={t("inventory.detail.analysis.metrics.profit")}
               value={analytics.financials.totalProfit}
               icon={<DollarSign className="h-4 w-4" />}
               color="#8b5cf6"
               isCurrency
             />
             <MetricCard
-              title="Sales"
+              title={t("inventory.detail.analysis.metrics.totalSale")}
               value={Number(analytics.summary.totalSale || 0).toFixed(2)}
               icon={<ArrowUpRight className="h-4 w-4" />}
               color="#ec4899"
@@ -191,10 +196,10 @@ export default function InventoryAnalysisPage() {
           </div>
 
           {/* Warehouse Performance */}
-          <Card className="rounded-[2.5rem] border-none shadow-sm bg-card overflow-hidden">
-            <CardHeader className="pb-6 pt-8 px-8">
+          <div className="rounded-[1.5rem] p-0 border-none shadow-sm bg-card overflow-hidden">
+            <CardHeader className="p-4">
               <div className="flex items-center gap-3">
-                <div className="h-12 w-12 rounded-2xl bg-orange-500/10 text-orange-600 flex items-center justify-center">
+                <div className="h-12 w-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center">
                   <Warehouse className="h-6 w-6" />
                 </div>
                 <div className="flex flex-col">
@@ -207,9 +212,9 @@ export default function InventoryAnalysisPage() {
                 </div>
               </div>
             </CardHeader>
-            <CardContent className="px-8 pb-8 space-y-8">
+            <CardContent className="py-0 space-y-2">
               {/* Joint Progress Bar */}
-              <div className="h-4 w-full bg-muted rounded-full overflow-hidden flex shadow-inner">
+              <div className="h-2 sm:h-4 mb-4 w-full bg-muted rounded-full overflow-hidden flex shadow-inner">
                 {analytics.analysis.topPerformingWarehouses
                   .slice(0, 5)
                   .map((w, i) => {
@@ -242,7 +247,7 @@ export default function InventoryAnalysisPage() {
                     return (
                       <div
                         key={i}
-                        className="flex items-center justify-between p-4 rounded-3xl border bg-muted/5 transition-all hover:bg-muted/10 group"
+                        className="flex items-center justify-between p-4 rounded-3xl border border-b border-muted/5 transition-all hover:bg-muted/10 group"
                       >
                         <div className="flex items-center gap-3">
                           <div
@@ -266,7 +271,7 @@ export default function InventoryAnalysisPage() {
                             {percentage.toFixed(1)}%
                           </span>
                           <span className="text-[9px] text-muted-foreground font-bold mt-1 uppercase text-right">
-                            Rev: {formatCurrency(w.revenue)}
+                            {formatCurrency(w.revenue)}
                           </span>
                         </div>
                       </div>
@@ -280,40 +285,34 @@ export default function InventoryAnalysisPage() {
                 )}
               </div>
             </CardContent>
-          </Card>
+          </div>
 
           {/* Additional Metrics */}
           <div className="grid grid-cols-2 gap-4">
             <div className="bg-card rounded-3xl p-5 border shadow-sm group transition-all hover:border-primary/20">
               <div className="flex items-center gap-2 text-muted-foreground font-bold text-[10px] uppercase mb-4 tracking-widest">
                 <TrendingDown className="h-4 w-4" />
-                Avg Purchase
+                {t("inventory.detail.analysis.metrics.avgPurchasePrice")}
               </div>
               <div className="flex flex-col">
-                <span className="text-2xl font-black">
+                <span className="text-lg sm:text-2xl font-black">
                   {formatCurrency(analytics.financials.avgPurchasePrice)}
-                </span>
-                <span className="text-[10px] text-muted-foreground font-medium mt-1">
-                  Cost per {unit}
                 </span>
               </div>
             </div>
             <div className="bg-card rounded-3xl p-5 border shadow-sm group transition-all hover:border-primary/20">
               <div className="flex items-center gap-2 text-primary font-bold text-[10px] uppercase mb-4 tracking-widest">
                 <TrendingUp className="h-4 w-4" />
-                Avg Sale
+                {t("inventory.detail.analysis.metrics.avgSalePrice")}
               </div>
               <div className="flex flex-col">
-                <span className="text-2xl font-black text-primary">
+                <span className="text-lg sm:text-2xl font-black text-primary">
                   {formatCurrency(analytics.financials.avgSalePrice)}
-                </span>
-                <span className="text-[10px] text-muted-foreground font-medium mt-1">
-                  Retail per {unit}
                 </span>
               </div>
             </div>
             <MetricCard
-              title="Avg Daily"
+              title={t("inventory.detail.analysis.metrics.avgDailySales")}
               value={Number(analytics.summary.avgDailySales || 0).toFixed(2)}
               icon={<CalendarClock className="h-4 w-4" />}
               color="#ec4899"
@@ -331,7 +330,7 @@ export default function InventoryAnalysisPage() {
             <div className="bg-blue-500/5 rounded-2xl p-4 border border-blue-500/10 flex flex-col gap-1 ring-1 ring-blue-500/5 min-w-[140px]">
               <div className="flex items-center gap-2 text-blue-600 font-black text-[10px] uppercase tracking-wider">
                 <ArrowDownLeft className="h-4 w-4" />
-                Purchases
+                {t("inventory.detail.analysis.metrics.totalPurchase")}
               </div>
               <span className="text-xl font-black text-blue-600">
                 {analytics.summary.totalPurchase.toLocaleString()}{" "}
@@ -340,12 +339,12 @@ export default function InventoryAnalysisPage() {
                 </span>
               </span>
             </div>
-            <div className="bg-red-500/5 rounded-2xl p-4 border border-red-500/10 flex flex-col gap-1 ring-1 ring-red-500/5 min-w-[140px]">
-              <div className="flex items-center gap-2 text-red-600 font-black text-[10px] uppercase tracking-wider">
+            <div className="bg-emerald-500/5 rounded-2xl p-4 border border-emerald-500/10 flex flex-col gap-1 ring-1 ring-emerald-500/5 min-w-[140px]">
+              <div className="flex items-center gap-2 text-emerald-600 font-black text-[10px] uppercase tracking-wider">
                 <ArrowUpRight className="h-4 w-4" />
-                Sales
+                {t("inventory.detail.analysis.metrics.totalSale")}
               </div>
-              <span className="text-xl font-black text-red-600">
+              <span className="text-xl font-black text-emerald-600">
                 {analytics.summary.totalSale.toLocaleString()}{" "}
                 <span className="text-[10px] opacity-70 underline decoration-2">
                   {unit}
@@ -354,16 +353,16 @@ export default function InventoryAnalysisPage() {
             </div>
           </div>
 
-          <Card className="rounded-[2.5rem] border-none shadow-sm bg-card overflow-hidden">
-            <CardHeader className="pt-8 px-8">
-              <CardTitle className="text-xl font-black flex items-center gap-3">
+          <div className="rounded-[1.5rem] border-none shadow-sm bg-card overflow-hidden">
+            <CardHeader className="p-4">
+              <CardTitle className="pb-2 text-xl font-black border-b border-border/50 flex items-center gap-3">
                 <div className="h-10 w-10 rounded-xl bg-muted flex items-center justify-center">
                   <History className="h-5 w-5" />
                 </div>
-                History Logs
+                {t("inventory.detail.analysis.tabs.movement")}
               </CardTitle>
             </CardHeader>
-            <CardContent className="px-6 pb-8 space-y-3">
+            <CardContent className="px-6 pb-8 pt-0 space-y-3">
               {analytics.history?.length > 0 ? (
                 analytics.history.map((item, i) => (
                   <div
@@ -397,12 +396,6 @@ export default function InventoryAnalysisPage() {
                           >
                             {item.type}
                           </span>
-                          <Badge
-                            variant="outline"
-                            className="text-[8px] h-4 font-black rounded-lg border-muted-foreground/20"
-                          >
-                            ID: {item.id?.toString().slice(-4) || "N/A"}
-                          </Badge>
                         </div>
                         <span className="text-xs text-muted-foreground font-medium mt-1">
                           {formatDate(item.createdAt)}
@@ -415,7 +408,7 @@ export default function InventoryAnalysisPage() {
                         {Number(item.quantity).toLocaleString()} {unit}
                       </span>
                       <span className="text-[10px] text-muted-foreground font-bold mt-0.5">
-                        {formatCurrency(item.unitPrice)}/ea
+                        {formatCurrency(item.unitPrice)}
                       </span>
                     </div>
                   </div>
@@ -423,11 +416,14 @@ export default function InventoryAnalysisPage() {
               ) : (
                 <div className="flex flex-col items-center justify-center py-20 opacity-30">
                   <Info className="h-12 w-12 mb-4" />
-                  <p className="font-bold">No Transaction Activity</p>
+                  <p className="font-bold">
+                    {t("inventory.tab.emptyPurchase")} /{" "}
+                    {t("inventory.tab.emptySale")}
+                  </p>
                 </div>
               )}
             </CardContent>
-          </Card>
+          </div>
         </TabsContent>
       </Tabs>
     </div>
@@ -462,7 +458,7 @@ function MetricCard({
           {title}
         </p>
         <div className="flex items-baseline gap-1 overflow-hidden">
-          <span className="text-xl md:text-2xl font-black truncate">
+          <span className="text-lg sm:text-2xl font-black truncate">
             {isCurrency
               ? formatCurrency(value)
               : Number(value).toLocaleString()}

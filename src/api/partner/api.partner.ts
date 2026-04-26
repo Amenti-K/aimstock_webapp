@@ -7,6 +7,7 @@ import {
   IPartnerResponse,
   IPartnerDetail,
   INewPartner,
+  IPartnerSelectorResponse,
 } from "@/components/interface/partner/partner.interfacce";
 import { IResponse } from "@/components/interface/common.interface";
 
@@ -58,7 +59,7 @@ export const useFetchPartnerById = (id: string, enabled?: boolean) => {
 };
 
 export const useFetchPartnerSelector = () => {
-  return useFetch<any>(endpoints.PARTNER + "/select", {
+  return useFetch<IPartnerSelectorResponse>(endpoints.PARTNER + "/select", {
     queryKey: queryKeys.partners.selector(),
   });
 };

@@ -3,24 +3,29 @@
   "pendingAnalytics": "የትንታኔ መረጃ በመጫን ላይ...",
   "errorAnalytics": "የትንታኔ መረጃ መጫን አልተሳካም።",
   "permissions": {
-    "view": "የሂሳብ መረጃ ለመመልከት ፈቃድ የሎትም።"
+    "view": "የትንታኔ መረጃ ለመመልከት ፈቃድ የሎትም።"
   },
   "summary": {
     "totalInv": {
       "title": "ጠቅላላ የክምችት ዋጋ",
-      "empty": "ምንም የክምችት መረጃ የለም"
+      "empty": "ምንም የክምችት መረጃ የለም",
+      "description": "በክምችት ደረጃዎች ላይ የተመሰረተ የቀጥታ ግምገማ"
     },
     "bestSelling": {
       "title": "በብዛት የሚሸጡ እቃዎች",
-      "sold": "ተሽጠዋል"
+      "sold": "ተሽጠዋል",
+      "noData": "የሽያጭ መረጃ የለም"
     },
     "lowStock": {
       "title": "ዝቅተኛ ክምችት ያላቸው እቃዎች",
-      "left": "ቀርቷል"
+      "left": "ቀርቷል",
+      "optimal": "በቂ",
+      "healthy": "የክምችት መጠን ጤናማ ነው"
     },
     "mostUnsold": {
       "title": "በጣም ያልተሸጡ እቃዎች",
-      "items": "እቃዎች"
+      "items": "እቃዎች",
+      "inStock": "በክምችት ውስጥ"
     }
   },
   "chart": {
@@ -44,5 +49,6 @@
       "spending": "ጠቅላላ ወጪ",
       "cashFlow": "የተጣራ የገንዘብ እንቅስቃሴ"
     }
-  }
+  },
+  "dashboardOverview": "የዳሽቦርድ አጠቃላይ እይታ"
 }

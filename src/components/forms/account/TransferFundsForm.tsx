@@ -6,15 +6,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { transferSchema, TransferFormType } from "../../schema/account.schema";
 import {
   IAccountTransfer,
-  IAccountDetail,
   IAccountSelector,
-  IAccount,
 } from "../../interface/interface.account";
 import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { Loader2, ArrowRightLeft } from "lucide-react";
 import NumericField from "../fields/NumericField";
 import SelectField from "../fields/SelectField";
+import { useLanguage } from "@/hooks/language.hook";
 
 interface Props {
   fromAccountId: string;
@@ -29,6 +28,8 @@ export default function TransferFundsForm({
   onTransfer,
   loading = false,
 }: Props) {
+  const { t } = useLanguage();
+  
   const form = useForm<TransferFormType>({
     resolver: zodResolver(transferSchema),
     defaultValues: {
@@ -54,13 +55,13 @@ export default function TransferFundsForm({
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 py-2">
-        <div className="bg-primary/5 p-4 rounded-2xl border border-primary/10">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5 py-1">
+        <div className="bg-primary/5 p-3 sm:p-4 rounded-xl sm:rounded-2xl border border-primary/10">
           <SelectField
             control={form.control as any}
             name="toAccountId"
-            label="Destination Account"
-            placeholder="Select where to send"
+            label={t("accounts.transfer.to")}
+            placeholder={t("accounts.transfer.select")}
             options={accountOptions}
           />
         </div>
@@ -68,7 +69,7 @@ export default function TransferFundsForm({
         <NumericField
           control={form.control as any}
           name="amount"
-          label="Transfer Amount"
+          label={t("accounts.transfer.amount")}
           placeholder="0.00"
           type="number"
         />
@@ -76,14 +77,14 @@ export default function TransferFundsForm({
         <Button
           type="submit"
           disabled={loading}
-          className="w-full rounded-xl py-6 text-base font-bold shadow-lg shadow-primary/20 transition-all hover:shadow-xl hover:-translate-y-0.5"
+          className="w-full rounded-xl py-5 sm:py-6 text-base font-bold shadow-lg shadow-primary/20 transition-all hover:shadow-xl hover:-translate-y-0.5 mt-2"
         >
           {loading ? (
             <Loader2 className="mr-2 h-5 w-5 animate-spin" />
           ) : (
             <ArrowRightLeft className="mr-2 h-5 w-5" />
           )}
-          Complete Transfer
+          {t("accounts.transfer.transfer")}
         </Button>
       </form>
     </Form>

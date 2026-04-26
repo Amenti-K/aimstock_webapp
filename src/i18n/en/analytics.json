@@ -3,24 +3,29 @@
   "pendingAnalytics": "Loading analytics data...",
   "errorAnalytics": "Failed to load analytics data.",
   "permissions": {
-    "view": "You do not have permission to view Accounts data."
+    "view": "You do not have permission to view Analytics data."
   },
   "summary": {
     "totalInv": {
       "title": "Total Inventory Value",
-      "empty": "No inventory data available"
+      "empty": "No inventory data available",
+      "description": "Live valuation based on stock levels"
     },
     "bestSelling": {
       "title": "Best Selling Items",
-      "sold": "sold"
+      "sold": "sold",
+      "noData": "No sales data"
     },
     "lowStock": {
       "title": "Low Stock Items",
-      "left": "left"
+      "left": "left",
+      "optimal": "Optimal",
+      "healthy": "Levels are healthy"
     },
     "mostUnsold": {
       "title": "Most Unsold Items",
-      "items": "items"
+      "items": "items",
+      "inStock": "In stock"
     }
   },
   "chart": {
@@ -44,5 +49,6 @@
       "spending": "Total Spending",
       "cashFlow": "Net Cash Flow"
     }
-  }
+  },
+  "dashboardOverview": "Dashboard Overview"
 }

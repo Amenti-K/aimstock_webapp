@@ -1,5 +1,6 @@
 {
   "moduleName": "Inventory",
+  "description": "Monitor and manage your stock across all warehouses.",
   "emptyInventory": "No inventory found. Start by adding your first inventory",
   "noResults": "No results for {{query}}",
   "pendingInvy": "Loading inventory details...",
@@ -20,8 +21,12 @@
     "unitPrice": "Unit Price",
     "lowStock": "Low Stock",
     "inStock": "In Stock",
+    "outOfStock": "Out Of Stock",
     "reorder": "Reorder",
-    "lowStockMessage": "Low stock, consider reordering"
+    "lowStockMessage": "Low stock, consider reordering",
+    "noSku": "NO-SKU",
+    "generics": "Generics",
+    "currentStock": "Current Stock"
   },
   "detail": {
     "title": "Inventory Detail",
@@ -66,6 +71,16 @@
     "low": "Low Stock",
     "out": "Out of Stock"
   },
+  "table": {
+    "item": "Item",
+    "sku": "SKU",
+    "stockLevel": "Stock Level",
+    "costPrice": "Cost Price",
+    "sellingPrice": "Selling Price",
+    "status": "Status",
+    "showMore": "Show more items",
+    "loadingMore": "Loading more..."
+  },
   "form": {
     "searchPlaceholder": "Search inventories...",
     "add": "New Inventory",
@@ -77,8 +92,11 @@
     "sellingPrice": "Selling Price *",
     "initialQty": "Initial Quantity *",
     "unit": "Unit(psc,kg,ltr,etc) *",
+    "inventoryInfo": "Inventory Information",
+    "inventoryInfoDesc": "Enter basic item details and pricing",
     "wareInv": {
       "title": "Warehouse Inventories",
+      "description": "Distribute stock across different locations",
       "ware": "Warehouse",
       "qty": "Quantity",
       "reorderQty": "Reorder Qty",

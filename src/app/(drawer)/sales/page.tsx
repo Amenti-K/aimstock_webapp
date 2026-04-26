@@ -25,9 +25,11 @@ import { formatCurrency, formatDate } from "@/lib/formatter";
 import { Calendar, User, Package, ChevronRight, Receipt } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { InfiniteScrollTrigger } from "@/components/common/InfiniteScrollTrigger";
+import { useLanguage } from "@/hooks/language.hook";
 
 export default function SalesPage() {
   const router = useRouter();
+  const { t } = useLanguage();
   const { canView, canCreate } = usePermissions();
   const hasViewAccess = canView("SALES");
   const hasCreateAccess = canCreate("SALES");
@@ -75,14 +77,14 @@ export default function SalesPage() {
 
   return (
     <div className="flex flex-col gap-6 pb-20 sm:pb-8">
-      {/* Header Section */}
-      <div className="flex flex-col gap-4 px-1 sm:flex-row sm:items-center sm:justify-between">
+      {/* Header Section - Hidden on Mobile */}
+      <div className="hidden sm:flex flex-col gap-4 px-1 sm:flex-row sm:items-center sm:justify-between">
         <div className="space-y-1">
           <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
-            Sales
+            {t("sales.moduleName")}
           </h1>
           <p className="text-sm text-muted-foreground">
-            Manage your outgoing stocks and revenue.
+            {t("sales.description")}
           </p>
         </div>
         {hasCreateAccess && (
@@ -90,10 +92,20 @@ export default function SalesPage() {
             className="w-full shadow-lg shadow-emerald-500/20 bg-emerald-600 hover:bg-emerald-700 transition-all hover:shadow-xl sm:w-auto"
             onClick={() => router.push("/sales/new")}
           >
-            <Plus className="mr-2 h-4 w-4" /> New Sale
+            <Plus className="mr-2 h-4 w-4" /> {t("sales.form.addSale")}
           </Button>
         )}
       </div>
+
+      {/* Mobile Floating Action Button */}
+      {hasCreateAccess && (
+        <Button
+          className="sm:hidden fixed bottom-24 right-6 z-50 h-14 w-14 rounded-full shadow-xl bg-emerald-600 hover:bg-emerald-700 p-0 flex items-center justify-center"
+          onClick={() => router.push("/sales/new")}
+        >
+          <Plus className="h-6 w-6 text-white" />
+        </Button>
+      )}
 
       {/* Daily Summary Section */}
       <DailyReport
@@ -101,8 +113,8 @@ export default function SalesPage() {
         date={date}
         setDate={handleDateChange}
         isLoading={isLoadingDailyReport}
-        title="Sales Summary"
-        subtitle="Insights for your daily revenue"
+        title={t("common.reportAcco.title")}
+        subtitle={t("common.reportAcco.subtitle")}
       />
 
       {/* List Section */}
@@ -113,88 +125,132 @@ export default function SalesPage() {
               <Plus className="h-8 w-8 opacity-20" />
             </div>
             <h3 className="text-lg font-medium text-foreground">
-              No sales found
+              {t("sales.emptySale")}
             </h3>
-            <p className="text-sm text-muted-foreground max-w-xs mx-auto mt-1">
-              Start recording sales to track your business performance.
-            </p>
           </div>
         ) : (
-          <div className="rounded-2xl border bg-card shadow-sm overflow-hidden text-emerald-600">
-            <Table>
-              <TableHeader className="bg-muted/30">
-                <TableRow>
-                  <TableHead className="w-[300px]">Customer & ID</TableHead>
-                  <TableHead className="hidden md:table-cell">
-                    Product Details
-                  </TableHead>
-                  <TableHead className="hidden sm:table-cell">Date</TableHead>
-                  <TableHead className="text-right">Revenue</TableHead>
-                  <TableHead className="w-[50px]"></TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {sales.map((sale: any) => {
-                  const itemCount = sale.saleItems?.length || 0;
-                  const mainItem =
-                    sale.saleItems?.[0]?.inventory?.name || "General Items";
-                  const soId = `SO-${sale.id.slice(-6).toUpperCase()}`;
+          <>
+            <div className="hidden sm:block rounded-2xl border bg-card shadow-sm overflow-hidden text-emerald-600">
+              <Table>
+                <TableHeader className="bg-muted/30">
+                  <TableRow>
+                    <TableHead className="w-[300px]">
+                      {t("sales.table.customerAndId")}
+                    </TableHead>
+                    <TableHead className="hidden md:table-cell">
+                      {t("sales.table.items")}
+                    </TableHead>
+                    <TableHead className="hidden sm:table-cell">
+                      {t("sales.table.date")}
+                    </TableHead>
+                    <TableHead className="text-right">
+                      {t("sales.table.revenue")}
+                    </TableHead>
+                    <TableHead className="w-[50px]"></TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {sales.map((sale: any) => {
+                    const itemCount = sale.saleItems?.length || 0;
+                    const soId = `SO-${sale.id.slice(-6).toUpperCase()}`;
 
-                  return (
-                    <TableRow
-                      key={sale.id}
-                      className="group cursor-pointer hover:bg-muted/30 transition-colors"
-                      onClick={() => router.push(`/sales/${sale.id}`)}
-                    >
-                      <TableCell className="py-4">
-                        <div className="flex items-center gap-3">
-                          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
-                            <Receipt className="h-5 w-5" />
+                    return (
+                      <TableRow
+                        key={sale.id}
+                        className="group cursor-pointer hover:bg-muted/30 transition-colors"
+                        onClick={() => router.push(`/sales/${sale.id}`)}
+                      >
+                        <TableCell className="py-4">
+                          <div className="flex items-center gap-3">
+                            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
+                              <Receipt className="h-5 w-5" />
+                            </div>
+                            <div className="flex flex-col min-w-0">
+                              <span className="font-semibold text-foreground truncate max-w-[180px]">
+                                {sale.partner?.name ||
+                                  t("sales.card.walkingCust")}
+                              </span>
+                              <span className="text-xs text-muted-foreground tabular-nums">
+                                {soId}
+                              </span>
+                            </div>
                           </div>
-                          <div className="flex flex-col min-w-0">
-                            <span className="font-semibold text-foreground truncate max-w-[180px]">
-                              {sale.partner?.name || "Walk-in Customer"}
-                            </span>
-                            <span className="text-xs text-muted-foreground tabular-nums">
-                              {soId}
+                        </TableCell>
+                        <TableCell className="hidden md:table-cell py-4">
+                          <div className="flex items-center gap-2 text-muted-foreground">
+                            <Package className="h-4 w-4" />
+                            <span className="text-sm">
+                              {itemCount} {t("common.unit.items")}
                             </span>
                           </div>
+                        </TableCell>
+                        <TableCell className="hidden sm:table-cell py-4 text-muted-foreground">
+                          <div className="flex items-center gap-2 text-sm">
+                            <Calendar className="h-4 w-4" />
+                            <span>{formatDate(sale.createdAt)}</span>
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-right py-4 font-bold text-emerald-600">
+                          {formatCurrency(sale.total || 0)}
+                        </TableCell>
+                        <TableCell className="py-4">
+                          <ChevronRight className="h-5 w-5 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+                </TableBody>
+              </Table>
+            </div>
+
+            {/* Mobile Cards */}
+            <div className="sm:hidden flex flex-col gap-3">
+              {sales.map((sale: any) => {
+                const itemCount = sale.saleItems?.length || 0;
+                const soId = `SO-${sale.id.slice(-6).toUpperCase()}`;
+
+                return (
+                  <div
+                    key={sale.id}
+                    onClick={() => router.push(`/sales/${sale.id}`)}
+                    className="bg-card border rounded-xl p-4 shadow-sm flex flex-col gap-3 active:scale-[0.98] transition-transform cursor-pointer"
+                  >
+                    <div className="flex justify-between items-start">
+                      <div className="flex gap-3 items-center">
+                        <div className="h-10 w-10 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center">
+                          <Receipt className="h-5 w-5" />
                         </div>
-                      </TableCell>
-                      <TableCell className="hidden md:table-cell py-4">
-                        <div className="flex items-center gap-2">
-                          <Package className="h-4 w-4 text-muted-foreground" />
-                          <span className="text-sm truncate max-w-[200px] text-muted-foreground">
-                            {mainItem}
-                          </span>
-                          {itemCount > 1 && (
-                            <Badge
-                              variant="outline"
-                              className="text-[10px] py-0 h-5 border-emerald-200 bg-emerald-50 text-emerald-700"
-                            >
-                              +{itemCount - 1} more
-                            </Badge>
-                          )}
+                        <div>
+                          <h3 className="font-semibold text-foreground text-base">
+                            {sale.partner?.name || t("sales.card.walkingCust")}
+                          </h3>
+                          <p className="text-xs text-muted-foreground">
+                            {soId}
+                          </p>
                         </div>
-                      </TableCell>
-                      <TableCell className="hidden sm:table-cell py-4 text-muted-foreground">
-                        <div className="flex items-center gap-2 text-sm">
-                          <Calendar className="h-4 w-4" />
-                          <span>{formatDate(sale.createdAt)}</span>
-                        </div>
-                      </TableCell>
-                      <TableCell className="text-right py-4 font-bold text-emerald-600">
+                      </div>
+                      <p className="text-sm font-bold text-emerald-600">
                         {formatCurrency(sale.total || 0)}
-                      </TableCell>
-                      <TableCell className="py-4">
-                        <ChevronRight className="h-5 w-5 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
-              </TableBody>
-            </Table>
-          </div>
+                      </p>
+                    </div>
+
+                    <div className="flex justify-between items-center text-sm text-muted-foreground pt-3 border-t">
+                      <div className="flex items-center gap-1.5">
+                        <Package className="h-4 w-4" />
+                        <span>
+                          {itemCount} {t("common.unit.items")}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <Calendar className="h-4 w-4" />
+                        <span>{formatDate(sale.createdAt)}</span>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </>
         )}
 
         <InfiniteScrollTrigger

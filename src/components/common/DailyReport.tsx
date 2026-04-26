@@ -25,6 +25,7 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/hooks/language.hook";
 
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -48,21 +49,25 @@ export function DailyReport({
   date,
   setDate,
   isLoading,
-  title = "Daily Report",
-  subtitle = "Summary for selected date",
+  title,
+  subtitle,
 }: DailyReportProps) {
+  const { t } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
 
+  const displayTitle = title || t("common.reportAcco.title");
+  const displaySubtitle = subtitle || t("common.reportAcco.subtitle");
+
   return (
-    <Card className="overflow-hidden border-none bg-gradient-to-br from-primary/5 via-background to-background shadow-sm">
+    <Card className="overflow-hidden py-0 border-none bg-gradient-to-br from-primary/5 via-background to-background shadow-sm">
       <Collapsible open={isOpen} onOpenChange={setIsOpen}>
         <div className="flex items-center justify-between p-4 sm:p-6">
           <div className="flex flex-col gap-1">
             <h3 className="text-lg font-semibold tracking-tight sm:text-xl">
-              {title}
+              {displayTitle}
             </h3>
-            <p className="text-sm text-muted-foreground">{subtitle}</p>
+            <p className="text-sm text-muted-foreground">{displaySubtitle}</p>
           </div>
           <div className="flex items-center gap-2 sm:gap-4">
             <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
@@ -77,10 +82,14 @@ export function DailyReport({
                 >
                   <CalendarIcon className="h-4 w-4 text-primary" />
                   <span className="hidden sm:inline-block">
-                    {date ? formatDate(date) : "Select Date"}
+                    {date
+                      ? formatDate(date)
+                      : t("common.reportAcco.selectDate")}
                   </span>
                   <span className="sm:hidden">
-                    {date ? formatDate(date) : "Date"}
+                    {date
+                      ? formatDate(date)
+                      : t("common.reportAcco.selectDate")}
                   </span>
                 </Button>
               </PopoverTrigger>
@@ -118,11 +127,12 @@ export function DailyReport({
         </div>
 
         <CollapsibleContent>
-          <CardContent className="px-2 sm:px-6 pb-6 pt-0">
-            <div className="grid grid-cols-3 gap-2 sm:gap-4">
+          <CardContent className="px-4 sm:px-6 pb-4 sm:pb-6 pt-0">
+            {/* Desktop View */}
+            <div className="hidden sm:grid sm:grid-cols-3 sm:gap-4">
               <SummaryItem
-                icon={<Landmark className="h-4 w-4 sm:h-5 sm:w-5" />}
-                label="Bank"
+                icon={<Landmark className="h-5 w-5" />}
+                label={t("common.reportAcco.totalPaidByBank")}
                 value={dailyReport?.totalPaidByBank ?? 0}
                 color="text-blue-600 dark:text-blue-400"
                 bgColor="bg-blue-500/10 dark:bg-blue-500/20"
@@ -130,8 +140,8 @@ export function DailyReport({
                 isLoading={isLoading}
               />
               <SummaryItem
-                icon={<Wallet className="h-4 w-4 sm:h-5 sm:w-5" />}
-                label="Cash"
+                icon={<Wallet className="h-5 w-5" />}
+                label={t("common.reportAcco.totalPaidByCash")}
                 value={dailyReport?.totalPaidByCash ?? 0}
                 color="text-emerald-600 dark:text-emerald-400"
                 bgColor="bg-emerald-500/10 dark:bg-emerald-500/20"
@@ -139,8 +149,8 @@ export function DailyReport({
                 isLoading={isLoading}
               />
               <SummaryItem
-                icon={<Banknote className="h-4 w-4 sm:h-5 sm:w-5" />}
-                label="Loan"
+                icon={<Banknote className="h-5 w-5" />}
+                label={t("common.reportAcco.totalLoanAmount")}
                 value={dailyReport?.totalLoan ?? 0}
                 color="text-rose-600 dark:text-rose-400"
                 bgColor="bg-rose-500/10 dark:bg-rose-500/20"
@@ -148,6 +158,45 @@ export function DailyReport({
                 isNegative
                 isLoading={isLoading}
               />
+            </div>
+
+            {/* Mobile View */}
+            <div className="sm:hidden flex flex-col">
+              {isLoading ? (
+                <div className="flex flex-col items-center justify-center py-6 space-y-2">
+                  <Loader2 className="h-5 w-5 animate-spin text-primary" />
+                  <span className="text-xs text-muted-foreground">
+                    {t("common.reportAcco.loadingReport")}
+                  </span>
+                </div>
+              ) : (
+                <>
+                  <div className="flex justify-between items-center py-3 border-b border-border/50">
+                    <span className="text-sm text-foreground">
+                      {t("common.reportAcco.totalPaidByBank")}
+                    </span>
+                    <span className="text-sm font-semibold">
+                      {formatCurrency(dailyReport?.totalPaidByBank ?? 0)}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center py-3 border-b border-border/50">
+                    <span className="text-sm text-foreground">
+                      {t("common.reportAcco.totalPaidByCash")}
+                    </span>
+                    <span className="text-sm font-semibold">
+                      {formatCurrency(dailyReport?.totalPaidByCash ?? 0)}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center py-3">
+                    <span className="text-sm text-foreground">
+                      {t("common.reportAcco.totalLoanAmount")}
+                    </span>
+                    <span className="text-sm font-semibold text-rose-600 dark:text-rose-400">
+                      {formatCurrency(dailyReport?.totalLoan ?? 0)}
+                    </span>
+                  </div>
+                </>
+              )}
             </div>
           </CardContent>
         </CollapsibleContent>
@@ -184,11 +233,21 @@ function SummaryItem({
       )}
     >
       <div className="flex flex-col sm:flex-row sm:items-center gap-1.5 sm:gap-3">
-        <div className={cn("hidden sm:flex rounded-lg p-2 bg-background/50 shadow-sm shrink-0", color)}>
+        <div
+          className={cn(
+            "hidden sm:flex rounded-lg p-2 bg-background/50 shadow-sm shrink-0",
+            color,
+          )}
+        >
           {icon}
         </div>
         <div className="flex items-center gap-1.5">
-          <div className={cn("sm:hidden rounded-md p-1 bg-background/50 shrink-0", color)}>
+          <div
+            className={cn(
+              "sm:hidden rounded-md p-1 bg-background/50 shrink-0",
+              color,
+            )}
+          >
             {icon}
           </div>
           <span className="text-[10px] sm:text-sm font-bold uppercase tracking-wider text-muted-foreground truncate">
@@ -213,4 +272,3 @@ function SummaryItem({
     </div>
   );
 }
-

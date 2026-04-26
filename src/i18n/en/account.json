@@ -19,7 +19,8 @@
     "branch": "Branch",
     "accountNumber": "ACCOUNT NUMBER",
     "holder": "CARD HOLDER",
-    "balance": "BALANCE"
+    "balance": "BALANCE",
+    "headquarters": "Headquarters"
   },
   "transfer": {
     "title": "Transfer Funds",
@@ -29,13 +30,21 @@
     "transfer": "Transfer",
     "select": "Select account",
     "loading": "Loading accounts...",
-    "error": "Failed to load accounts."
+    "error": "Failed to load accounts.",
+    "subtitle": "Securely move funds between your financial accounts."
   },
   "tranxCard": {
     "transaction": "Transaction",
     "transactions": "Transactions",
     "income": "Income",
-    "expense": "Expense"
+    "expense": "Expense",
+    "subtitle": "Complete history of inflows and outflows",
+    "records": "Records",
+    "description": "Description",
+    "amount": "Amount",
+    "noDescription": "No description provided",
+    "received": "RECEIVED",
+    "sent": "SENT"
   },
   "form": {
     "add": "Add Account",
@@ -48,7 +57,11 @@
     "edit": "Edit Account",
     "balanceEdit": "Balance (not editable)",
     "loading": "Loading accounts...",
-    "error": "Failed to load accounts."
+    "error": "Failed to load accounts.",
+    "addSubtitle": "Fill in the details to create a new financial account.",
+    "editSubtitle": "Update the details for your account \"{{name}}\".",
+    "detailsSubtitleNew": "Provide the necessary information to set up your account securely.",
+    "detailsSubtitleEdit": "Modify the account information below and save your changes."
   },
   "bank": {
     "TELEBIRR": "Telebirr",
@@ -79,5 +92,21 @@
     "GADAA_BANK": "Gadaa Bank",
     "SHABELLE_BANK": "Shabelle Bank",
     "others": "Others"
+  },
+  "details": {
+    "title": "Account Information",
+    "subtitle": "Details for your {{type}} account",
+    "institution": "Financial Institution",
+    "number": "Account Number",
+    "balance": "Available Balance",
+    "verified": "Verified Balance",
+    "noNumber": "Not Provided"
+  },
+  "activity": {
+    "title": "Activity Volume",
+    "subtitle": "Lifetime summary",
+    "inflow": "Total Inflow",
+    "outflow": "Total Outflow",
+    "records": "{{count}} Transactions recorded"
   }
 }

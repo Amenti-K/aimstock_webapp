@@ -8,9 +8,11 @@ import SalesForm from "@/components/forms/sales/SalesForm";
 import { useCreateSale } from "@/api/sale/api.sale";
 import { usePermissions } from "@/hooks/permission.hook";
 import { AccessDeniedView } from "@/components/guards/AccessDeniedView";
+import { useLanguage } from "@/hooks/language.hook";
 
 export default function NewSalesPage() {
   const router = useRouter();
+  const { t } = useLanguage();
   const { canCreate } = usePermissions();
   const hasCreateAccess = canCreate("SALES");
   const createSale = useCreateSale();
@@ -26,9 +28,9 @@ export default function NewSalesPage() {
           <ArrowLeft className="h-5 w-5" />
         </Button>
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Add Sale</h1>
+          <h1 className="text-2xl font-bold tracking-tight">{t("sales.form.addSale")}</h1>
           <p className="text-sm text-muted-foreground">
-            Record a new sales transaction.
+            {t("sales.description")}
           </p>
         </div>
       </div>

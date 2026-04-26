@@ -30,10 +30,12 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useLanguage } from "@/hooks/language.hook";
 
 export default function PurchaseDetailPage() {
   const { id } = useParams();
   const router = useRouter();
+  const { t } = useLanguage();
   const purchaseId = id as string;
   const { canView, canUpdate, canDelete } = usePermissions();
   const hasViewAccess = canView("PURCHASE");
@@ -91,8 +93,10 @@ export default function PurchaseDetailPage() {
           className="rounded-xl hover:bg-card"
         >
           <ArrowLeft className="mr-2 h-4 w-4" />
-          <span className="hidden sm:inline">Back to Purchases</span>
-          <span className="sm:hidden">Back</span>
+          <span className="hidden sm:inline">
+            {t("common.back")} to {t("purchase.moduleName")}
+          </span>
+          <span className="sm:hidden">{t("common.back")}</span>
         </Button>
 
         <div className="flex items-center gap-2">
@@ -106,7 +110,7 @@ export default function PurchaseDetailPage() {
                 onClick={() => router.push(`/purchase/${purchaseId}/edit`)}
               >
                 <Pencil className="mr-2 h-4 w-4" />
-                Edit
+                {t("common.edit")}
               </Button>
             )}
             {hasDeleteAccess && (
@@ -117,7 +121,7 @@ export default function PurchaseDetailPage() {
                 onClick={() => setIsDeleteOpen(true)}
               >
                 <Trash2 className="mr-2 h-4 w-4" />
-                Delete
+                {t("common.delete")}
               </Button>
             )}
           </div>
@@ -134,12 +138,15 @@ export default function PurchaseDetailPage() {
                   <MoreVertical className="h-5 w-5" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-40 rounded-xl">
+              <DropdownMenuContent
+                align="end"
+                className="w-40 rounded-xl bg-card"
+              >
                 {hasUpdateAccess && (
                   <DropdownMenuItem
                     onClick={() => router.push(`/purchase/${purchaseId}/edit`)}
                   >
-                    <Pencil className="mr-2 h-4 w-4" /> Edit
+                    <Pencil className="mr-2 h-4 w-4" /> {t("common.edit")}
                   </DropdownMenuItem>
                 )}
                 {hasDeleteAccess && (
@@ -147,7 +154,7 @@ export default function PurchaseDetailPage() {
                     className="text-destructive font-medium"
                     onClick={() => setIsDeleteOpen(true)}
                   >
-                    <Trash2 className="mr-2 h-4 w-4" /> Delete
+                    <Trash2 className="mr-2 h-4 w-4" /> {t("common.delete")}
                   </DropdownMenuItem>
                 )}
               </DropdownMenuContent>
@@ -191,23 +198,26 @@ export default function PurchaseDetailPage() {
       <AlertDialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
         <AlertDialogContent className="rounded-2xl">
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete permanently?</AlertDialogTitle>
+            <AlertDialogTitle>
+              {t("common.confirmDelete.title", {
+                entity: t("purchase.moduleName"),
+              })}
+            </AlertDialogTitle>
             <AlertDialogDescription>
-              You are about to delete purchase{" "}
-              <span className="font-bold text-foreground">{poNumber}</span>.
-              This will also remove associated inventory increments and
-              financial records. This action is irreversible.
+              {t("common.confirmDelete.message", {
+                entity: t("purchase.moduleName"),
+              })}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="gap-2 sm:gap-0">
             <AlertDialogCancel className="rounded-xl">
-              Keep Purchase
+              {t("common.cancel")}
             </AlertDialogCancel>
             <AlertDialogAction
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90 rounded-xl"
               onClick={handleDelete}
             >
-              Confirm Delete
+              {t("common.delete")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

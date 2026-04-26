@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect, useMemo } from "react";
 import {
-  useDeletePurchase,
   useInfinitePurchases,
   useFetchDailyPurchaseReport,
 } from "@/api/purchase/api.purchase";
@@ -22,18 +21,14 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { formatCurrency, formatDate } from "@/lib/formatter";
-import {
-  Calendar,
-  User,
-  Package,
-  ChevronRight,
-  ShoppingCart,
-} from "lucide-react";
+import { Calendar, User, Package, ChevronRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { InfiniteScrollTrigger } from "@/components/common/InfiniteScrollTrigger";
+import { useLanguage } from "@/hooks/language.hook";
 
 export default function PurchasePage() {
   const router = useRouter();
+  const { t } = useLanguage();
   const { canView, canCreate } = usePermissions();
   const hasViewAccess = canView("PURCHASE");
   const hasCreateAccess = canCreate("PURCHASE");
@@ -81,14 +76,14 @@ export default function PurchasePage() {
 
   return (
     <div className="flex flex-col gap-6 pb-20 sm:pb-8">
-      {/* Header Section */}
-      <div className="flex flex-col gap-4 px-1 sm:flex-row sm:items-center sm:justify-between">
+      {/* Header Section - Hidden on Mobile */}
+      <div className="hidden sm:flex flex-col gap-4 px-1 sm:flex-row sm:items-center sm:justify-between">
         <div className="space-y-1">
           <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
-            Purchases
+            {t("purchase.moduleName")}
           </h1>
           <p className="text-sm text-muted-foreground">
-            Monitor and manage your supply chain transactions.
+            {t("purchase.description")}
           </p>
         </div>
         {hasCreateAccess && (
@@ -96,10 +91,20 @@ export default function PurchasePage() {
             className="w-full shadow-lg shadow-primary/20 transition-all hover:shadow-xl sm:w-auto"
             onClick={() => router.push("/purchase/new")}
           >
-            <Plus className="mr-2 h-4 w-4" /> New Purchase
+            <Plus className="mr-2 h-4 w-4" /> {t("purchase.form.addPur")}
           </Button>
         )}
       </div>
+
+      {/* Mobile Floating Action Button */}
+      {hasCreateAccess && (
+        <Button
+          className="sm:hidden fixed bottom-24 right-6 z-50 h-14 w-14 rounded-full shadow-xl bg-primary hover:bg-primary/90 p-0 flex items-center justify-center"
+          onClick={() => router.push("/purchase/new")}
+        >
+          <Plus className="h-6 w-6 text-primary-foreground" />
+        </Button>
+      )}
 
       {/* Daily Summary Section */}
       <DailyReport
@@ -107,8 +112,8 @@ export default function PurchasePage() {
         date={date}
         setDate={handleDateChange}
         isLoading={isLoadingDailyReport}
-        title="Purchase Summary"
-        subtitle="Insights for your inventory intake"
+        title={t("common.reportAcco.title")}
+        subtitle={t("common.reportAcco.subtitle")}
       />
 
       {/* List Section */}
@@ -119,89 +124,133 @@ export default function PurchasePage() {
               <Plus className="h-8 w-8 opacity-20" />
             </div>
             <h3 className="text-lg font-medium text-foreground">
-              No purchases found
+              {t("purchase.emptyPur")}
             </h3>
-            <p className="text-sm text-muted-foreground max-w-xs mx-auto mt-1">
-              Start adding purchases to keep track of your incoming inventory.
-            </p>
           </div>
         ) : (
-          <div className="rounded-2xl border bg-card shadow-sm overflow-hidden">
-            <Table>
-              <TableHeader className="bg-muted/30">
-                <TableRow>
-                  <TableHead className="w-[300px]">Supplier & ID</TableHead>
-                  <TableHead className="hidden md:table-cell">
-                    Product Details
-                  </TableHead>
-                  <TableHead className="hidden sm:table-cell">Date</TableHead>
-                  <TableHead className="text-right">Total Amount</TableHead>
-                  <TableHead className="w-[50px]"></TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {purchases.map((purchase: any) => {
-                  const itemCount = purchase.purchaseItems?.length || 0;
-                  const mainItem =
-                    purchase.purchaseItems?.[0]?.inventory?.name ||
-                    "General Items";
-                  const poId = `PO-${purchase.id.slice(-6).toUpperCase()}`;
+          <>
+            <div className="hidden sm:block rounded-2xl border bg-card shadow-sm overflow-hidden">
+              <Table>
+                <TableHeader className="bg-muted/30">
+                  <TableRow>
+                    <TableHead className="w-[300px]">
+                      {t("purchase.table.supplierAndId")}
+                    </TableHead>
+                    <TableHead className="hidden md:table-cell">
+                      {t("purchase.table.items")}
+                    </TableHead>
+                    <TableHead className="hidden sm:table-cell">
+                      {t("purchase.table.date")}
+                    </TableHead>
+                    <TableHead className="text-right">
+                      {t("purchase.table.total")}
+                    </TableHead>
+                    <TableHead className="w-[50px]"></TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {purchases.map((purchase: any) => {
+                    const itemCount = purchase.purchaseItems?.length || 0;
+                    const poId = `PO-${purchase.id.slice(-6).toUpperCase()}`;
 
-                  return (
-                    <TableRow
-                      key={purchase.id}
-                      className="group cursor-pointer hover:bg-muted/30 transition-colors"
-                      onClick={() => router.push(`/purchase/${purchase.id}`)}
-                    >
-                      <TableCell className="py-4">
-                        <div className="flex items-center gap-3">
-                          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
-                            <User className="h-5 w-5" />
+                    return (
+                      <TableRow
+                        key={purchase.id}
+                        className="group cursor-pointer hover:bg-muted/30 transition-colors"
+                        onClick={() => router.push(`/purchase/${purchase.id}`)}
+                      >
+                        <TableCell className="py-4">
+                          <div className="flex items-center gap-3">
+                            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+                              <User className="h-5 w-5" />
+                            </div>
+                            <div className="flex flex-col min-w-0">
+                              <span className="font-semibold text-foreground truncate max-w-[180px]">
+                                {purchase.partner?.name ||
+                                  t("purchase.card.supplier")}
+                              </span>
+                              <span className="text-xs text-muted-foreground tabular-nums">
+                                {poId}
+                              </span>
+                            </div>
                           </div>
-                          <div className="flex flex-col min-w-0">
-                            <span className="font-semibold text-foreground truncate max-w-[180px]">
-                              {purchase.partner?.name || "General Supplier"}
-                            </span>
-                            <span className="text-xs text-muted-foreground tabular-nums">
-                              {poId}
+                        </TableCell>
+                        <TableCell className="hidden md:table-cell py-4">
+                          <div className="flex items-center gap-2 text-muted-foreground">
+                            <Package className="h-4 w-4" />
+                            <span className="text-sm">
+                              {itemCount} {t("common.unit.items")}
                             </span>
                           </div>
+                        </TableCell>
+                        <TableCell className="hidden sm:table-cell py-4">
+                          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                            <Calendar className="h-4 w-4" />
+                            <span>{formatDate(purchase.createdAt)}</span>
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-right py-4 font-bold text-foreground">
+                          {formatCurrency(purchase.total || 0)}
+                        </TableCell>
+                        <TableCell className="py-4">
+                          <ChevronRight className="h-5 w-5 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+                </TableBody>
+              </Table>
+            </div>
+
+            {/* Mobile Cards */}
+            <div className="sm:hidden flex flex-col gap-3">
+              {purchases.map((purchase: any) => {
+                const itemCount = purchase.purchaseItems?.length || 0;
+                const poId = `PO-${purchase.id.slice(-6).toUpperCase()}`;
+
+                return (
+                  <div
+                    key={purchase.id}
+                    onClick={() => router.push(`/purchase/${purchase.id}`)}
+                    className="bg-card border rounded-xl p-4 shadow-sm flex flex-col gap-3 active:scale-[0.98] transition-transform cursor-pointer"
+                  >
+                    <div className="flex justify-between items-start">
+                      <div className="flex gap-3 items-center">
+                        <div className="h-10 w-10 rounded-full bg-primary/10 text-primary flex items-center justify-center">
+                          <User className="h-5 w-5" />
                         </div>
-                      </TableCell>
-                      <TableCell className="hidden md:table-cell py-4">
-                        <div className="flex items-center gap-2">
-                          <Package className="h-4 w-4 text-muted-foreground" />
-                          <span className="text-sm truncate max-w-[200px]">
-                            {mainItem}
-                          </span>
-                          {itemCount > 1 && (
-                            <Badge
-                              variant="outline"
-                              className="text-[10px] py-0 h-5 border-primary/20 bg-primary/5"
-                            >
-                              +{itemCount - 1} more
-                            </Badge>
-                          )}
+                        <div>
+                          <h3 className="font-semibold text-foreground text-base">
+                            {purchase.partner?.name ||
+                              t("purchase.card.supplier")}
+                          </h3>
+                          <p className="text-xs text-muted-foreground">
+                            {poId}
+                          </p>
                         </div>
-                      </TableCell>
-                      <TableCell className="hidden sm:table-cell py-4">
-                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                          <Calendar className="h-4 w-4" />
-                          <span>{formatDate(purchase.createdAt)}</span>
-                        </div>
-                      </TableCell>
-                      <TableCell className="text-right py-4 font-bold text-foreground">
+                      </div>
+                      <p className="text-sm font-bold text-primary">
                         {formatCurrency(purchase.total || 0)}
-                      </TableCell>
-                      <TableCell className="py-4">
-                        <ChevronRight className="h-5 w-5 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
-              </TableBody>
-            </Table>
-          </div>
+                      </p>
+                    </div>
+
+                    <div className="flex justify-between items-center text-sm text-muted-foreground pt-3 border-t">
+                      <div className="flex items-center gap-1.5">
+                        <Package className="h-4 w-4" />
+                        <span>
+                          {itemCount} {t("common.unit.items")}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <Calendar className="h-4 w-4" />
+                        <span>{formatDate(purchase.createdAt)}</span>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </>
         )}
 
         <InfiniteScrollTrigger

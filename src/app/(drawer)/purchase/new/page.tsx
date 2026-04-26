@@ -8,9 +8,11 @@ import PurchaseForm from "@/components/forms/purchase/PurchaseForm";
 import { useCreatePurchase } from "@/api/purchase/api.purchase";
 import { usePermissions } from "@/hooks/permission.hook";
 import { AccessDeniedView } from "@/components/guards/AccessDeniedView";
+import { useLanguage } from "@/hooks/language.hook";
 
 export default function NewPurchasePage() {
   const router = useRouter();
+  const { t } = useLanguage();
   const { canCreate } = usePermissions();
   const hasCreateAccess = canCreate("PURCHASE");
   const createPurchase = useCreatePurchase();
@@ -26,9 +28,9 @@ export default function NewPurchasePage() {
           <ArrowLeft className="h-5 w-5" />
         </Button>
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Add Purchase</h1>
+          <h1 className="text-2xl font-bold tracking-tight">{t("purchase.form.addPur")}</h1>
           <p className="text-sm text-muted-foreground">
-            Record a new supplier purchase.
+            {t("purchase.description")}
           </p>
         </div>
       </div>

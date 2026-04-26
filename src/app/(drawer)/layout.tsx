@@ -17,8 +17,51 @@ import { AlertTriangle, Info, WifiOff, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { LockButton } from "@/components/security/LockButton";
+import { useLanguage } from "@/hooks/language.hook";
+import { drawerNavItems } from "@/constants/drawer";
+import { NavLink } from "@/components/NavLink";
+
+function MobileBottomTabs() {
+  const { t } = useLanguage();
+  const mobileTabHrefs = [
+    "/sales",
+    "/purchase",
+    "/dashboard",
+    "/inventory",
+    "/account",
+  ];
+
+  // Create tabs in specific order
+  const orderedTabs = mobileTabHrefs
+    .map((href) => drawerNavItems.find((item) => item.href === href))
+    .filter(Boolean);
+
+  return (
+    <div className="fixed bottom-4 left-4 right-4 z-50 flex items-center justify-around rounded-2xl border bg-background/85 backdrop-blur-md supports-[backdrop-filter]:bg-background/60 sm:hidden h-16 px-2 shadow-[0_8px_32px_rgba(0,0,0,0.12)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.4)] border-border/50">
+      {orderedTabs.map((item: any) => (
+        <NavLink
+          key={item.href}
+          to={item.href}
+          end={item.href === "/dashboard"}
+          className="flex flex-col items-center justify-center flex-1 h-full gap-1 text-muted-foreground transition-all duration-300 relative group"
+          activeClassName="text-primary font-bold"
+        >
+          {item && (
+            <div className="relative">
+              <item.icon className="h-5.5 w-5.5 transition-all duration-300 group-active:scale-90" />
+            </div>
+          )}
+          <span className="text-[10px] font-medium leading-none tracking-tight text-center truncate">
+            {t(item?.translationKey || "")}
+          </span>
+        </NavLink>
+      ))}
+    </div>
+  );
+}
 
 function NetworkBanner() {
+  const { t } = useLanguage();
   const [isOnline, setIsOnline] = React.useState(true);
 
   React.useEffect(() => {
@@ -38,9 +81,11 @@ function NetworkBanner() {
   if (isOnline) return null;
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-[100] bg-destructive text-destructive-foreground py-2 px-4 flex items-center justify-center gap-2 text-xs font-medium animate-in slide-in-from-top duration-300 shadow-md">
-      <WifiOff className="h-3 w-3" />
-      <span>You are currently offline. Check your connection.</span>
+    <div className="fixed top-0 left-0 right-0 z-[100] bg-destructive text-destructive-foreground py-2.5 px-4 flex items-center justify-center gap-3 text-xs font-semibold animate-in slide-in-from-top duration-500 shadow-lg">
+      <WifiOff className="h-4 w-4 animate-pulse" />
+      <span>
+        {t("common.network.noInternet")}. {t("common.network.checkNetwork")}
+      </span>
     </div>
   );
 }
@@ -50,6 +95,7 @@ export default function DrawerLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const { t } = useLanguage();
   const pathname = usePathname() ?? "";
   const router = useRouter();
   const isMobile = useIsMobile();
@@ -57,6 +103,18 @@ export default function DrawerLayout({
 
   const [isPastDueDismissed, setIsPastDueDismissed] = React.useState(false);
   const [isTrialDismissed, setIsTrialDismissed] = React.useState(false);
+
+  const mobileTabHrefs = [
+    "/sales",
+    "/purchase",
+    "/dashboard",
+    "/inventory",
+    "/account",
+  ];
+
+  const hideTabs: boolean = mobileTabHrefs.some((href) =>
+    pathname.startsWith(href),
+  );
 
   const pageName =
     pathname.split("/").filter(Boolean).pop()?.replace(/-/g, " ") ||
@@ -94,7 +152,7 @@ export default function DrawerLayout({
           <LockButton />
           <h1 className="text-sm font-medium capitalize">{pageName}</h1>
         </header>
-        <main className="flex-1 overflow-auto bg-muted/30 p-4 sm:p-5 space-y-4">
+        <main className="flex-1 overflow-auto bg-muted/30 p-4 sm:p-5 space-y-4 pb-24 sm:pb-5">
           {/* Past Due Alert */}
           {isPastDue && (!isMobile || !isPastDueDismissed) && (
             <Alert
@@ -105,22 +163,23 @@ export default function DrawerLayout({
               )}
             >
               <AlertTriangle className="h-4 w-4" />
-              <div className="flex flex-col sm:flex-row w-full sm:items-center justify-between gap-3">
+              <div className="flex flex-row w-full sm:items-center justify-between gap-3">
                 <div>
-                  <AlertTitle>Action Required</AlertTitle>
+                  <AlertTitle>
+                    {t("subscription.banner.actionRequired")}
+                  </AlertTitle>
                   <AlertDescription className="text-xs sm:text-sm">
-                    Your subscription is past due. You have {daysLeft} day
-                    {daysLeft !== 1 ? "s" : ""} before access is restricted.
+                    {t("subscription.banner.message.pastDue", { daysLeft })}
                   </AlertDescription>
                 </div>
                 <div className="flex items-center gap-2">
                   <Button
                     variant="destructive"
                     size="sm"
-                    className="h-8 text-xs px-3"
+                    className="h-8 text-xs px-3 font-semibold"
                     onClick={() => router.push("/setting/subscription/plans")}
                   >
-                    Renew Now
+                    {t("subscription.banner.actionLabel.pastDue")}
                   </Button>
                 </div>
               </div>
@@ -144,22 +203,20 @@ export default function DrawerLayout({
               )}
             >
               <Info className="h-4 w-4 text-primary" />
-              <div className="flex flex-col sm:flex-row w-full sm:items-center justify-between gap-3">
+              <div className="flex flex-row w-full sm:items-center justify-between gap-3">
                 <div>
-                  <AlertTitle>Trial Period</AlertTitle>
+                  <AlertTitle>{t("subscription.banner.notice")}</AlertTitle>
                   <AlertDescription className="text-xs sm:text-sm">
-                    Your trial expires in {daysLeft} day
-                    {daysLeft !== 1 ? "s" : ""}. Upgrade now to keep all
-                    features.
+                    {t("subscription.banner.message.trialing", { daysLeft })}
                   </AlertDescription>
                 </div>
                 <div className="flex items-center gap-2">
                   <Button
                     size="sm"
-                    className="h-8 text-xs px-3"
+                    className="h-8 text-xs px-3 font-semibold"
                     onClick={() => router.push("/setting/subscription/plans")}
                   >
-                    Upgrade
+                    {t("subscription.banner.actionLabel.trialing")}
                   </Button>
                 </div>
               </div>
@@ -176,6 +233,7 @@ export default function DrawerLayout({
 
           {children}
         </main>
+        {hideTabs && <MobileBottomTabs />}
       </SidebarInset>
     </SidebarProvider>
   );

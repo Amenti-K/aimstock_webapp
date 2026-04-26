@@ -118,42 +118,41 @@ export default function PartnerDetailPage() {
               </AvatarFallback>
             </Avatar>
             <div>
-              <h1 className="text-2xl font-black tracking-tight">
+              <h1 className="text-xl sm:text-2xl font-black tracking-tight leading-tight">
                 {partner.name}
               </h1>
-              <p className="text-sm text-muted-foreground flex items-center gap-1.5 mt-0.5">
-                <Phone className="h-3 w-3" />
-                {partner.phone || "No phone number"}
-              </p>
+              <div className="flex items-center gap-3 flex-wrap mt-0.5">
+                <p className="text-xs sm:text-sm text-muted-foreground flex items-center gap-1.5">
+                  <Phone className="h-3 w-3" />
+                  {partner.phone || "No phone number"}
+                </p>
+                <LastAudit
+                  lastAudit={partner.lastAuditLog}
+                  className="opacity-80"
+                />
+              </div>
             </div>
-            <LastAudit
-              lastAudit={partner.lastAuditLog}
-              className="ml-2 hidden lg:inline-flex"
-            />
           </div>
         </div>
-        <div className="flex flex-col items-end gap-2">
-          <LastAudit lastAudit={partner.lastAuditLog} className="lg:hidden" />
-          <div className="flex items-center gap-2">
-            {canUpdate("PARTNERS") && (
-              <Button
-                variant="outline"
-                onClick={() => router.push(`/partner/${partnerId}/edit`)}
-                className="rounded-full shadow-sm"
-              >
-                <Pencil className="mr-2 h-4 w-4" /> Edit
-              </Button>
-            )}
-            {canDelete("PARTNERS") && (
-              <Button
-                variant="destructive"
-                onClick={() => setOpenDelete(true)}
-                className="rounded-full shadow-sm"
-              >
-                <Trash2 className="mr-2 h-4 w-4" /> Delete
-              </Button>
-            )}
-          </div>
+        <div className="flex items-center gap-2">
+          {canUpdate("PARTNERS") && (
+            <Button
+              variant="outline"
+              onClick={() => router.push(`/partner/${partnerId}/edit`)}
+              className="rounded-full shadow-sm"
+            >
+              <Pencil className="mr-2 h-4 w-4" /> Edit
+            </Button>
+          )}
+          {canDelete("PARTNERS") && (
+            <Button
+              variant="destructive"
+              onClick={() => setOpenDelete(true)}
+              className="rounded-full shadow-sm"
+            >
+              <Trash2 className="mr-2 h-4 w-4" /> Delete
+            </Button>
+          )}
         </div>
       </div>
 
