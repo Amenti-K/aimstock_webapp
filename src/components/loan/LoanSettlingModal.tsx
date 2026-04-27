@@ -11,22 +11,7 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
-import {
-  Form,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormControl,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { useFetchAccountSelector } from "@/api/account/api.account";
 import { useCreateLoanTranx } from "@/api/loan/api.loan";
@@ -34,7 +19,12 @@ import { LoanTxType } from "@/components/interface/loan/loan.interface";
 import {
   SettlingFormData,
   settlingSchema,
-} from "@/components/forms/loan/loan.schema";
+} from "@/components/schema/loan.schema";
+import { useLanguage } from "@/hooks/language.hook";
+import SelectField from "@/components/forms/fields/SelectField";
+import NumericField from "@/components/forms/fields/NumericField";
+import TextField from "@/components/forms/fields/TextField";
+import SubmitButton from "@/components/forms/fields/SubmitButton";
 
 interface Props {
   open: boolean;
@@ -51,6 +41,7 @@ export function LoanSettlingModal({
   partnerName,
   balance,
 }: Props) {
+  const { t } = useLanguage();
   const isReceiving = balance > 0;
   const maxAmount = Math.abs(balance);
   const addLoanTranx = useCreateLoanTranx();
@@ -120,110 +111,63 @@ export function LoanSettlingModal({
             onSubmit={form.handleSubmit(onSubmit)}
             className="space-y-4 pt-4"
           >
-            <FormField
-              control={form.control}
+            <SelectField
+              control={form.control as any}
               name="txType"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Type</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                    value={field.value}
-                    disabled
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select type" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value={LoanTxType.LOAN_RECEIPT}>
-                        Receive Payment
-                      </SelectItem>
-                      <SelectItem value={LoanTxType.LOAN_PAYMENT}>
-                        Make Payment
-                      </SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
+              label={t("loan.form.tranxType")}
+              options={[
+                {
+                  value: LoanTxType.LOAN_RECEIPT,
+                  label: t("loan.form.paymentReceived"),
+                },
+                {
+                  value: LoanTxType.LOAN_PAYMENT,
+                  label: t("loan.form.paymentMade"),
+                },
+              ]}
+              disabled
             />
 
-            <FormField
-              control={form.control}
+            <SelectField
+              control={form.control as any}
               name="accountId"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Account</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                    value={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger disabled={loadingAccounts}>
-                        <SelectValue placeholder="Select account" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {accounts.map((acc: any) => (
-                        <SelectItem key={acc.id} value={acc.id}>
-                          {acc.name} ({acc.bank ?? "Cash"})
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
+              label={t("loan.form.bankPay.selectAccount")}
+              options={accounts.map((acc: any) => ({
+                value: acc.id,
+                label: `${acc.name} (${acc.bank ?? "Cash"})`,
+              }))}
+              placeholder={t("loan.form.bankPay.selectAccount")}
+              disabled={loadingAccounts}
             />
 
-            <FormField
-              control={form.control}
+            <NumericField
+              control={form.control as any}
               name="amount"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Amount</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      step="0.01"
-                      placeholder="0.00"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
+              label={t("loan.form.amount")}
+              placeholder="0.00"
             />
 
-            <FormField
-              control={form.control}
+            <TextField
+              control={form.control as any}
               name="note"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Note (Optional)</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Additional details..." {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
+              label={t("loan.form.note")}
+              placeholder={t("loan.form.note")}
             />
 
-            <div className="flex justify-end gap-2 pt-4">
+            <div className="flex flex-col sm:flex-row justify-end gap-2 pt-4">
               <Button
                 type="button"
                 variant="outline"
                 onClick={() => onOpenChange(false)}
+                className="h-11 rounded-xl sm:flex-1"
               >
-                Cancel
+                {t("common.cancel")}
               </Button>
-              <Button type="submit" disabled={addLoanTranx.isPending}>
-                {addLoanTranx.isPending ? "Processing..." : "Settle Loan"}
-              </Button>
+              <SubmitButton
+                title={t("loan.form.settleLoan")}
+                loading={addLoanTranx.isPending}
+                className="h-11 rounded-xl sm:flex-1"
+              />
             </div>
           </form>
         </Form>

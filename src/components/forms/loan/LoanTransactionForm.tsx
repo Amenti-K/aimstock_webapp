@@ -3,77 +3,52 @@
 import React, { useEffect, useMemo } from "react";
 import { useForm, useWatch, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { PlusCircle, Trash2 } from "lucide-react";
-
-import TextField from "@/components/forms/fields/TextField";
-import NumericField from "@/components/forms/fields/NumericField";
+import {
+  PlusCircle,
+  Trash2,
+  Calendar,
+  FileText,
+  Wallet,
+  Landmark,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Form } from "@/components/ui/form";
+import { useFetchAccountSelector } from "@/api/account/api.account";
+import {
+  loanTransactionSchema,
+  LoanTransactionData,
+} from "@/components/schema/loan.schema";
+import { useCreateLoanTranx, useUpdateLoanTx } from "@/api/loan/api.loan";
+import {
+  LoanTxType,
+  ILoanTranx,
+} from "@/components/interface/loan/loan.interface";
+import { useLanguage } from "@/hooks/language.hook";
+import { formatCurrency } from "@/lib/formatter";
+import { Badge } from "@/components/ui/badge";
 import SelectField from "@/components/forms/fields/SelectField";
+import NumericField from "@/components/forms/fields/NumericField";
+import TextField from "@/components/forms/fields/TextField";
+import TextAreaField from "@/components/forms/fields/TextAreaField";
 import SubmitButton from "@/components/forms/fields/SubmitButton";
 
-import {
-  LoanTransactionData,
-  loanTransactionSchema,
-} from "./loan.schema";
-import {
-  useCreateLoanTranx,
-  useUpdateLoanTx,
-} from "@/api/loan/api.loan";
-import { LoanTxType, ILoanTranx } from "@/components/interface/loan/loan.interface";
-import { useFetchAccountSelector } from "@/api/account/api.account";
-import { Button } from "@/components/ui/button";
-
-const LoanSummary = ({ control }: { control: any }) => {
-  const paymentItems = useWatch({
-    control,
-    name: "paymentItems",
-  });
-  const loanCashPayment = useWatch({
-    control,
-    name: "loanCashPayment",
-  });
-
-  const calculatedAmount = useMemo(() => {
-    const cashTotal = loanCashPayment ? Number(loanCashPayment.amount) || 0 : 0;
-    const bankTotal = (paymentItems || []).reduce(
-      (sum: number, p: any) => sum + (Number(p.amount) || 0),
-      0
-    );
-    return bankTotal + cashTotal;
-  }, [loanCashPayment, paymentItems]);
-
-  return (
-    <div className="p-4 bg-muted/50 rounded-lg mt-2 mb-4 border border-border">
-      <p className="text-xs text-muted-foreground mb-1 uppercase tracking-wider font-semibold">
-        Total Transaction Value
-      </p>
-      <p className="text-2xl font-bold text-foreground">
-        Br {calculatedAmount.toLocaleString()}
-      </p>
-    </div>
-  );
-};
-
 interface Props {
-  data?: ILoanTranx | null;
-  partnerId: string;
-  mode?: "add" | "edit";
+  initialValues?: Partial<LoanTransactionData> | null;
+  txId?: string;
+  partnerId?: string;
   onSuccess?: () => void;
-  onCancel?: () => void;
 }
 
 export default function LoanTransactionForm({
-  data,
-  mode = "add",
+  initialValues,
+  txId,
   partnerId,
   onSuccess,
-  onCancel,
 }: Props) {
-  const {
-    control,
-    handleSubmit,
-    reset,
-    formState: { isSubmitting },
-  } = useForm<LoanTransactionData>({
+  const { t } = useLanguage();
+  const isEdit = !!txId;
+
+  const form = useForm<LoanTransactionData>({
     resolver: zodResolver(loanTransactionSchema),
     defaultValues: {
       txType: "" as LoanTxType,
@@ -84,198 +59,247 @@ export default function LoanTransactionForm({
     },
   });
 
-  const {
-    fields: paymentFields,
-    append: appendPayment,
-    remove: removePayment,
-  } = useFieldArray({
+  const { control, handleSubmit, reset, setValue } = form;
+  const { fields, append, remove } = useFieldArray({
     control,
     name: "paymentItems",
   });
 
-  const addLoanTranx = useCreateLoanTranx();
-  const updateLoanTranx = useUpdateLoanTx();
-  const { data: accounts, isPending: loadingAccounts } = useFetchAccountSelector();
+  const createLoanTx = useCreateLoanTranx();
+  const updateLoanTx = useUpdateLoanTx();
+  const { data: accountsData, isLoading: loadingAccounts } =
+    useFetchAccountSelector();
 
-  const accountOptions = useMemo(() => {
-    if (!Array.isArray(accounts?.data)) return [];
-    return accounts.data.map((a: any) => ({
-      value: a.id,
-      label: `${a.name} (${a.bank ?? "Cash"}) ${a.balance} Br`,
-    }));
-  }, [accounts]);
+  const watchAmount = useWatch({ control, name: "paymentItems" }) || [];
+  const watchCash = useWatch({ control, name: "loanCashPayment" });
+
+  const totalAmount = useMemo(() => {
+    const bankTotal = watchAmount.reduce(
+      (sum, item) => sum + (Number(item.amount) || 0),
+      0,
+    );
+    const cashTotal = Number(watchCash?.amount || 0);
+    return bankTotal + cashTotal;
+  }, [watchAmount, watchCash]);
 
   useEffect(() => {
-    if (data) {
+    if (initialValues) {
+      // Map loanPayments from API to paymentItems for the form
+      const mappedPaymentItems =
+        (initialValues as any).loanPayments?.map((p: any) => ({
+          accountId: p.accountId || p.account?.id || "",
+          amount: Number(p.amount) || 0,
+        })) || [];
+
+      // Ensure txType matches enum case if necessary
+      const txType = initialValues.txType as LoanTxType;
+
       reset({
-        txType: data.txType,
-        paymentItems:
-          data.loanPayments?.map((p: any) => ({
-            accountId: p.accountId,
-            amount: Number(p.amount),
-          })) || [],
-        loanCashPayment: {
-          amount: Number(data.loanCashPayment?.amount || 0),
-        },
-        note: data.note || "",
-        dueDate: data.dueDate
-          ? new Date(data.dueDate).toISOString().split("T")[0]
+        txType: txType,
+        paymentItems: mappedPaymentItems,
+        loanCashPayment: initialValues.loanCashPayment || { amount: 0 },
+        note: initialValues.note || "",
+        dueDate: initialValues.dueDate
+          ? new Date(initialValues.dueDate).toISOString().split("T")[0]
           : "",
       });
     }
-  }, [data, reset]);
+  }, [initialValues, reset]);
 
-  const handleSave = (formData: LoanTransactionData) => {
+  const onFormSubmit = (data: LoanTransactionData) => {
     const payload = {
-      partnerId: partnerId!,
-      txType: formData.txType as any,
-      paymentItems: formData.paymentItems.map((item) => ({
-        accountId: item.accountId,
+      ...data,
+      partnerId: partnerId || (initialValues as any)?.partnerId || "",
+      paymentItems: data.paymentItems.map((item) => ({
+        ...item,
         amount: Number(item.amount),
       })),
-      loanCashPayment:
-        formData.loanCashPayment && Number(formData.loanCashPayment.amount) > 0
-          ? {
-              amount: Number(formData.loanCashPayment.amount),
-            }
-          : undefined,
-      note: formData.note,
-      dueDate: formData.dueDate ? new Date(formData.dueDate) : undefined,
+      loanCashPayment: data.loanCashPayment
+        ? { amount: Number(data.loanCashPayment.amount) }
+        : undefined,
+      dueDate: data.dueDate ? new Date(data.dueDate) : undefined,
     };
 
-    if (mode === "edit" && data?.id) {
-      updateLoanTranx.mutate(
-        { ...payload, id: data.id },
-        {
-          onSuccess: () => {
-            reset();
-            onSuccess?.();
-          },
-        }
+    if (isEdit) {
+      updateLoanTx.mutate(
+        { ...payload, id: txId },
+        { onSuccess: () => onSuccess?.() },
       );
     } else {
-      addLoanTranx.mutate(payload, {
-        onSuccess: () => {
-          reset();
-          onSuccess?.();
-        },
-      });
+      createLoanTx.mutate(payload, { onSuccess: () => onSuccess?.() });
     }
   };
 
+  const txTypes = [
+    { value: LoanTxType.LOAN_GIVEN, label: t("loan.form.loanGiven") },
+    { value: LoanTxType.LOAN_TAKEN, label: t("loan.form.loanTaken") },
+    { value: LoanTxType.LOAN_PAYMENT, label: t("loan.form.paymentMade") },
+    { value: LoanTxType.LOAN_RECEIPT, label: t("loan.form.paymentReceived") },
+  ];
+
   return (
-    <form onSubmit={handleSubmit(handleSave)} className="space-y-6">
-      <div className="grid grid-cols-1 gap-6">
+    <>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <SelectField
+          control={control as any}
           name="txType"
-          control={control}
-          options={[
-            { label: "Loan Given", value: LoanTxType.LOAN_GIVEN },
-            { label: "Loan Taken", value: LoanTxType.LOAN_TAKEN },
-            { label: "Payment Made", value: LoanTxType.LOAN_PAYMENT },
-            { label: "Payment Received", value: LoanTxType.LOAN_RECEIPT },
-          ]}
-          placeholder="Select Transaction Type"
-          label="Transaction Type"
+          label={t("loan.form.tranxType")}
+          options={txTypes}
+          placeholder={t("loan.form.selectTranxType")}
         />
 
-        {/* Bank Payments Section */}
-        <div className="border border-border p-4 rounded-lg bg-card">
-          <div className="flex items-center justify-between mb-4">
-            <h4 className="text-sm font-semibold">Bank Payments</h4>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => appendPayment({ accountId: "", amount: 0 })}
-              className="gap-2"
-            >
-              <PlusCircle className="h-4 w-4" />
-              Add Bank Payment
-            </Button>
-          </div>
+        <TextField
+          control={control as any}
+          name="dueDate"
+          type="date"
+          label={t("loan.form.dueDate")}
+        />
+      </div>
 
-          <div className="space-y-3">
-            {paymentFields?.map((field, index) => (
-              <div key={field.id} className="flex items-end gap-3">
-                <div className="flex-1">
-                  <SelectField
-                    name={`paymentItems.${index}.accountId`}
-                    control={control}
-                    options={accountOptions}
-                    placeholder={loadingAccounts ? "Loading..." : "Select Account"}
-                    label={`Account ${index + 1}`}
-                  />
-                </div>
-                <div className="flex-1">
-                  <NumericField
-                    name={`paymentItems.${index}.amount`}
-                    control={control}
-                    placeholder="0"
-                    label="Amount"
-                  />
-                </div>
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <h3 className="text-sm font-bold uppercase tracking-widest text-muted-foreground flex items-center gap-2">
+            <Landmark className="h-4 w-4" />{" "}
+            {t("loan.form.bankPay.bankPayments")}
+          </h3>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            className="rounded-full h-9 border-primary/20 text-primary hover:bg-primary/5 gap-2"
+            onClick={() => append({ accountId: "", amount: 0 })}
+          >
+            <PlusCircle className="h-4 w-4" />{" "}
+            {t("loan.form.bankPay.addBankPayment")}
+          </Button>
+        </div>
+
+        <div className="space-y-3">
+          {fields.map((field, index) => (
+            <div
+              key={field.id}
+              className="flex items-start gap-2 p-2 rounded-2xl bg-muted/20 border border-muted-foreground/5 shadow-sm"
+            >
+              <div className="w-[50%] flex-shrink-0">
+                <SelectField
+                  control={control as any}
+                  name={`paymentItems.${index}.accountId`}
+                  options={
+                    accountsData?.data?.map((acc: any) => ({
+                      value: acc.id,
+                      label: `${acc.name} (${acc.bank})`,
+                    })) || []
+                  }
+                  placeholder={t("loan.form.bankPay.selectAccount", {
+                    index: index + 1,
+                  })}
+                />
+              </div>
+
+              <div className="w-[40%] flex-shrink-0">
+                <NumericField
+                  control={control as any}
+                  name={`paymentItems.${index}.amount`}
+                  placeholder={t("loan.form.amount")}
+                />
+              </div>
+
+              <div className="w-[10%] flex justify-center flex-shrink-0">
                 <Button
                   type="button"
-                  variant="destructive"
+                  variant="ghost"
                   size="icon"
-                  className="mb-0.5"
-                  onClick={() => removePayment(index)}
+                  className="h-9 w-9 text-red-500 hover:text-red-600 hover:bg-red-50 rounded-full"
+                  onClick={() => remove(index)}
                 >
                   <Trash2 className="h-4 w-4" />
                 </Button>
               </div>
-            ))}
-          </div>
-        </div>
+            </div>
+          ))}
 
-        {/* Cash Payment Section */}
-        <div className="p-4 bg-primary/5 rounded-lg border border-primary/10">
-          <h4 className="text-sm font-semibold mb-3">Cash Payments</h4>
+          {fields.length === 0 && (
+            <div className="text-center py-10 rounded-3xl border-2 border-dashed border-muted bg-muted/5 flex flex-col items-center justify-center text-muted-foreground">
+              <Landmark className="h-10 w-10 mb-2 opacity-10" />
+              <p className="text-sm font-medium">
+                {t("common.formHints.noBankPayments")}
+              </p>
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+        <div className="space-y-6">
           <NumericField
+            control={control as any}
             name="loanCashPayment.amount"
-            control={control}
-            placeholder="0"
-            label="Amount"
+            label={t("loan.form.cashPay.cashPayments")}
+            placeholder="0.00"
+          />
+
+          <TextAreaField
+            control={control as any}
+            name="note"
+            label={t("loan.form.note")}
+            placeholder={t("loan.form.note")}
           />
         </div>
 
-        <LoanSummary control={control} />
+        <div className="rounded-3xl bg-primary/5 border border-primary/10 p-6 md:p-8 space-y-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary/60 mb-1 md:mb-2">
+                {t("loan.form.totalTranx")}
+              </p>
+              <p className="text-3xl md:text-4xl lg:text-5xl font-black text-primary tracking-tighter break-all">
+                {formatCurrency(totalAmount)}
+              </p>
+            </div>
+            <Badge
+              variant="secondary"
+              className="w-full sm:w-auto justify-center py-2 px-6 rounded-xl bg-primary/10 text-primary border-none text-[10px] font-bold uppercase tracking-wider h-fit"
+            >
+              {isEdit ? t("loan.form.editTranx") : t("loan.form.createTranx")}
+            </Badge>
+          </div>
 
-        <TextField
-          name="dueDate"
-          control={control}
-          type="date"
-          label="Due Date"
-        />
-
-        <TextField
-          name="note"
-          control={control}
-          placeholder="Additional notes"
-          multiLine
-          label="Note"
-        />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-primary/10">
+            <div className="bg-background/40 p-3 rounded-2xl border border-primary/5">
+              <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block mb-1">
+                {t("loan.form.bankPay.bankPayments")}
+              </span>
+              <span className="text-lg font-black text-foreground">
+                {formatCurrency(totalAmount - Number(watchCash?.amount || 0))}
+              </span>
+            </div>
+            <div className="bg-background/40 p-3 rounded-2xl border border-primary/5">
+              <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block mb-1">
+                {t("loan.form.cashPay.cashPayments")}
+              </span>
+              <span className="text-lg font-black text-foreground">
+                {formatCurrency(Number(watchCash?.amount || 0))}
+              </span>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <div className="flex gap-4 items-center">
+      <div className="flex flex-col sm:flex-row gap-3 pt-4">
         <SubmitButton
-          title={mode === "add" ? "Create Transaction" : "Save Changes"}
-          loading={addLoanTranx.isPending || updateLoanTranx.isPending}
+          title={isEdit ? t("loan.form.editTranx") : t("loan.form.createTranx")}
+          loading={createLoanTx.isPending || updateLoanTx.isPending}
+          className="flex-1 h-12 md:h-14 rounded-2xl"
         />
-
-        {onCancel && (
-          <Button
-            type="button"
-            variant="outline"
-            className="flex-1"
-            disabled={addLoanTranx.isPending || updateLoanTranx.isPending}
-            onClick={onCancel}
-          >
-            Cancel
-          </Button>
-        )}
+        <Button
+          type="button"
+          variant="outline"
+          className="flex-1 h-12 md:h-14 rounded-2xl font-bold text-base md:text-lg border-muted-foreground/20 hover:bg-muted/5"
+          onClick={() => window.history.back()}
+        >
+          {t("common.cancel")}
+        </Button>
       </div>
-    </form>
+    </>
   );
 }

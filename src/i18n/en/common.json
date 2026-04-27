@@ -64,6 +64,7 @@
   "unit": {
     "items": "items"
   },
+  "for": "for",
   "date": "Date",
   "others": "Others",
   "share": "Share",
@@ -75,6 +76,7 @@
   "delete": "Delete",
   "cancel": "Cancel",
   "save": "Save",
+  "saveChanges": "Save Changes",
   "create": "Create",
   "update": "Update",
   "duplicate": "Duplicate",
@@ -92,6 +94,7 @@
   "notSpecified": "Not specified",
   "noContact": "No contact",
   "showMore": "Show more",
+  "loadMore": "Load More",
   "layout": {
     "drawer": {
       "welcome": "Welcome Back!",

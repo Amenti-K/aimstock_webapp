@@ -93,7 +93,7 @@
     "bankPay": {
       "bankPayments": "የባንክ ክፍያዎች",
       "addBankPayment": "የባንክ ክፍያ ጨምር",
-      "selectAccount": "አካውንት ይምረጡ",
+      "selectAccount": "አካውንት {{index}} ይምረጡ",
       "account": "አካውንት {{index}}"
     },
     "cashPay": {
@@ -105,5 +105,14 @@
     "remainingBalance": "የቀረ ሒሳብ",
     "dueDate": "የሚከፈልበት ቀን (አማራጭ)",
     "createTranx": "ግብይት ፍጠር"
+  },
+  "system": {
+    "system": "ሲስተም",
+    "systemTranx": "ይህ በሲስተም የተፈጠረ ግብይት ስለሆነ ማስተካከል ወይም መሰረዝ አይቻልም።"
+  },
+  "audit": {
+    "lastAudit": "የመጨረሻው ኦዲት ሎግ",
+    "modifiedBy": "የተሻሻለው በ",
+    "date": "ቀን"
   }
 }

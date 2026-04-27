@@ -24,9 +24,12 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useLanguage } from "@/hooks/language.hook";
+import { formatCurrency } from "@/lib/formatter";
 
 export default function LoanPage() {
   const router = useRouter();
+  const { t } = useLanguage();
   const { canView, canCreate } = usePermissions();
   const hasViewAccess = canView("LOANS");
   const hasCreateAccess = canCreate("LOANS");
@@ -48,7 +51,7 @@ export default function LoanPage() {
   const [settlePartner, setSettlePartner] = React.useState<any>(null);
 
   if (!hasViewAccess) {
-    return <AccessDeniedView moduleName="Loans" />;
+    return <AccessDeniedView moduleName={t("loan.moduleName")} />;
   }
 
   if (isLoading) return <LoadingView />;
@@ -62,21 +65,28 @@ export default function LoanPage() {
     .filter((p: any) => p.balance < 0)
     .reduce((sum: number, p: any) => sum + Math.abs(p.balance), 0);
 
+  const partnersGivenCount = loanPartners.filter(
+    (p: any) => p.balance > 0,
+  ).length;
+  const partnersTakenCount = loanPartners.filter(
+    (p: any) => p.balance < 0,
+  ).length;
+
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <div className="space-y-6 p-2 pb-20 md:pb-6">
+      <div className="hidden sm:flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Loans</h1>
-          <p className="text-sm text-muted-foreground">
-            Monitor borrow/lend balances and repayment history.
-          </p>
+          <h1 className="text-2xl font-bold tracking-tight">
+            {t("loan.moduleName")}
+          </h1>
+          <p className="text-sm text-muted-foreground">{t("loan.emptyLoan")}</p>
         </div>
         {hasCreateAccess && (
           <Button
-            className="w-full sm:w-auto"
+            className="flex w-full sm:w-auto"
             onClick={() => router.push("/loan/new")}
           >
-            <Plus className="mr-2 h-4 w-4" /> Add Partner Loan
+            <Plus className="mr-2 h-4 w-4" /> {t("loan.form.addLoan")}
           </Button>
         )}
       </div>
@@ -84,51 +94,59 @@ export default function LoanPage() {
       <div className="grid gap-4 grid-cols-2">
         <div className="rounded-xl border bg-card text-card-foreground shadow">
           <div className="p-6 flex flex-row items-center justify-between space-y-0 pb-2">
-            <h3 className="tracking-tight text-sm font-medium">Total Given</h3>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              className="h-4 w-4 text-emerald-500"
-            >
-              <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
-            </svg>
+            <h3 className="tracking-tight text-sm font-medium">
+              {t("loan.card.totalGiven")}
+            </h3>
+            <div className="h-8 w-8 rounded-full bg-emerald-50 flex items-center justify-center">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                className="h-4 w-4 text-emerald-500"
+              >
+                <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+              </svg>
+            </div>
           </div>
           <div className="p-6 pt-0">
-            <div className="text-2xl font-bold text-emerald-600">
-              Br {totalGiven.toLocaleString()}
+            <div className="text-xl sm:text-2xl md:text-3xl font-bold text-emerald-600">
+              {formatCurrency(totalGiven)}
             </div>
             <p className="text-xs text-muted-foreground">
-              {loanPartners.filter((p: any) => p.balance > 0).length} partners
+              {t("loan.card.totalGivenCount", { count: partnersGivenCount })}
             </p>
           </div>
         </div>
-        <div className="rounded-xl border bg-card text-card-foreground shadow">
+        <div className="rounded-xl border bg-card text-card-foreground shadow-sm overflow-hidden">
           <div className="p-6 flex flex-row items-center justify-between space-y-0 pb-2">
-            <h3 className="tracking-tight text-sm font-medium">Total Taken</h3>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              className="h-4 w-4 text-red-500"
-            >
-              <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
-            </svg>
+            <h3 className="tracking-tight text-sm font-medium">
+              {t("loan.card.totalTaken")}
+            </h3>
+            <div className="h-8 w-8 rounded-full bg-red-50 flex items-center justify-center">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                className="h-4 w-4 text-red-500"
+              >
+                <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+              </svg>
+            </div>
           </div>
           <div className="p-6 pt-0">
-            <div className="text-2xl font-bold text-red-600">
-              Br {totalTaken.toLocaleString()}
+            <div className="text-xl sm:text-2xl md:text-3xl font-bold text-red-600">
+              {formatCurrency(totalTaken)}
             </div>
             <p className="text-xs text-muted-foreground">
-              {loanPartners.filter((p: any) => p.balance < 0).length} partners
+              {t("loan.card.totalTakenCount", { count: partnersTakenCount })}
             </p>
           </div>
         </div>
@@ -138,17 +156,18 @@ export default function LoanPage() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Partner Name</TableHead>
-              <TableHead>Current Balance</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead className="w-[100px]">Actions</TableHead>
+              <TableHead>{t("loan.form.partner")}</TableHead>
+              <TableHead>{t("loan.detail.currentBal")}</TableHead>
+              <TableHead className="w-[100px] text-right">
+                {t("loan.detail.tranx.actions")}
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {loanPartners.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={4} className="h-24 text-center">
-                  No loan records found.
+                  {t("loan.emptyLoan")}
                 </TableCell>
               </TableRow>
             ) : (
@@ -160,10 +179,10 @@ export default function LoanPage() {
                     className="cursor-pointer"
                     onClick={() => {
                       const queryObj = new URLSearchParams({
-                        name: lp.name || "",
-                        phone: lp.phone || "",
                         balance: balance.toString(),
-                        address: lp.address || "",
+                        name: lp.name,
+                        phone: lp.phone,
+                        address: lp.address,
                       });
                       router.push(`/loan/${lp.id}?${queryObj.toString()}`);
                     }}
@@ -177,26 +196,13 @@ export default function LoanPage() {
                     <TableCell
                       className={`font-bold ${balance < 0 ? "text-red-600" : "text-emerald-600"}`}
                     >
-                      Br {Math.abs(balance).toLocaleString()}
+                      {formatCurrency(Math.abs(balance))}
                       <span className="ml-1 text-[10px] font-normal text-muted-foreground uppercase">
-                        ({balance < 0 ? "Owed" : "Lent"})
-                      </span>
-                    </TableCell>
-                    <TableCell>
-                      <span
-                        className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ring-1 ring-inset ${
-                          balance === 0
-                            ? "bg-gray-50 text-gray-700 ring-gray-600/20"
-                            : balance < 0
-                              ? "bg-red-50 text-red-700 ring-red-600/10"
-                              : "bg-emerald-50 text-emerald-700 ring-emerald-600/10"
-                        }`}
-                      >
-                        {balance === 0
-                          ? "Settled"
-                          : balance < 0
-                            ? "Passive"
-                            : "Active"}
+                        (
+                        {balance < 0
+                          ? t("loan.card.youOwe")
+                          : t("loan.card.owesYou")}
+                        )
                       </span>
                     </TableCell>
                     <TableCell onClick={(e) => e.stopPropagation()}>
@@ -210,7 +216,9 @@ export default function LoanPage() {
                               setSettlePartner(lp);
                             }}
                           >
-                            Settle
+                            {balance < 0
+                              ? t("loan.card.pay")
+                              : t("loan.card.receive")}
                           </Button>
                         )}
                         <DropdownMenu>
@@ -223,17 +231,17 @@ export default function LoanPage() {
                             <DropdownMenuItem
                               onClick={() => {
                                 const queryObj = new URLSearchParams({
-                                  name: lp.name || "",
-                                  phone: lp.phone || "",
                                   balance: balance.toString(),
-                                  address: lp.address || "",
+                                  name: lp.name,
+                                  phone: lp.phone,
+                                  address: lp.address,
                                 });
                                 router.push(
                                   `/loan/${lp.id}?${queryObj.toString()}`,
                                 );
                               }}
                             >
-                              View Ledger
+                              {t("loan.detail.transactions")}
                             </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
@@ -250,7 +258,7 @@ export default function LoanPage() {
       <div className="grid grid-cols-1 gap-4 md:hidden">
         {loanPartners.length === 0 ? (
           <div className="rounded-xl border bg-card p-8 text-center text-muted-foreground">
-            No loan records found.
+            {t("loan.emptyLoan")}
           </div>
         ) : (
           loanPartners.map((lp: any) => {
@@ -261,10 +269,10 @@ export default function LoanPage() {
                 className="flex flex-col gap-3 rounded-xl border bg-card p-4 shadow-sm"
                 onClick={() => {
                   const queryObj = new URLSearchParams({
-                    name: lp.name || "",
-                    phone: lp.phone || "",
                     balance: balance.toString(),
-                    address: lp.address || "",
+                    name: lp.name,
+                    phone: lp.phone,
+                    address: lp.address,
                   });
                   router.push(`/loan/${lp.id}?${queryObj.toString()}`);
                 }}
@@ -279,7 +287,7 @@ export default function LoanPage() {
                     <div className="flex flex-col">
                       <span className="font-semibold">{lp.name}</span>
                       <span className="text-xs text-muted-foreground">
-                        {lp.phone || "No phone"}
+                        {lp.phone || t("loan.card.noPhone")}
                       </span>
                     </div>
                   </div>
@@ -292,21 +300,23 @@ export default function LoanPage() {
                         setSettlePartner(lp);
                       }}
                     >
-                      Settle {balance < 0 ? "Payment" : "Receipt"}
+                      {balance < 0
+                        ? t("loan.card.pay")
+                        : t("loan.card.receive")}
                     </Button>
                   )}
                   <div className="flex flex-col items-end">
                     <span
                       className={`font-bold ${balance < 0 ? "text-red-600" : "text-emerald-600"}`}
                     >
-                      Br {Math.abs(balance).toLocaleString()}
+                      {formatCurrency(balance)}
                     </span>
-                    <span className="text-xs text-muted-foreground uppercase">
+                    <span className="text-[10px] text-muted-foreground uppercase font-medium">
                       {balance === 0
-                        ? "Settled"
+                        ? t("loan.card.settle")
                         : balance < 0
-                          ? "You Owe"
-                          : "Owes You"}
+                          ? t("loan.card.youOwe")
+                          : t("loan.card.owesYou")}
                     </span>
                   </div>
                 </div>
@@ -316,17 +326,27 @@ export default function LoanPage() {
         )}
       </div>
 
-      <div className="flex justify-center w-full">
+      <div className="flex justify-center w-full py-4">
         {hasNextPage && (
           <Button
             variant="outline"
             onClick={() => fetchNextPage()}
             disabled={isFetchingNextPage}
+            className="w-full sm:w-auto"
           >
-            {isFetchingNextPage ? "Loading more..." : "Load More"}
+            {isFetchingNextPage ? t("loan.pendingLoan") : t("common.loadMore")}
           </Button>
         )}
       </div>
+
+      {hasCreateAccess && (
+        <Button
+          className="fixed bottom-20 right-6 h-14 w-14 rounded-full shadow-lg sm:hidden z-50 p-0"
+          onClick={() => router.push("/loan/new")}
+        >
+          <Plus className="h-6 w-6" />
+        </Button>
+      )}
 
       {settlePartner && (
         <LoanSettlingModal

@@ -1,4 +1,5 @@
-import { IAccount } from "@/api/account/api.account";
+import { ILastAudit } from "../auditLog/interface.audit";
+import { IAccount } from "../interface.account";
 
 export enum LoanTxType {
   LOAN_GIVEN = "loan_given",
@@ -8,14 +9,6 @@ export enum LoanTxType {
   SALE_FINANCING = "sale_financing",
   PURCHASE_FINANCING = "purchase_financing",
   ADJUSTMENT = "adjustment",
-}
-
-export interface ILastAudit {
-  createdAt: Date;
-  createdBy: {
-    id: string;
-    fullName: string;
-  };
 }
 
 export interface ILoanPartner {

@@ -93,7 +93,7 @@
     "bankPay": {
       "bankPayments": "Bank payments",
       "addBankPayment": "Add Bank Payment",
-      "selectAccount": "Select Account",
+      "selectAccount": "Select Account {index}",
       "account": "Account {index}"
     },
     "cashPay": {
@@ -105,5 +105,14 @@
     "remainingBalance": "Remaining Balance",
     "dueDate": "Due Date (optional)",
     "createTranx": "Create Transaction"
+  },
+  "system": {
+    "system": "System",
+    "systemTranx": "This is a system-generated transaction and cannot be modified or deleted."
+  },
+  "audit": {
+    "lastAudit": "Last Audit Log",
+    "modifiedBy": "Modified by",
+    "date": "Date"
   }
 }

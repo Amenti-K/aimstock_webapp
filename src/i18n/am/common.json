@@ -64,6 +64,7 @@
   "unit": {
     "items": "እቃዎች"
   },
+  "for": "ለ",
   "date": "ቀን",
   "others": "ሌሎች",
   "share": "ድርሻ",
@@ -75,6 +76,7 @@
   "delete": "ሰርዝ",
   "cancel": "ሰርዝ",
   "save": "አስቀምጥ",
+  "saveChanges": "ለውጦችን አስቀምጥ",
   "create": "ፍጠር",
   "update": "አዘምን",
   "duplicate": "ድገም",
@@ -92,6 +94,7 @@
   "notSpecified": "አልተገለጸም",
   "noContact": "መገናኛ የለም",
   "showMore": "ተጨማሪ አሳይ",
+  "loadMore": "ተጨማሪ ጫን",
   "layout": {
     "drawer": {
       "welcome": "እንኳን ተመልሰው መጡ!",
