@@ -12,28 +12,7 @@ import { LoadingView, ErrorView } from "@/components/common/StateView";
 import { AccessDeniedView } from "@/components/guards/AccessDeniedView";
 import { usePermissions } from "@/hooks/permission.hook";
 import { Button } from "@/components/ui/button";
-import {
-  Plus,
-  MoreHorizontal,
-  ShieldCheck,
-  Pencil,
-  Copy,
-  Trash2,
-} from "lucide-react";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { Plus, ShieldCheck, Pencil, Copy, Trash2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import {
   Dialog,
@@ -54,8 +33,23 @@ import {
 import RoleForm from "@/components/forms/role/RoleForm";
 import { RoleFormValues } from "@/components/forms/role/role.schema";
 import { IRole } from "@/components/interface/role/role.interface";
+import { useLanguage } from "@/hooks/language.hook";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 export default function RolePage() {
+  const { t } = useLanguage();
   const { canView, canCreate, canUpdate, canDelete } = usePermissions();
   const hasViewAccess = canView("ROLE");
   const hasCreateAccess = canCreate("ROLE");
@@ -166,54 +160,99 @@ export default function RolePage() {
     );
   };
 
-  const ActionsDropdown = ({ role }: { role: IRole }) => (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="h-8 w-8 p-0">
-          <MoreHorizontal className="h-4 w-4" />
+  const GroupedPermissions = ({ permissions }: { permissions: any[] }) => {
+    const grouped = permissions.reduce((acc: any, p: any) => {
+      if (!acc[p.module]) acc[p.module] = [];
+      acc[p.module].push(p.permission);
+      return acc;
+    }, {});
+
+    return (
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
+        {Object.entries(grouped).map(([module, perms]: [string, any]) => (
+          <div key={module} className="space-y-1.5">
+            <span className="text-xs font-bold uppercase text-muted-foreground tracking-wider">
+              {module}
+            </span>
+            <div className="flex flex-wrap gap-1">
+              {perms.map((p: string, idx: number) => (
+                <Badge key={idx} variant="secondary" className="text-[10px]">
+                  {p}
+                </Badge>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  };
+
+  const RoleActions = ({ role }: { role: IRole }) => (
+    <div className="flex items-center gap-2 mt-6 border-t pt-4">
+      {hasUpdateAccess && (
+        <Button
+          variant="outline"
+          size="sm"
+          className="h-8 gap-1.5"
+          onClick={(e) => {
+            e.stopPropagation();
+            onOpenEdit(role.id);
+          }}
+        >
+          <Pencil className="h-3.5 w-3.5" />
+          {t("common.edit")}
         </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="bg-secondary">
-        {hasUpdateAccess && (
-          <DropdownMenuItem
-            className="cursor-pointer"
-            onClick={() => onOpenEdit(role.id)}
-          >
-            <Pencil className="mr-2 h-4 w-4" />
-            Edit role
-          </DropdownMenuItem>
-        )}
-        {hasCreateAccess && (
-          <DropdownMenuItem
-            className="cursor-pointer"
-            onClick={() => onOpenDuplicate(role.id)}
-          >
-            <Copy className="mr-2 h-4 w-4" />
-            Duplicate role
-          </DropdownMenuItem>
-        )}
-        {hasDeleteAccess && (
-          <DropdownMenuItem
-            className="cursor-pointer text-destructive"
-            onClick={() => {
-              setSelectedRoleId(role.id);
-              setIsDeleteOpen(true);
-            }}
-          >
-            <Trash2 className="mr-2 h-4 w-4" />
-            Delete role
-          </DropdownMenuItem>
-        )}
-      </DropdownMenuContent>
-    </DropdownMenu>
+      )}
+      {hasCreateAccess && (
+        <Button
+          variant="outline"
+          size="sm"
+          className="h-8 gap-1.5"
+          onClick={(e) => {
+            e.stopPropagation();
+            onOpenDuplicate(role.id);
+          }}
+        >
+          <Copy className="h-3.5 w-3.5" />
+          {t("role.card.duplicate")}
+        </Button>
+      )}
+      {hasDeleteAccess && (
+        <Button
+          variant="ghost"
+          size="sm"
+          className="h-8 gap-1.5 text-destructive hover:bg-destructive/10 hover:text-destructive"
+          onClick={(e) => {
+            e.stopPropagation();
+            setSelectedRoleId(role.id);
+            setIsDeleteOpen(true);
+          }}
+        >
+          <Trash2 className="h-3.5 w-3.5" />
+          {t("common.delete")}
+        </Button>
+      )}
+    </div>
   );
 
   if (!hasViewAccess) {
-    return <AccessDeniedView moduleName="Roles & Permissions" />;
+    return <AccessDeniedView moduleName={t("role.moduleName")} />;
   }
 
   if (isLoading) return <LoadingView />;
   if (isError) return <ErrorView refetch={refetch} />;
+
+  const RoleContent = ({ role }: { role: IRole }) => (
+    <div className="space-y-4">
+      {role.description && (
+        <div className="text-sm text-muted-foreground leading-relaxed">
+          {role.description}
+        </div>
+      )}
+      <GroupedPermissions permissions={role.permissions} />
+      <RoleActions role={role} />
+    </div>
+  );
 
   return (
     <div className="space-y-6">
@@ -221,133 +260,99 @@ export default function RolePage() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">
-            Roles & Permissions
+            {t("role.moduleName")}
           </h1>
-          <p className="text-sm text-muted-foreground">
-            Configure access levels for your team members.
-          </p>
+          <p className="text-sm text-muted-foreground">{t("role.roleDes")}</p>
         </div>
         {hasCreateAccess && (
-          <Button className="w-full sm:w-auto" onClick={onOpenCreate}>
-            <Plus className="mr-2 h-4 w-4" /> Create Role
+          <Button className="hidden sm:flex" onClick={onOpenCreate}>
+            <Plus className="mr-2 h-4 w-4" /> {t("role.form.addRole")}
           </Button>
         )}
       </div>
 
-      {/* Desktop Table */}
-      <div className="hidden md:block rounded-md border bg-card">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Role Name</TableHead>
-              <TableHead>Description</TableHead>
-              <TableHead>Permissions</TableHead>
-              <TableHead className="w-[80px]">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {roles.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={4} className="h-24 text-center">
-                  No roles found.
-                </TableCell>
-              </TableRow>
-            ) : (
-              roles.map((role) => (
-                <TableRow key={role.id}>
-                  <TableCell className="font-medium whitespace-nowrap">
-                    <div className="flex items-center gap-2">
-                      <ShieldCheck className="h-4 w-4 text-muted-foreground" />
-                      {role.name}
-                    </div>
-                  </TableCell>
-                  <TableCell className="max-w-[250px] truncate text-muted-foreground">
-                    {role.description || "No description provided."}
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex flex-wrap gap-1">
-                      {role.permissions
-                        ?.slice(0, 3)
-                        .map((p: any, idx: number) => (
-                          <Badge
-                            key={idx}
-                            variant="secondary"
-                            className="text-[10px]"
-                          >
-                            {p.module}:{p.permission}
-                          </Badge>
-                        ))}
-                      {(role.permissions?.length || 0) > 3 && (
-                        <Badge variant="outline" className="text-[10px]">
-                          +{(role.permissions?.length || 0) - 3} more
-                        </Badge>
-                      )}
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <ActionsDropdown role={role} />
-                  </TableCell>
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
-      </div>
+      {/* Floating Action Button for Mobile */}
+      {hasCreateAccess && (
+        <div className="fixed bottom-20 right-6 z-50 sm:hidden">
+          <Button
+            size="icon"
+            className="h-14 w-14 rounded-full shadow-2xl bg-primary hover:bg-primary/90"
+            onClick={onOpenCreate}
+          >
+            <Plus className="h-6 w-6" />
+          </Button>
+        </div>
+      )}
 
-      {/* Mobile Cards */}
-      <div className="grid grid-cols-1 gap-4 md:hidden">
+      {/* Roles List */}
+      <div className="grid gap-4">
         {roles.length === 0 ? (
-          <div className="rounded-xl border bg-card p-8 text-center text-muted-foreground">
-            No roles found.
-          </div>
+          <Card className="p-8 text-center text-muted-foreground">
+            {t("role.emptyRole")}
+          </Card>
         ) : (
-          roles.map((role) => (
-            <div
-              key={role.id}
-              className="flex items-start justify-between rounded-xl border bg-card p-4 shadow-sm"
-            >
-              <div className="flex items-start gap-3">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10">
-                  <ShieldCheck className="h-5 w-5 text-primary" />
-                </div>
-                <div className="flex flex-col gap-1">
-                  <span className="font-semibold leading-tight">
-                    {role.name}
-                  </span>
-                  {role.description && (
-                    <span className="text-xs text-muted-foreground line-clamp-1">
-                      {role.description}
-                    </span>
-                  )}
-                  <div className="flex flex-wrap gap-1 mt-1">
-                    {role.permissions?.slice(0, 2).map((p: any, idx: number) => (
-                      <Badge key={idx} variant="secondary" className="text-[10px]">
-                        {p.module}:{p.permission}
-                      </Badge>
-                    ))}
-                    {(role.permissions?.length || 0) > 2 && (
-                      <Badge variant="outline" className="text-[10px]">
-                        +{(role.permissions?.length || 0) - 2} more
-                      </Badge>
-                    )}
-                  </div>
-                </div>
+          <Accordion
+            type="multiple"
+            defaultValue={roles.map((r) => r.id)}
+            className="space-y-4"
+          >
+            {roles.map((role) => (
+              <div key={role.id}>
+                {/* Desktop View: Expanded Card */}
+                <Card className="hidden md:block overflow-hidden transition-all hover:shadow-md border-primary/10">
+                  <CardHeader className="pb-2">
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
+                        <ShieldCheck className="h-5 w-5 text-primary" />
+                      </div>
+                      <CardTitle className="text-lg">{role.name}</CardTitle>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <RoleContent role={role} />
+                  </CardContent>
+                </Card>
+
+                {/* Mobile View: Accordion */}
+                <AccordionItem
+                  value={role.id}
+                  className="md:hidden border rounded-xl bg-card px-4 shadow-sm"
+                >
+                  <AccordionTrigger className="hover:no-underline py-4">
+                    <div className="flex items-center gap-3 text-left">
+                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/10">
+                        <ShieldCheck className="h-4.5 w-4.5 text-primary" />
+                      </div>
+                      <div className="flex flex-col gap-0.5">
+                        <span className="font-semibold text-base leading-tight">
+                          {role.name}
+                        </span>
+                        <span className="text-xs text-muted-foreground line-clamp-1">
+                          {role.permissions?.length || 0}{" "}
+                          {t("role.form.module")}
+                        </span>
+                      </div>
+                    </div>
+                  </AccordionTrigger>
+                  <AccordionContent className="pb-4">
+                    <RoleContent role={role} />
+                  </AccordionContent>
+                </AccordionItem>
               </div>
-              <ActionsDropdown role={role} />
-            </div>
-          ))
+            ))}
+          </Accordion>
         )}
       </div>
 
       {/* Load More */}
       {hasNextPage && (
-        <div className="flex justify-center w-full">
+        <div className="flex justify-center w-full pb-20 sm:pb-0">
           <Button
             variant="outline"
             onClick={() => fetchNextPage()}
             disabled={isFetchingNextPage}
           >
-            {isFetchingNextPage ? "Loading more..." : "Load More"}
+            {isFetchingNextPage ? t("common.loading") : t("common.loadMore")}
           </Button>
         </div>
       )}
@@ -364,10 +369,10 @@ export default function RolePage() {
           <DialogHeader>
             <DialogTitle>
               {formMode === "create"
-                ? "Create role"
+                ? t("role.form.addRole")
                 : formMode === "duplicate"
-                  ? "Duplicate role"
-                  : "Edit role"}
+                  ? t("role.form.duplicateRole")
+                  : t("role.form.editRole")}
             </DialogTitle>
           </DialogHeader>
           {formMode !== "create" &&
@@ -387,7 +392,11 @@ export default function RolePage() {
                 setSelectedRoleId(null);
               }}
               isPending={createRole.isPending || updateRole.isPending}
-              submitLabel={formMode === "edit" ? "Save changes" : "Create role"}
+              submitLabel={
+                formMode === "edit"
+                  ? t("common.saveChanges")
+                  : t("role.form.createRole")
+              }
             />
           )}
         </DialogContent>
@@ -397,19 +406,24 @@ export default function RolePage() {
       <AlertDialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete role?</AlertDialogTitle>
+            <AlertDialogTitle>
+              {t("common.confirmDelete.title", {
+                entity: t("role.moduleName"),
+              })}
+            </AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. The selected role will be
-              permanently removed.
+              {t("common.confirmDelete.message", {
+                entity: t("role.moduleName"),
+              })}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
             <AlertDialogAction
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               onClick={handleDeleteRole}
             >
-              Delete
+              {t("common.delete")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

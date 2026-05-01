@@ -5,7 +5,6 @@ import { useGetAuditLogsInfinite } from "@/api/audit/api.audit";
 import { LoadingView, ErrorView } from "@/components/common/StateView";
 import { AccessDeniedView } from "@/components/guards/AccessDeniedView";
 import { usePermissions } from "@/hooks/permission.hook";
-import { Button } from "@/components/ui/button";
 import { History, User } from "lucide-react";
 import {
   Table,
@@ -25,12 +24,9 @@ import {
   AuditAction,
   EntityType,
 } from "@/components/interface/auditLog/interface.audit";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { useRouter } from "next/navigation";
+import { InfiniteScrollTrigger } from "@/components/common/InfiniteScrollTrigger";
+import { useLanguage } from "@/hooks/language.hook";
 
 const filterSchema = z.object({
   auditAction: z.string().optional(),
@@ -41,9 +37,10 @@ type FilterForm = z.infer<typeof filterSchema>;
 
 export default function AuditPage() {
   const { canView } = usePermissions();
+  const { t } = useLanguage();
   const hasViewAccess = canView("AUDITLOG");
-  const [selectedLog, setSelectedLog] = React.useState<any | null>(null);
-  const [isDetailsOpen, setIsDetailsOpen] = React.useState(false);
+  const router = useRouter();
+
   const { control, watch } = useForm<FilterForm>({
     resolver: zodResolver(filterSchema),
     defaultValues: {
@@ -76,24 +73,24 @@ export default function AuditPage() {
 
   const actionOptions = React.useMemo(
     () => [
-      { label: "All actions", value: "ALL" as AuditAction },
+      { label: t("audit.allActions"), value: "ALL" as AuditAction },
       ...Object.values(AuditAction).map((action) => ({
-        label: action,
+        label: t(`audit.action.${action.toLowerCase()}`),
         value: action,
       })),
     ],
-    [],
+    [t],
   );
 
   const entityOptions = React.useMemo(
     () => [
-      { label: "All entities", value: "ALL" as EntityType },
+      { label: t("audit.allEntities"), value: "ALL" as EntityType },
       ...Object.values(EntityType).map((entity) => ({
-        label: entity,
+        label: t(`audit.entities.${entity.toLowerCase()}`),
         value: entity,
       })),
     ],
-    [],
+    [t],
   );
 
   const logs = React.useMemo(() => {
@@ -108,7 +105,7 @@ export default function AuditPage() {
   };
 
   if (!hasViewAccess) {
-    return <AccessDeniedView moduleName="Audit Logs" />;
+    return <AccessDeniedView moduleName={t("audit.moduleName")} />;
   }
 
   if (isLoading) return <LoadingView />;
@@ -116,11 +113,11 @@ export default function AuditPage() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight">Audit Logs</h1>
+      {/* Header - Hidden on mobile */}
+      <div className="hidden md:block">
+        <h1 className="text-2xl font-bold tracking-tight">{t("audit.moduleName")}</h1>
         <p className="text-sm text-muted-foreground">
-          Track system activities and user actions for accountability.
+          {t("audit.moduleDescription")}
         </p>
       </div>
 
@@ -129,13 +126,13 @@ export default function AuditPage() {
         <SelectField
           name="entityType"
           control={control as any}
-          label="Entity type"
+          label={t("audit.entityType")}
           options={entityOptions}
         />
         <SelectField
           name="auditAction"
           control={control as any}
-          label="Action"
+          label={t("audit.actionLabel")}
           options={actionOptions}
         />
       </div>
@@ -145,18 +142,17 @@ export default function AuditPage() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Time</TableHead>
-              <TableHead>User</TableHead>
-              <TableHead>Action</TableHead>
-              <TableHead>Entity</TableHead>
-              <TableHead>Details</TableHead>
+              <TableHead>{t("audit.time")}</TableHead>
+              <TableHead>{t("audit.user")}</TableHead>
+              <TableHead>{t("audit.actionLabel")}</TableHead>
+              <TableHead>{t("audit.entityType")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {logs.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={5} className="h-24 text-center">
-                  No audit logs found.
+                <TableCell colSpan={4} className="h-24 text-center">
+                  {t("audit.emptyAudit")}
                 </TableCell>
               </TableRow>
             ) : (
@@ -165,8 +161,7 @@ export default function AuditPage() {
                   key={log.id}
                   className="cursor-pointer hover:bg-muted/50"
                   onClick={() => {
-                    setSelectedLog(log);
-                    setIsDetailsOpen(true);
+                    router.push(`/audit/${log.entityId}?entityType=${log.entityType}`);
                   }}
                 >
                   <TableCell className="font-medium whitespace-nowrap text-xs">
@@ -188,14 +183,11 @@ export default function AuditPage() {
                       variant="outline"
                       className={`text-[10px] font-bold ${getActionColor(log.action)}`}
                     >
-                      {log.action}
+                      {t(`audit.action.${log.action.toLowerCase()}`)}
                     </Badge>
                   </TableCell>
                   <TableCell className="text-xs font-semibold">
-                    {log.entityType}
-                  </TableCell>
-                  <TableCell className="max-w-[300px] truncate text-xs text-muted-foreground">
-                    {JSON.stringify(log.newValues || log.oldValues || {})}
+                    {t(`audit.entities.${log.entityType.toLowerCase()}`)}
                   </TableCell>
                 </TableRow>
               ))
@@ -208,7 +200,7 @@ export default function AuditPage() {
       <div className="grid grid-cols-1 gap-4 md:hidden">
         {logs.length === 0 ? (
           <div className="rounded-xl border bg-card p-8 text-center text-muted-foreground">
-            No audit logs found.
+            {t("audit.emptyAudit")}
           </div>
         ) : (
           logs.map((log: any) => (
@@ -216,8 +208,7 @@ export default function AuditPage() {
               key={log.id}
               className="flex items-start justify-between rounded-xl border bg-card p-4 shadow-sm cursor-pointer active:opacity-70"
               onClick={() => {
-                setSelectedLog(log);
-                setIsDetailsOpen(true);
+                router.push(`/audit/${log.entityId}?entityType=${log.entityType}`);
               }}
             >
               <div className="flex items-start gap-3">
@@ -239,76 +230,23 @@ export default function AuditPage() {
                   variant="outline"
                   className={`text-[10px] font-bold ${getActionColor(log.action)}`}
                 >
-                  {log.action}
+                  {t(`audit.action.${log.action.toLowerCase()}`)}
                 </Badge>
-                <span className="text-xs font-semibold">{log.entityType}</span>
+                <span className="text-xs font-semibold">
+                  {t(`audit.entities.${log.entityType.toLowerCase()}`)}
+                </span>
               </div>
             </div>
           ))
         )}
       </div>
 
-      {/* Load More */}
-      {hasNextPage && (
-        <div className="flex justify-center w-full">
-          <Button
-            variant="outline"
-            onClick={() => fetchNextPage()}
-            disabled={isFetchingNextPage}
-          >
-            {isFetchingNextPage ? "Loading more..." : "Load More"}
-          </Button>
-        </div>
-      )}
-
-      {/* Log Detail Dialog */}
-      <Dialog open={isDetailsOpen} onOpenChange={setIsDetailsOpen}>
-        <DialogContent className="max-h-[90vh] overflow-auto sm:max-w-3xl">
-          <DialogHeader>
-            <DialogTitle>Audit log details</DialogTitle>
-          </DialogHeader>
-          {!selectedLog ? null : (
-            <div className="space-y-4 text-sm">
-              <div className="grid gap-2 grid-cols-2">
-                <div>
-                  <p className="text-xs text-muted-foreground">Action</p>
-                  <p className="font-medium">{selectedLog.action}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-muted-foreground">Entity</p>
-                  <p className="font-medium">{selectedLog.entityType}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-muted-foreground">Entity ID</p>
-                  <p className="font-mono text-xs">{selectedLog.entityId}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-muted-foreground">Date</p>
-                  <p className="font-medium">
-                    {formatDate(selectedLog.createdAt)}
-                  </p>
-                </div>
-              </div>
-              <div className="space-y-2">
-                <p className="text-xs font-medium text-muted-foreground">
-                  Old values
-                </p>
-                <pre className="overflow-auto rounded-md bg-muted p-3 text-xs">
-                  {JSON.stringify(selectedLog.oldValues ?? {}, null, 2)}
-                </pre>
-              </div>
-              <div className="space-y-2">
-                <p className="text-xs font-medium text-muted-foreground">
-                  New values
-                </p>
-                <pre className="overflow-auto rounded-md bg-muted p-3 text-xs">
-                  {JSON.stringify(selectedLog.newValues ?? {}, null, 2)}
-                </pre>
-              </div>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
+      {/* Infinite Scroll Trigger */}
+      <InfiniteScrollTrigger
+        hasNextPage={!!hasNextPage}
+        isLoading={isFetchingNextPage}
+        onIntersect={() => fetchNextPage()}
+      />
     </div>
   );
 }

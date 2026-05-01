@@ -209,8 +209,6 @@ export default function LoanDetailPage() {
       />
     );
 
-  console.log("selected tx", selectedTx);
-
   return (
     <div className="space-y-6 pb-20 md:pb-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">

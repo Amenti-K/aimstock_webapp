@@ -1,6 +1,8 @@
 {
   "moduleName": "Audit Logs",
+  "moduleDescription": "Track system activities and user actions for accountability.",
   "detailTitle": "Audit History",
+  "detailDescription": "Detailed history and current state of the {{entityType}}.",
   "allActions": "All Actions",
   "allEntities": "All Entities",
   "selectAction": "Select Action",
@@ -12,10 +14,16 @@
   "noHistory": "No history found for this entity",
   "emptyAudit": "No audit logs found",
   "timelineTitle": "Timeline",
+  "fields": "Fields",
+  "entityDetails": "Entity Details",
+  "actionHistory": "Action History",
+  "time": "Time",
+  "user": "User",
   "permissions": {
     "view": "You do not have permission to view audit logs"
   },
   "entities": {
+    "company": "Company",
     "purchase": "Purchase",
     "sale": "Sale",
     "warehouse": "Warehouse",

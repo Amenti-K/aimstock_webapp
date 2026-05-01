@@ -1,6 +1,8 @@
 {
   "moduleName": "የኦዲት መዝገቦች",
+  "moduleDescription": "ለተጠያቂነት የስርዓት እንቅስቃሴዎችን እና የተጠቃሚ እርምጃዎችን ይከታተሉ።",
   "detailTitle": "የኦዲት ታሪክ",
+  "detailDescription": "የ{{entityType}} ዝርዝር ታሪክ እና የአሁኑ ሁኔታ።",
   "allActions": "ሁሉንም ተግባራት",
   "allEntities": "ሁሉንም ዓይነት",
   "selectAction": "ተግባር ይምረጡ",
@@ -12,10 +14,16 @@
   "noHistory": "ለዚህ አካል የተገኘ የታሪክ መዝገብ የለም",
   "emptyAudit": "ምንም የኦዲት መዝገብ አልተገኘም",
   "timelineTitle": "የጊዜ መስመር",
+  "fields": "መስኮች",
+  "entityDetails": "የአካል ዝርዝሮች",
+  "actionHistory": "የተግባር ታሪክ",
+  "time": "ጊዜ",
+  "user": "ተጠቃሚ",
   "permissions": {
     "view": "የኦዲት መዝገቦችን ለማየት ፈቃድ የለዎትም"
   },
   "entities": {
+    "company": "ኩባንያ",
     "purchase": "ግዢ",
     "sale": "ሽያጭ",
     "warehouse": "መጋዘን",

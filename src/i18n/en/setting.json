@@ -1,5 +1,6 @@
 {
   "moduleName": "Setting",
+  "description": "Manage your account, organization, and display preferences.",
   "version": "Version",
   "build": "Build",
   "devBy": "Developed by AIM Technologies",
@@ -11,7 +12,8 @@
     "subscription": "Subscription",
     "preferences": "Preferences",
     "theme": "Theme",
-    "language": "Language"
+    "language": "Language",
+    "languageDesc": "Choose your preferred language for the system."
   },
   "theme": {
     "title": "Theme",

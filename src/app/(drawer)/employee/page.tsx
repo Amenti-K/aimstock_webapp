@@ -61,8 +61,10 @@ import {
   ResetPasswordFormValues,
   UpdateEmployeeFormValues,
 } from "@/components/forms/employee/employee.schema";
+import { useLanguage } from "@/hooks/language.hook";
 
 export default function EmployeePage() {
+  const { t } = useLanguage();
   const { canView, canCreate, canUpdate, canDelete } = usePermissions();
   const hasViewAccess = canView("EMPLOYEES");
   const hasCreateAccess = canCreate("EMPLOYEES");
@@ -169,7 +171,7 @@ export default function EmployeePage() {
             }}
           >
             <Pencil className="mr-2 h-4 w-4" />
-            Edit employee
+            {t("employee.card.editPro")}
           </DropdownMenuItem>
         )}
         {hasUpdateAccess && (
@@ -180,7 +182,7 @@ export default function EmployeePage() {
             }}
           >
             <KeyRound className="mr-2 h-4 w-4" />
-            Reset password
+            {t("employee.card.resetPass")}
           </DropdownMenuItem>
         )}
         {hasDeleteAccess && (
@@ -192,7 +194,7 @@ export default function EmployeePage() {
             }}
           >
             <UserX className="mr-2 h-4 w-4" />
-            Deactivate
+            {t("common.disable")}
           </DropdownMenuItem>
         )}
       </DropdownMenuContent>
@@ -200,7 +202,7 @@ export default function EmployeePage() {
   );
 
   if (!hasViewAccess) {
-    return <AccessDeniedView moduleName="Employees" />;
+    return <AccessDeniedView moduleName={t("employee.moduleName")} />;
   }
 
   if (isLoading) return <LoadingView />;
@@ -211,41 +213,62 @@ export default function EmployeePage() {
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Employees</h1>
+          <h1 className="text-2xl font-bold tracking-tight">
+            {t("employee.moduleName")}
+          </h1>
           <p className="text-sm text-muted-foreground">
-            Manage your team, roles, and access permissions.
+            {t("common.layout.drawer.slogan")}
           </p>
         </div>
         {hasCreateAccess && (
           <Button
-            className="w-full sm:w-auto"
+            className="hidden sm:flex"
             onClick={() => {
               setEmployeeFormMode("add");
               setSelectedEmployee(null);
               setIsEmployeeFormOpen(true);
             }}
           >
-            <Plus className="mr-2 h-4 w-4" /> Add Employee
+            <Plus className="mr-2 h-4 w-4" /> {t("employee.form.addEmployee")}
           </Button>
         )}
       </div>
+
+      {/* Floating Action Button for Mobile */}
+      {hasCreateAccess && (
+        <div className="fixed bottom-20 right-6 z-50 sm:hidden">
+          <Button
+            size="icon"
+            className="h-14 w-14 rounded-full shadow-2xl bg-primary hover:bg-primary/90"
+            onClick={() => {
+              setEmployeeFormMode("add");
+              setSelectedEmployee(null);
+              setIsEmployeeFormOpen(true);
+            }}
+          >
+            <Plus className="h-6 w-6" />
+          </Button>
+        </div>
+      )}
 
       {/* Desktop Table */}
       <div className="hidden md:block rounded-md border bg-card">
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Employee</TableHead>
-              <TableHead>Phone</TableHead>
-              <TableHead>Role</TableHead>
-              <TableHead className="w-[80px]">Actions</TableHead>
+              <TableHead>{t("employee.moduleName")}</TableHead>
+              <TableHead>{t("employee.form.phoneNum")}</TableHead>
+              <TableHead>{t("employee.form.role")}</TableHead>
+              <TableHead className="w-[80px]">
+                {t("common.permission.all")}
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {employees.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={4} className="h-24 text-center">
-                  No employees found.
+                  {t("employee.emptyEmployee")}
                 </TableCell>
               </TableRow>
             ) : (
@@ -281,7 +304,7 @@ export default function EmployeePage() {
       <div className="grid grid-cols-1 gap-4 md:hidden">
         {employees.length === 0 ? (
           <div className="rounded-xl border bg-card p-8 text-center text-muted-foreground">
-            No employees found.
+            {t("employee.emptyEmployee")}
           </div>
         ) : (
           employees.map((emp) => (
@@ -300,14 +323,16 @@ export default function EmployeePage() {
                     {emp.name}
                   </span>
                   <span className="text-xs text-muted-foreground">
-                    {emp.phoneNumber || "No phone"}
+                    {emp.phoneNumber || t("employee.card.noPhone")}
                   </span>
                 </div>
               </div>
-              <Badge variant="outline" className="mt-1 w-fit text-xs">
-                {emp.role?.name || "Member"}
-              </Badge>
-              <ActionsDropdown emp={emp} />
+              <div className="flex items-center gap-2">
+                <Badge variant="outline" className="text-[10px] py-0 px-2 h-5">
+                  {emp.role?.name || "Member"}
+                </Badge>
+                <ActionsDropdown emp={emp} />
+              </div>
             </div>
           ))
         )}
@@ -315,13 +340,15 @@ export default function EmployeePage() {
 
       {/* Load More */}
       {hasNextPage && (
-        <div className="flex justify-center w-full">
+        <div className="flex justify-center w-full pb-20 sm:pb-0">
           <Button
             variant="outline"
             onClick={() => fetchNextPage()}
             disabled={isFetchingNextPage}
           >
-            {isFetchingNextPage ? "Loading more..." : "Load More"}
+            {isFetchingNextPage
+              ? t("common.loading")
+              : t("common.loadMore")}
           </Button>
         </div>
       )}
@@ -331,7 +358,9 @@ export default function EmployeePage() {
         <DialogContent className="sm:max-w-lg">
           <DialogHeader>
             <DialogTitle>
-              {employeeFormMode === "add" ? "Add employee" : "Edit employee"}
+              {employeeFormMode === "add"
+                ? t("employee.form.addEmployee")
+                : t("employee.form.editEmployee")}
             </DialogTitle>
           </DialogHeader>
           {roleSelector.isLoading ? (
@@ -358,7 +387,7 @@ export default function EmployeePage() {
       <Dialog open={isResetPasswordOpen} onOpenChange={setIsResetPasswordOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Reset employee password</DialogTitle>
+            <DialogTitle>{t("employee.form.resetPass")}</DialogTitle>
           </DialogHeader>
           <EmployeeResetPasswordForm
             onSubmit={handleResetPassword}
@@ -375,22 +404,25 @@ export default function EmployeePage() {
       <AlertDialog open={isDeactivateOpen} onOpenChange={setIsDeactivateOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Deactivate employee?</AlertDialogTitle>
+            <AlertDialogTitle>
+              {t("common.confirmDelete.title", { entity: t("employee.moduleName") })}
+            </AlertDialogTitle>
             <AlertDialogDescription>
-              This employee will no longer be able to access the system.
+              {t("common.confirmDelete.message", { entity: t("employee.moduleName") })}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
             <AlertDialogAction
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               onClick={handleDeactivateEmployee}
             >
-              Deactivate
+              {t("common.disable")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
     </div>
+
   );
 }

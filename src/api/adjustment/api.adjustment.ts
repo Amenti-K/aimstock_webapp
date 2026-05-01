@@ -1,4 +1,11 @@
-import { INewAdjustment } from "@/components/interface/adjustment/adjustment.interface";
+import {
+  IAdjustment,
+  INewAdjustment,
+} from "@/components/interface/adjustment/adjustment.interface";
+import {
+  IPaginatedResponse,
+  IResponse,
+} from "@/components/interface/common.interface";
 import { useMutate, useFetch, useInfiniteFetch } from "@/hooks/query.hook";
 import endpoints from "@/lib/endpoints";
 import { queryKeys } from "@/lib/queryKeys";
@@ -26,11 +33,14 @@ export const useGetAdjustmentsInfinite = (
     ...(search ? { search } : {}),
   };
 
-  return useInfiniteFetch<any>(endpoints.ADJUSTMENT, {
-    queryKey: queryKeys.adjustments.list(queryParams),
-    params: { ...queryParams, limit: 10 },
-    enabled: enabled ?? true,
-  });
+  return useInfiniteFetch<IPaginatedResponse<IAdjustment>>(
+    endpoints.ADJUSTMENT,
+    {
+      queryKey: queryKeys.adjustments.list(queryParams),
+      params: { ...queryParams, limit: 10 },
+      enabled: enabled ?? true,
+    },
+  );
 };
 
 export const useCreateAdjustment = () => {
@@ -42,7 +52,7 @@ export const useCreateAdjustment = () => {
 };
 
 export const useFetchAdjustmentById = (id: string, enabled?: boolean) => {
-  return useFetch<any>(`${endpoints.ADJUSTMENT}/${id}`, {
+  return useFetch<IResponse<IAdjustment>>(`${endpoints.ADJUSTMENT}/${id}`, {
     queryKey: queryKeys.adjustments.detail(id),
     enabled: enabled ?? !!id,
   });

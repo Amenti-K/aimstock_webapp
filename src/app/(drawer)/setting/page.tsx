@@ -71,7 +71,7 @@ export default function SettingsPage() {
           {t("setting.moduleName")}
         </h1>
         <p className="text-sm text-muted-foreground">
-          Manage your account, organization, and display preferences.
+          {t("setting.description")}
         </p>
       </div>
 
@@ -132,14 +132,16 @@ export default function SettingsPage() {
               className="flex w-full items-center justify-center gap-2 rounded-xl py-6 text-base font-semibold shadow-sm transition-all hover:scale-[1.02] active:scale-[0.98]"
             >
               <LogOut className="h-5 w-5" />
-              {t("confirmLogout.title")}
+              {t("common.confirmLogout.title")}
             </Button>
           </AlertDialogTrigger>
           <AlertDialogContent>
             <AlertDialogHeader>
-              <AlertDialogTitle>{t("confirmLogout.title")}?</AlertDialogTitle>
+              <AlertDialogTitle>
+                {t("common.confirmLogout.title")}?
+              </AlertDialogTitle>
               <AlertDialogDescription>
-                {t("confirmLogout.message")}
+                {t("common.confirmLogout.message")}
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
@@ -148,7 +150,7 @@ export default function SettingsPage() {
                 onClick={handleLogout}
                 className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               >
-                {t("confirmLogout.title")}
+                {t("common.confirmLogout.title")}
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
@@ -214,7 +216,7 @@ export default function SettingsPage() {
           <DialogHeader>
             <DialogTitle>{t("setting.section.language")}</DialogTitle>
             <DialogDescription>
-              Choose your preferred language for the system.
+              {t("setting.section.languageDesc")}
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-3 pt-4">

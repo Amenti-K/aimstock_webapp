@@ -13,6 +13,7 @@ import {
   CreateEmployeeFormValues,
   UpdateEmployeeFormValues,
 } from "./employee.schema";
+import { useLanguage } from "@/hooks/language.hook";
 
 interface Option {
   label: string;
@@ -23,7 +24,9 @@ interface EmployeeFormProps {
   mode: "add" | "edit";
   roleOptions: Option[];
   initialData?: IEmployee | null;
-  onSubmit: (values: CreateEmployeeFormValues | UpdateEmployeeFormValues) => void;
+  onSubmit: (
+    values: CreateEmployeeFormValues | UpdateEmployeeFormValues,
+  ) => void;
   onCancel: () => void;
   isPending?: boolean;
 }
@@ -36,6 +39,7 @@ export default function EmployeeForm({
   onCancel,
   isPending = false,
 }: EmployeeFormProps) {
+  const { t } = useLanguage();
   const schema = mode === "add" ? createEmployeeSchema : updateEmployeeSchema;
   const form = useForm<CreateEmployeeFormValues | UpdateEmployeeFormValues>({
     resolver: zodResolver(schema),
@@ -60,46 +64,54 @@ export default function EmployeeForm({
   }, [form, initialData, mode]);
 
   return (
-    <form onSubmit={form.handleSubmit((values) => onSubmit(values))} className="space-y-4">
+    <form
+      onSubmit={form.handleSubmit((values) => onSubmit(values))}
+      className="space-y-4"
+    >
       <TextField
         name="name"
-        control={form.control}
-        label="Full name"
+        control={form.control as any}
+        label={t("employee.form.fullName")}
         placeholder="John Doe"
       />
       <TextField
         name="phoneNumber"
-        control={form.control}
-        label="Phone number"
+        control={form.control as any}
+        label={t("employee.form.phoneNum")}
         placeholder="0912345678"
       />
       <SelectField
         name="roleId"
-        control={form.control}
-        label="Role"
-        placeholder="Select role"
+        control={form.control as any}
+        label={t("employee.form.role")}
+        placeholder={t("common.select")}
         options={roleOptions}
       />
       {mode === "add" && (
         <TextField
           name="password"
-          control={form.control}
+          control={form.control as any}
           secureTextEntry
-          label="Password"
+          label={t("employee.form.password")}
           placeholder="********"
         />
       )}
 
       <div className="flex justify-end gap-2">
-        <Button type="button" variant="outline" onClick={onCancel} disabled={isPending}>
-          Cancel
+        <Button
+          type="button"
+          variant="outline"
+          onClick={onCancel}
+          disabled={isPending}
+        >
+          {t("common.cancel")}
         </Button>
         <Button type="submit" disabled={isPending}>
           {isPending
-            ? "Saving..."
+            ? t("common.loading")
             : mode === "add"
-              ? "Create employee"
-              : "Save changes"}
+              ? t("employee.form.addEmployee")
+              : t("common.saveChanges")}
         </Button>
       </div>
     </form>

@@ -2,6 +2,7 @@
 
 import React, { useEffect } from "react";
 import { Loader2 } from "lucide-react";
+import { useLanguage } from "@/hooks/language.hook";
 
 interface InfiniteScrollTriggerProps {
   onIntersect: () => void;
@@ -15,6 +16,7 @@ export function InfiniteScrollTrigger({
   hasNextPage,
 }: InfiniteScrollTriggerProps) {
   const triggerRef = React.useRef<HTMLDivElement>(null);
+  const { t } = useLanguage();
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -43,7 +45,7 @@ export function InfiniteScrollTrigger({
       {isLoading ? (
         <div className="flex items-center gap-2 text-primary">
           <Loader2 className="h-5 w-5 animate-spin" />
-          <span className="text-sm font-medium">Loading more records...</span>
+          <span className="text-sm font-medium">{t("common.loadingMore", { defaultValue: "Loading more records..." })}</span>
         </div>
       ) : (
         <div className="h-2 w-full" /> 

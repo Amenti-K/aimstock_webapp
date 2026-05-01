@@ -1,5 +1,6 @@
 {
   "moduleName": "ቅንብሮች",
+  "description": "የመለያ እና ድርጅት ቅንብሮችን ያስተዳድሩ።",
   "version": "ስሪት",
   "build": "ግንባታ",
   "devBy": "ተገንብቷል በ AIM Technologies",
@@ -11,7 +12,8 @@
     "subscription": "ደንበኝነት ምዝገባ",
     "preferences": "ምርጫዎች",
     "theme": "አቀራረብ",
-    "language": "ቋንቋ"
+    "language": "ቋንቋ",
+    "languageDesc": "የስርዓቱን ቋንቋ ከዚህ መምረጥ ይችላሉ።"
   },
   "theme": {
     "title": "አቀራረብ",

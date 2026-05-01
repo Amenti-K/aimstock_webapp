@@ -85,6 +85,7 @@
   "errorView": "Something went wrong",
   "search": "Search...",
   "loading": "Loading...",
+  "loadingMore": "Loading more...",
   "emptyView": "No data found",
   "retry": "Retry",
   "back": "Back",
