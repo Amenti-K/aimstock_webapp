@@ -48,7 +48,7 @@ function AuthGuard({ children }: { children: React.ReactNode }) {
     const isSetupPage = pathname.startsWith("/setup");
     // Billing & plans in settings must be reachable even when expired
     const isSubscriptionSettingPage = pathname.startsWith(
-      "/setting/subscription"
+      "/setting/subscription",
     );
 
     // ── Step 1: Auth check ────────────────────────────────────────────────────
@@ -82,9 +82,7 @@ function AuthGuard({ children }: { children: React.ReactNode }) {
     // subscription exists but isExpired === true (EXPIRED or CANCELED status).
     if (isExpired) {
       const isAllowed =
-        isAuthPage ||
-        pathname === "/blocked/pay" ||
-        isSubscriptionSettingPage;
+        isAuthPage || pathname === "/blocked/pay" || isSubscriptionSettingPage;
       if (!isAllowed) {
         router.replace("/blocked/pay");
         return;
@@ -97,7 +95,8 @@ function AuthGuard({ children }: { children: React.ReactNode }) {
     }
 
     // ── Step 4: Active subscription — check company setup ────────────────────
-    if (company && company.setupStep !== 4) {
+    // if (company && company.setupStep !== 4) {
+    if (company && true) {
       if (!isSetupPage) {
         router.replace("/setup");
       }

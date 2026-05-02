@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2, Plus, Trash2, Package } from "lucide-react";
+import { Loader2, Plus, Trash2, Package, Warehouse } from "lucide-react";
 
 import { useFetchWarehouseSelector } from "@/api/warehouse/api.warehouse";
 import { useCreateBulkInventory } from "@/api/inventory/api.inventory";
@@ -14,43 +14,42 @@ import {
 } from "@/components/schema/inventory.schema";
 import { useAppDispatch } from "@/redux/hooks";
 import { setCompanyStep } from "@/redux/slices/userAuthSlice";
+import { useLanguage } from "@/hooks/language.hook";
 
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Card, CardContent } from "@/components/ui/card";
 import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
+import { Form } from "@/components/ui/form";
+import TextField from "@/components/forms/fields/TextField";
+import NumericField from "@/components/forms/fields/NumericField";
+import SelectField from "@/components/forms/fields/SelectField";
 
 export default function Step2InventoryPage() {
   const router = useRouter();
   const dispatch = useAppDispatch();
+  const { t } = useLanguage();
 
   // Fetch warehouses for distribution of initial quantities
   const { data: warehousesResponse, isLoading: loadingWarehouses } =
     useFetchWarehouseSelector();
   const warehouses = warehousesResponse?.data || [];
 
+  const warehouseOptions = useMemo(
+    () =>
+      warehouses.map((warehouse) => ({
+        value: warehouse.id,
+        label: `${warehouse.name}${warehouse.isInternal ? ` (${t("warehouse.card.isInternal")})` : ""}`,
+      })),
+    [warehouses, t],
+  );
+
   const { mutateAsync: createBulkInventory, isPending } =
     useCreateBulkInventory();
-
-  // If there are warehouses, we default each product to have warehouse inventories initialized
-  const defaultWarehouseInventories = warehouses.map((w) => ({
-    warehouseId: w.id,
-    quantity: 0,
-    reorderQuantity: 0,
-  }));
 
   const form = useForm<inventoriesArrayFormValues>({
     resolver: zodResolver(inventoriesArraySchema),
@@ -64,7 +63,9 @@ export default function Step2InventoryPage() {
           boughtPrice: 0,
           sellingPrice: 0,
           initialQuantity: 0,
-          warehouseInventories: defaultWarehouseInventories,
+          warehouseInventories: [
+            { warehouseId: "", quantity: 0, reorderQuantity: 0 },
+          ],
         },
       ],
     },
@@ -75,24 +76,6 @@ export default function Step2InventoryPage() {
     name: "inventories",
   });
 
-  // Re-populate if warehouses load late
-  React.useEffect(() => {
-    if (
-      warehouses.length > 0 &&
-      fields.length > 0 &&
-      fields[0].warehouseInventories.length === 0
-    ) {
-      form.setValue(
-        "inventories.0.warehouseInventories",
-        warehouses.map((w) => ({
-          warehouseId: w.id,
-          quantity: 0,
-          reorderQuantity: 0,
-        })),
-      );
-    }
-  }, [warehouses, fields, form]);
-
   const handleAdd = () => {
     append({
       name: "",
@@ -102,11 +85,9 @@ export default function Step2InventoryPage() {
       boughtPrice: 0,
       sellingPrice: 0,
       initialQuantity: 0,
-      warehouseInventories: warehouses.map((w) => ({
-        warehouseId: w.id,
-        quantity: 0,
-        reorderQuantity: 0,
-      })),
+      warehouseInventories: [
+        { warehouseId: "", quantity: 0, reorderQuantity: 0 },
+      ],
     });
   };
 
@@ -131,278 +112,248 @@ export default function Step2InventoryPage() {
   return (
     <div className="w-full max-w-4xl mx-auto py-8">
       <div className="mb-8 scale-in-center">
+        <div className="flex items-center justify-between mb-2">
+          <p className="text-sm font-medium text-primary">
+            {t("setup.header.stepCount", { current: 2, total: 3 })}
+          </p>
+        </div>
         <h1 className="text-3xl font-bold tracking-tight text-foreground flex items-center gap-2">
           <Package className="w-8 h-8 text-primary" />
-          Step 2: Add Initial Products
+          {t("setup.step2.title")}
         </h1>
         <p className="text-muted-foreground mt-2">
-          Let's add some initial inventory to your system. You can specify
-          prices, quantities and distribute them across your warehouses.
+          {t("setup.step2.description")}
         </p>
 
         <div className="w-full h-2 bg-muted mt-6 rounded-full overflow-hidden">
-          <div className="h-full bg-primary w-2/4 transition-all duration-500 ease-out" />
+          <div className="h-full bg-primary w-2/3 transition-all duration-700 ease-in-out" />
         </div>
       </div>
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-12">
           {fields.map((field, index) => (
             <Card
               key={field.id}
-              className="fade-in-up border-primary/20 bg-background shadow-sm"
+              className="fade-in-up border-primary/20 bg-background shadow-sm hover:shadow-md transition-shadow duration-300 rounded-[1.5rem] overflow-hidden relative"
             >
-              <CardContent className="p-6 relative">
-                {fields.length > 1 && (
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    className="absolute top-4 right-4 text-destructive hover:bg-destructive/10 hover:text-destructive"
-                    onClick={() => remove(index)}
-                  >
-                    <Trash2 className="w-5 h-5" />
-                  </Button>
-                )}
-
-                <h3 className="text-lg font-semibold mb-4 text-primary">
-                  Product #{index + 1}
-                </h3>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
-                  <FormField
-                    control={form.control}
+              {fields.length > 1 && (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="absolute top-4 right-4 text-destructive hover:bg-destructive/10 hover:text-destructive z-20"
+                  onClick={() => remove(index)}
+                >
+                  <Trash2 className="w-5 h-5" />
+                </Button>
+              )}
+              <div className="flex px-6 pb-4 items-center gap-3 border-b">
+                <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+                  <Package className="h-5 w-5" />
+                </div>
+                <div>
+                  <CardTitle className="text-lg font-bold">
+                    {t("setup.step2.cardTitle", { index: index + 1 })}
+                  </CardTitle>
+                  <CardDescription>
+                    {t("inventory.form.inventoryInfoDesc")}
+                  </CardDescription>
+                </div>
+              </div>
+              <CardContent className="space-y-8">
+                {/* Product Information Grid */}
+                <div className="grid grid-cols-2 lg:grid-cols-3 gap-6">
+                  <TextField
                     name={`inventories.${index}.name`}
-                    render={({ field }) => (
-                      <FormItem className="lg:col-span-2">
-                        <FormLabel>Product Name</FormLabel>
-                        <FormControl>
-                          <Input placeholder="e.g. iPhone 15 Pro" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
+                    control={form.control as any}
+                    label={t("inventory.form.name")}
+                    placeholder={t("inventory.card.name")}
                   />
-
-                  <FormField
-                    control={form.control}
+                  <TextField
                     name={`inventories.${index}.sku`}
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>SKU (Optional)</FormLabel>
-                        <FormControl>
-                          <Input placeholder="IPH-15-PRO" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
+                    control={form.control as any}
+                    label={t("inventory.form.sku")}
+                    placeholder="CRN-0001"
                   />
-
-                  <FormField
-                    control={form.control}
-                    name={`inventories.${index}.unit`}
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Unit</FormLabel>
-                        <FormControl>
-                          <Input placeholder="pcs, kg, box" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
+                  <NumericField
                     name={`inventories.${index}.boughtPrice`}
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Bought Price</FormLabel>
-                        <FormControl>
-                          <Input
-                            type="number"
-                            step="0.01"
-                            {...field}
-                            onChange={(e) =>
-                              field.onChange(parseFloat(e.target.value) || 0)
-                            }
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
+                    control={form.control as any}
+                    label={t("inventory.form.boughtPrice")}
+                    placeholder="0"
                   />
-
-                  <FormField
-                    control={form.control}
+                  <NumericField
                     name={`inventories.${index}.sellingPrice`}
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Selling Price</FormLabel>
-                        <FormControl>
-                          <Input
-                            type="number"
-                            step="0.01"
-                            {...field}
-                            onChange={(e) =>
-                              field.onChange(parseFloat(e.target.value) || 0)
-                            }
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
+                    control={form.control as any}
+                    label={t("inventory.form.sellingPrice")}
+                    placeholder="0"
                   />
-
-                  <FormField
-                    control={form.control}
+                  <TextField
+                    name={`inventories.${index}.unit`}
+                    control={form.control as any}
+                    label={t("inventory.form.unit")}
+                    placeholder="pcs, kg, etc."
+                  />
+                  <NumericField
                     name={`inventories.${index}.initialQuantity`}
-                    render={({ field }) => (
-                      <FormItem className="lg:col-span-2">
-                        <FormLabel>Total Initial Quantity</FormLabel>
-                        <FormControl>
-                          <Input
-                            type="number"
-                            {...field}
-                            onChange={(e) =>
-                              field.onChange(parseInt(e.target.value) || 0)
-                            }
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
+                    control={form.control as any}
+                    label={t("inventory.form.initialQty")}
+                    placeholder="0"
                   />
                 </div>
 
-                <Accordion type="single" collapsible className="w-full">
-                  <AccordionItem value="warehouses" className="border-none">
-                    <AccordionTrigger className="bg-muted/50 px-4 py-2 rounded-lg text-sm font-medium hover:bg-muted/70 transition-colors">
-                      Distribute Quantity Across Warehouses
-                    </AccordionTrigger>
-                    <AccordionContent className="pt-4 px-2 space-y-4">
-                      {form
-                        .watch(`inventories.${index}.warehouseInventories`)
-                        ?.map((wi, wIndex) => {
-                          const warehouse = warehouses.find(
-                            (w) => w.id === wi.warehouseId,
-                          );
-                          return (
-                            <div
-                              key={wIndex}
-                              className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center bg-background border rounded-lg p-3"
-                            >
-                              <span className="font-semibold text-sm">
-                                {warehouse?.name || "Unknown Warehouse"}
-                              </span>
-                              <div className="flex space-x-2">
-                                <FormField
-                                  control={form.control}
-                                  name={`inventories.${index}.warehouseInventories.${wIndex}.quantity`}
-                                  render={({ field }) => (
-                                    <FormItem className="flex-1">
-                                      <FormLabel className="text-xs">
-                                        Quantity
-                                      </FormLabel>
-                                      <FormControl>
-                                        <Input
-                                          type="number"
-                                          {...field}
-                                          onChange={(e) =>
-                                            field.onChange(
-                                              parseInt(e.target.value) || 0,
-                                            )
-                                          }
-                                        />
-                                      </FormControl>
-                                    </FormItem>
-                                  )}
-                                />
-                                <FormField
-                                  control={form.control}
-                                  name={`inventories.${index}.warehouseInventories.${wIndex}.reorderQuantity`}
-                                  render={({ field }) => (
-                                    <FormItem className="flex-1">
-                                      <FormLabel className="text-xs">
-                                        Reorder At
-                                      </FormLabel>
-                                      <FormControl>
-                                        <Input
-                                          type="number"
-                                          {...field}
-                                          onChange={(e) =>
-                                            field.onChange(
-                                              parseInt(e.target.value) || 0,
-                                            )
-                                          }
-                                        />
-                                      </FormControl>
-                                    </FormItem>
-                                  )}
-                                />
-                              </div>
-                            </div>
-                          );
-                        })}
-                    </AccordionContent>
-                  </AccordionItem>
-                </Accordion>
-                {form.formState.errors?.inventories?.[index]
-                  ?.initialQuantity && (
-                  <p className="text-sm font-medium text-destructive mt-2">
-                    {
-                      form.formState.errors.inventories[index]?.initialQuantity
-                        ?.message
-                    }
-                  </p>
-                )}
+                {/* Warehouse Distribution Section */}
+                <div className="pt-8 border-t space-y-6">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+                        <Warehouse className="h-4 w-4" />
+                      </div>
+                      <h4 className="text-sm font-bold">
+                        {t("inventory.form.wareInv.title")}
+                      </h4>
+                    </div>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      className="rounded-full h-8 text-xs"
+                      onClick={() => {
+                        const currentWares = form.getValues(
+                          `inventories.${index}.warehouseInventories`,
+                        );
+                        form.setValue(
+                          `inventories.${index}.warehouseInventories`,
+                          [
+                            ...currentWares,
+                            {
+                              warehouseId: "",
+                              quantity: 0,
+                              reorderQuantity: 0,
+                            },
+                          ],
+                        );
+                      }}
+                    >
+                      <Plus className="mr-1 h-3 w-3" />
+                      {t("inventory.form.wareInv.addWare")}
+                    </Button>
+                  </div>
+
+                  <WarehouseDistribution
+                    index={index}
+                    control={form.control}
+                    warehouseOptions={warehouseOptions}
+                    t={t}
+                    form={form}
+                  />
+                </div>
               </CardContent>
             </Card>
           ))}
-
-          {form.formState.errors.inventories?.root && (
-            <p className="text-sm font-medium text-destructive">
-              {form.formState.errors.inventories.root.message}
-            </p>
-          )}
 
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t">
             <Button
               type="button"
               variant="outline"
               onClick={handleAdd}
-              className="w-full sm:w-auto"
+              className="w-full sm:w-auto rounded-full px-6"
             >
               <Plus className="w-4 h-4 mr-2" />
-              Add Another Product
+              {t("setup.step2.addAnother")}
             </Button>
 
-            <div className="flex items-center gap-2 w-full sm:w-auto">
-              <Button
-                type="button"
-                variant="ghost"
-                onClick={() => {
-                  // Skip logic
-                  dispatch(setCompanyStep(3));
-                  router.push("/setup/step3-create-partners");
-                }}
-              >
-                Skip for now
-              </Button>
-              <Button type="submit" disabled={isPending} className="px-8">
-                {isPending ? (
-                  <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Saving...
-                  </>
-                ) : (
-                  "Continue to Next Step"
-                )}
-              </Button>
-            </div>
+            <Button
+              type="submit"
+              disabled={isPending}
+              className="px-10 rounded-full shadow-lg shadow-primary/20"
+            >
+              {isPending ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  {t("common.saving")}
+                </>
+              ) : (
+                t("setup.step2.nextStep")
+              )}
+            </Button>
           </div>
         </form>
       </Form>
+    </div>
+  );
+}
+
+function WarehouseDistribution({
+  index,
+  control,
+  warehouseOptions,
+  t,
+  form,
+}: any) {
+  const { fields, remove } = useFieldArray({
+    control,
+    name: `inventories.${index}.warehouseInventories`,
+  });
+
+  const watchedWarehouses = form.watch(
+    `inventories.${index}.warehouseInventories`,
+  );
+
+  const optionsForRow = (wIndex: number) => {
+    const selectedIds = (watchedWarehouses ?? [])
+      .map((w: any) => w?.warehouseId)
+      .filter(Boolean);
+    const currentId = watchedWarehouses?.[wIndex]?.warehouseId;
+    return warehouseOptions.filter((option: any) => {
+      if (option.value === currentId) return true;
+      return !selectedIds.includes(option.value);
+    });
+  };
+
+  return (
+    <div className="space-y-4">
+      {fields.map((field, wIndex) => (
+        <div className="overflow-x-auto grid grid-cols-16 gap-4 items-start">
+          <div className="col-span-8">
+            <SelectField
+              name={`inventories.${index}.warehouseInventories.${wIndex}.warehouseId`}
+              control={control as any}
+              label={t("inventory.form.wareInv.ware")}
+              placeholder={t("inventory.form.wareInv.selectWare")}
+              options={optionsForRow(wIndex)}
+            />
+          </div>
+          <div className="col-span-3 whitespace-nowrap">
+            <NumericField
+              name={`inventories.${index}.warehouseInventories.${wIndex}.quantity`}
+              control={control as any}
+              label={t("inventory.form.wareInv.qty")}
+              placeholder="0"
+            />
+          </div>
+          <div className="col-span-3 whitespace-nowrap">
+            <NumericField
+              name={`inventories.${index}.warehouseInventories.${wIndex}.reorderQuantity`}
+              control={control as any}
+              label={t("inventory.form.wareInv.reorderQty")}
+              placeholder="0"
+            />
+          </div>
+          <div className="col-span-2 mt-4">
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className="h-10 w-10 text-destructive hover:bg-destructive/10 hover:text-destructive rounded-xl mb-[2px]"
+              onClick={() => remove(wIndex)}
+              disabled={fields.length === 1}
+            >
+              <Trash2 className="h-5 w-5" />
+            </Button>
+          </div>
+        </div>
+      ))}
     </div>
   );
 }

@@ -1,4 +1,6 @@
 {
+  "saving": "Saving...",
+  "skip": "Skip",
   "confirmDelete": {
     "title": "Delete {entity}",
     "message": "Are you sure you want to delete this {entity.toLowerCase()}?"

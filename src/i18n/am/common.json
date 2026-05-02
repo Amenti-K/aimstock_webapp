@@ -1,4 +1,6 @@
 {
+  "saving": "በማስቀመጥ ላይ...",
+  "skip": "ዝለል",
   "confirmDelete": {
     "title": "{entity} ሰርዝ",
     "message": "ይህን {entity.toLowerCase()} መሰረዝ እንደሚፈልጉ እርግጠኛ ነዎት?"

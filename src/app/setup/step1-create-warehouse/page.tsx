@@ -13,24 +13,19 @@ import {
 } from "@/components/schema/warehouse.schema";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { setCompanyStep } from "@/redux/slices/userAuthSlice";
+import { useLanguage } from "@/hooks/language.hook";
 
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent } from "@/components/ui/card";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Form } from "@/components/ui/form";
+import TextField from "@/components/forms/fields/TextField";
+import TextAreaField from "@/components/forms/fields/TextAreaField";
+import SwitchField from "@/components/forms/fields/SwitchField";
 
 export default function Step1WarehousePage() {
   const router = useRouter();
   const dispatch = useAppDispatch();
+  const { t } = useLanguage();
   const { company } = useAppSelector((state) => state.userAuth);
 
   const maxWarehouses = 2; // Can be based on subscription plan later
@@ -95,18 +90,21 @@ export default function Step1WarehousePage() {
   return (
     <div className="w-full max-w-3xl mx-auto py-8">
       <div className="mb-8 scale-in-center">
+        <div className="flex items-center justify-between mb-2">
+          <p className="text-sm font-medium text-primary">
+            {t("setup.header.stepCount", { current: 1, total: 3 })}
+          </p>
+        </div>
         <h1 className="text-3xl font-bold tracking-tight text-foreground flex items-center gap-2">
           <Building2 className="w-8 h-8 text-primary" />
-          Step 1: Setup Warehouses
+          {t("setup.step1.title")}
         </h1>
         <p className="text-muted-foreground mt-2">
-          Add your initial warehouses or store locations to start tracking
-          inventory. You can add more later.
+          {t("setup.step1.description")}
         </p>
 
-        {/* Progress bar logic could go here */}
         <div className="w-full h-2 bg-muted mt-6 rounded-full overflow-hidden">
-          <div className="h-full bg-primary w-1/4 transition-all duration-500 ease-out" />
+          <div className="h-full bg-primary w-1/3 transition-all duration-700 ease-in-out" />
         </div>
       </div>
 
@@ -115,112 +113,68 @@ export default function Step1WarehousePage() {
           {fields.map((field, index) => (
             <Card
               key={field.id}
-              className="fade-in-up border-primary/20 bg-background shadow-sm"
+              className="fade-in-up border-primary/20 bg-background shadow-sm hover:shadow-md transition-shadow duration-300 rounded-[1.5rem] overflow-hidden"
             >
-              <CardContent className="p-6 relative">
+              <CardContent className="relative space-y-4">
                 {fields.length > 1 && (
                   <Button
                     type="button"
                     variant="ghost"
                     size="icon"
-                    className="absolute top-4 right-4 text-destructive hover:bg-destructive/10 hover:text-destructive"
+                    className="absolute top-4 right-4 text-destructive hover:bg-destructive/10 hover:text-destructive z-10"
                     onClick={() => remove(index)}
                   >
                     <Trash2 className="w-5 h-5" />
                   </Button>
                 )}
 
-                <h3 className="text-lg font-semibold mb-4">
-                  Warehouse #{index + 1}
+                <h3 className="text-lg font-semibold mb-4 text-primary">
+                  {t("setup.step1.cardTitle", { index: index + 1 })}
                 </h3>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <FormField
-                    control={form.control}
+                  <TextField
                     name={`warehouses.${index}.name`}
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Warehouse Name</FormLabel>
-                        <FormControl>
-                          <Input placeholder="e.g. Main Store" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
+                    control={form.control as any}
+                    label={t("warehouse.form.name")}
+                    placeholder={t("warehouse.form.name")}
                   />
 
-                  <FormField
-                    control={form.control}
+                  <TextField
                     name={`warehouses.${index}.contactPhone`}
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Contact Phone</FormLabel>
-                        <FormControl>
-                          <Input placeholder="e.g. 0912345678" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
+                    control={form.control as any}
+                    label={t("warehouse.form.contactPhone")}
+                    placeholder="0911xxxxxx"
                   />
 
-                  <FormField
-                    control={form.control}
-                    name={`warehouses.${index}.location`}
-                    render={({ field }) => (
-                      <FormItem className="md:col-span-2">
-                        <FormLabel>Location / Address</FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="e.g. Bole, Addis Ababa"
-                            {...field}
-                            value={field.value || ""}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                  <div className="md:col-span-2">
+                    <TextField
+                      name={`warehouses.${index}.location`}
+                      control={form.control as any}
+                      label={t("warehouse.form.location")}
+                      placeholder={t("warehouse.form.location")}
+                    />
+                  </div>
 
-                  <FormField
-                    control={form.control}
-                    name={`warehouses.${index}.description`}
-                    render={({ field }) => (
-                      <FormItem className="md:col-span-2">
-                        <FormLabel>Description (Optional)</FormLabel>
-                        <FormControl>
-                          <Textarea
-                            placeholder="Short description..."
-                            className="resize-none h-20"
-                            {...field}
-                            value={field.value || ""}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                  <div className="md:col-span-2">
+                    <TextAreaField
+                      name={`warehouses.${index}.description`}
+                      control={form.control as any}
+                      label={t("warehouse.form.description")}
+                      placeholder={t("warehouse.form.description")}
+                    />
+                  </div>
 
-                  <FormField
-                    control={form.control}
-                    name={`warehouses.${index}.isInternal`}
-                    render={({ field }) => (
-                      <FormItem className="flex flex-row items-start space-x-3 space-y-0 p-4 border rounded-md md:col-span-2 bg-muted/30">
-                        <FormControl>
-                          <Checkbox
-                            checked={field.value || false}
-                            onCheckedChange={field.onChange}
-                          />
-                        </FormControl>
-                        <div className="space-y-1 leading-none">
-                          <FormLabel>Is this an internal warehouse?</FormLabel>
-                          <p className="text-xs text-muted-foreground">
-                            Check this if this location is strictly internal and
-                            not open for direct customer sales.
-                          </p>
-                        </div>
-                      </FormItem>
-                    )}
-                  />
+                  <div className="md:col-span-2 pt-2">
+                    <SwitchField
+                      name={`warehouses.${index}.isInternal`}
+                      control={form.control as any}
+                      label={t("warehouse.form.isInternal")}
+                    />
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {t("setup.step1.internalHint")}
+                    </p>
+                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -238,26 +192,26 @@ export default function Step1WarehousePage() {
               variant="outline"
               onClick={handleAdd}
               disabled={isLimitReached}
-              className="w-full sm:w-auto"
+              className="w-full sm:w-auto rounded-full px-6"
             >
               <Plus className="w-4 h-4 mr-2" />
               {isLimitReached
-                ? `Limit Reached (${maxWarehouses})`
-                : "Add Another Warehouse"}
+                ? t("setup.step1.limitReached", { count: maxWarehouses })
+                : t("setup.step1.addAnother")}
             </Button>
 
             <Button
               type="submit"
               disabled={isPending}
-              className="w-full sm:w-auto px-8"
+              className="w-full sm:w-auto px-10 rounded-full shadow-lg shadow-primary/20"
             >
               {isPending ? (
                 <>
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Saving...
+                  {t("common.saving")}
                 </>
               ) : (
-                "Continue to Next Step"
+                t("setup.step1.nextStep")
               )}
             </Button>
           </div>

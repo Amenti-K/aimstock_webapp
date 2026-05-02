@@ -102,7 +102,7 @@
       "reorderQty": "Reorder Qty",
       "selectWare": "Select warehouse",
       "loadingWare": "Loading...",
-      "addWare": "+ Add Warehouse"
+      "addWare": "Add Warehouse"
     }
   }
 }

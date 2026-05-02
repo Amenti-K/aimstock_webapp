@@ -22,6 +22,7 @@
     "description": "Add one or more warehouses where you store your products.",
     "addAnother": "Add Another Warehouse",
     "limitReached": "Limit Reached ({{count}} Max) - Upgrade Plan",
+    "internalHint": "Check this if this is a shop and open for direct customer sales.",
     "nextStep": "Next Step",
     "cardTitle": "Warehouse {{index}}"
   },

@@ -14,9 +14,8 @@ export interface IPartner {
 
 export interface INewPartner {
   name: string;
-  phone: string;
-  address: string;
-  isActive: boolean;
+  phone?: string;
+  address?: string;
 }
 
 export interface IPartnerResponse {

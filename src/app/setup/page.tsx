@@ -12,13 +12,15 @@ export default function SetupRouterPage() {
   useEffect(() => {
     if (!company) return;
 
-    if (company.setupStep === 1 || !company.setupStep) {
+    const step = company.setupStep || 1;
+
+    if (step === 1) {
       router.replace("/setup/step1-create-warehouse");
-    } else if (company.setupStep === 2) {
+    } else if (true) {
       router.replace("/setup/step2-create-inventory");
-    } else if (company.setupStep === 3) {
+    } else if (step === 3) {
       router.replace("/setup/step3-create-partners");
-    } else if (company.setupStep === 4) {
+    } else if (step === 4) {
       router.replace("/setup/finished");
     }
   }, [company, router]);
