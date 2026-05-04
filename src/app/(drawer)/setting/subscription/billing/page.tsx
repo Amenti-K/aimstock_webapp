@@ -1,6 +1,6 @@
 "use client";
 
-import React, { Suspense, useState } from "react";
+import React, { Suspense, useState, useMemo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useFetchPlans } from "@/api/subscription/api.plan";
 import {
@@ -19,26 +19,13 @@ import {
   Send,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-
-// ─── Helpers ──────────────────────────────────────────────────────────────────
-
-function formatPrice(amount: number) {
-  return new Intl.NumberFormat("en-ET", { minimumFractionDigits: 0 }).format(
-    amount
-  );
-}
-
-const INTERVAL_LABELS: Record<BillingInterval, string> = {
-  [BillingInterval.MONTHLY]: "Monthly",
-  [BillingInterval.THREE_MONTHS]: "3 Months",
-  [BillingInterval.SIX_MONTHS]: "6 Months",
-  [BillingInterval.YEARLY]: "Yearly",
-};
+import { useLanguage } from "@/hooks/language.hook";
 
 // ─── Inner component (needs useSearchParams) ──────────────────────────────────
 
 function BillingContent() {
   const router = useRouter();
+  const { t } = useLanguage();
   const searchParams = useSearchParams();
 
   const planId = searchParams.get("planId") ?? "";
@@ -54,6 +41,19 @@ function BillingContent() {
 
   const [activeBank, setActiveBank] = useState<BankKey>("CBE");
 
+  const formatPrice = (amount: number) => {
+    return new Intl.NumberFormat("en-ET", { minimumFractionDigits: 0 }).format(
+      amount
+    );
+  };
+
+  const INTERVAL_LABELS: Record<BillingInterval, string> = useMemo(() => ({
+    [BillingInterval.MONTHLY]: t("common.timeFrame.30days"),
+    [BillingInterval.THREE_MONTHS]: t("subscription.plans.intervals.3months"),
+    [BillingInterval.SIX_MONTHS]: t("subscription.plans.intervals.6months"),
+    [BillingInterval.YEARLY]: t("subscription.plans.intervals.year"),
+  }), [t]);
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-24">
@@ -67,14 +67,14 @@ function BillingContent() {
       <div className="space-y-4">
         <Button variant="ghost" onClick={() => router.back()} className="gap-2">
           <ChevronLeft className="w-4 h-4" />
-          Back
+          {t("common.back")}
         </Button>
         <div className="flex flex-col items-center justify-center py-24 text-center gap-4">
           <p className="text-muted-foreground">
-            Plan not found. Please go back and select a plan.
+            {t("subscription.billing.notFound")}
           </p>
           <Button variant="outline" onClick={() => router.back()}>
-            Go Back
+            {t("common.back")}
           </Button>
         </div>
       </div>
@@ -95,21 +95,21 @@ function BillingContent() {
         </Button>
         <div>
           <h1 className="text-2xl font-bold tracking-tight">
-            Billing &amp; Payment
+            {t("subscription.billing.title")}
           </h1>
           <p className="text-sm text-muted-foreground">
-            Complete your subscription payment below
+            {t("subscription.billing.description")}
           </p>
         </div>
       </div>
 
       {/* ── Order Summary ── */}
       <div className="rounded-xl border bg-card p-6 space-y-4">
-        <h2 className="font-semibold text-base">Order Summary</h2>
+        <h2 className="font-semibold text-base">{t("subscription.billing.orderSummary")}</h2>
 
         <div className="flex items-center justify-between text-sm">
           <span className="text-muted-foreground">
-            {selectedPlan!.name} Plan
+            {t("subscription.billing.planLabel", { name: selectedPlan!.name })}
           </span>
           <span className="font-semibold">
             {currency} {formatPrice(price)}
@@ -124,7 +124,7 @@ function BillingContent() {
         <Separator />
 
         <div className="flex items-center justify-between">
-          <span className="font-bold text-base">Total Due</span>
+          <span className="font-bold text-base">{t("subscription.billing.totalDue")}</span>
           <span className="font-extrabold text-2xl text-primary">
             {currency} {formatPrice(price)}
           </span>
@@ -133,7 +133,7 @@ function BillingContent() {
 
       {/* ── Payment Method ── */}
       <div className="space-y-4">
-        <h2 className="font-semibold text-base">Payment Method</h2>
+        <h2 className="font-semibold text-base">{t("subscription.billing.paymentMethod")}</h2>
 
         {/* Bank Tabs */}
         <div className="flex gap-1 rounded-xl bg-muted p-1.5">
@@ -166,7 +166,7 @@ function BillingContent() {
         {/* Account Details */}
         <div className="rounded-xl border bg-card p-6 text-center space-y-3">
           <p className="text-sm text-muted-foreground">
-            Transfer the exact amount to the following account:
+            {t("subscription.billing.transferInstructions")}
           </p>
           <p className="font-bold text-primary text-lg">
             {BANK_DETAILS[activeBank].name}
@@ -183,7 +183,7 @@ function BillingContent() {
             </p>
           </div>
           <p className="text-xs text-muted-foreground">
-            Tap the account number to select and copy it
+            {t("subscription.billing.copyHint")}
           </p>
         </div>
       </div>
@@ -193,19 +193,17 @@ function BillingContent() {
         <div className="flex items-center gap-2 mb-3">
           <Info className="w-5 h-5 text-secondary-foreground" />
           <p className="font-semibold text-secondary-foreground text-sm">
-            Payment Instructions
+            {t("subscription.billing.instructions.title")}
           </p>
         </div>
         <p className="text-sm text-secondary-foreground/90">
-          1. Transfer the exact amount shown above to the account number
-          provided.
+          {t("subscription.billing.instructions.step1")}
         </p>
         <p className="text-sm text-secondary-foreground/90">
-          2. Take a screenshot or photo of your payment receipt / confirmation.
+          {t("subscription.billing.instructions.step2")}
         </p>
         <p className="text-sm text-secondary-foreground/90">
-          3. Send the receipt to our support team via Telegram for manual
-          verification and activation.
+          {t("subscription.billing.instructions.step3")}
         </p>
       </div>
 
@@ -217,7 +215,7 @@ function BillingContent() {
         onClick={() => window.open(SUPPORT_LINKS.telegram, "_blank")}
       >
         <Send className="w-4 h-4" />
-        Send Payment Receipt to Support
+        {t("subscription.billing.sendReceipt")}
       </Button>
     </div>
   );

@@ -25,10 +25,13 @@
   },
   "profile": {
     "title": "የግል መረጃ",
+    "description": "የግል መታወቂያ ዝርዝሮችዎን ያዘምኑ።",
     "cantChangeProPic": "የመለያ ምስል መቀየር አይቻልም።",
     "name": "ሙሉ ስም",
     "phoneNum": "ስልክ ቁጥር",
-    "cantChangePhoneNum": "ስልክ ቁጥር በድርጅትዎ አስተዳዳሪ ይተዳደራል።"
+    "cantChangePhoneNum": "ስልክ ቁጥር በድርጅትዎ አስተዳዳሪ ይተዳደራል።",
+    "ownerOnlyPhone": "ስልክ ቁጥር መቀየር የሚችሉት ባለቤቶች ብቻ ናቸው።",
+    "save": "መገለጫ አስቀምጥ"
   },
   "pin": {
     "enterNew": "አዲስ PIN ያስገቡ",
@@ -38,6 +41,15 @@
   },
   "security": {
     "title": "ደህንነት እና መግቢያ",
+    "sessionLock": "የክፍለ ጊዜ መቆለፊያ (PIN)",
+    "sessionLockDesc": "ከ5 ደቂቃ እንቅስቃሴ አልባነት በኋላ ማያ ገጹን በራስ-ሰር ይቆልፉ።",
+    "lockNow": "አሁን ቆልፍ",
+    "changePin": "PIN ቀይር",
+    "clearDisable": "አጽዳ እና አሰናክል",
+    "confirmDisablePin": "PIN ያሰናክሉ እና የተቀመጠውን ኮድ ያጽዱ?",
+    "setPinTitle": "የክፍለ ጊዜ PIN ያዘጋጁ",
+    "setPinDesc": "ይህ PIN ከእረፍት ጊዜ በኋላ ክፍለ ጊዜዎን ለመክፈት ጥቅም ላይ ይውላል።",
+    "saveEnable": "አስቀምጥ እና አግብር",
     "2fa": {
       "title": "ሁለት-ደረጃ ማረጋገጫ",
       "disableSecurity": "ደህንነትን ማሰናከል?",
@@ -52,6 +64,7 @@
     },
     "changePass": {
       "title": "የይለፍ ቃል መቀየር",
+      "passwordDesc": "የይለፍ ቃል ማዘመኛ እና የመግቢያ ደህንነት መቆጣጠሪያዎች።",
       "password": "የይለፍ ቃል",
       "*": "******",
       "change": "ቀይር",
@@ -61,12 +74,15 @@
       "newPass": "አዲስ የይለፍ ቃል",
       "confirmPass": "አዲሱን የይለፍ ቃል ያረጋግጡ",
       "success": "የይለፍ ቃል በተሳካ ሁኔታ ዘምኗል",
-      "error": "የይለፍ ቃል ማዘመን አልተሳካም"
+      "error": "የይለፍ ቃል ማዘመን አልተሳካም",
+      "updateSecurity": "ደህንነትን ያዘምኑ"
     }
   },
   "companyProfile": {
     "title": "የኩባንያ መረጃ",
+    "description": "የድርጅት መገለጫ እና የባለቤትነት ደረጃ ቅንብሮች።",
     "name": "የኩባንያ ስም",
-    "moreCompanySettings": "ተጨማሪ የኩባንያ ቅንብሮች እና ውቅሮች በወደፊት ዝማኔዎች ይገኛሉ።"
+    "moreCompanySettings": "ተጨማሪ የኩባንያ ቅንብሮች እና ውቅሮች በወደፊት ዝማኔዎች ይገኛሉ።",
+    "save": "ኩባንያ አስቀምጥ"
   }
 }

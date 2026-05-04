@@ -22,6 +22,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useUpdateCompany } from "@/api/setting/api.company";
 import { usePermissions } from "@/hooks/permission.hook";
 import TextField from "@/components/forms/fields/TextField";
+import { useLanguage } from "@/hooks/language.hook";
 
 const companySchema = z.object({
   name: z.string().min(2, "Company name is required"),
@@ -31,9 +32,10 @@ type CompanyFormValues = z.infer<typeof companySchema>;
 
 export default function CompanyProfilePage() {
   const router = useRouter();
+  const { t } = useLanguage();
   const { canUpdate } = usePermissions();
   const hasUpdatePermission = canUpdate("COMPANY");
-  const { user, company } = useSelector((state: RootState) => state.userAuth);
+  const { company } = useSelector((state: RootState) => state.userAuth);
 
   const {
     control,
@@ -72,31 +74,33 @@ export default function CompanyProfilePage() {
         <Button variant="ghost" size="icon" onClick={() => router.back()}>
           <ArrowLeft className="h-4 w-4" />
         </Button>
-        <h1 className="text-2xl font-bold tracking-tight">Company Profile</h1>
+        <h1 className="text-2xl font-bold tracking-tight">
+          {t("setting.companyProfile.title")}
+        </h1>
       </div>
 
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Building className="h-5 w-5" />
-            Organization Profile
+            {t("setting.companyProfile.title")}
           </CardTitle>
           <CardDescription>
-            Organization profile and ownership-level settings.
+            {t("setting.companyProfile.description")}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
             <TextField
               name="name"
+              label={t("setting.companyProfile.name")}
               control={control as any}
               disabled={!hasUpdatePermission}
             />
           </div>
           <div className="rounded-md border bg-muted/40 p-3 text-xs text-muted-foreground">
             <span className="font-medium">
-              More company settings and configurations will be available in
-              future updates.
+              {t("setting.companyProfile.moreCompanySettings")}
             </span>
           </div>
           <Button
@@ -109,7 +113,7 @@ export default function CompanyProfilePage() {
             {updateCompany.isPending ? (
               <Loader className="h-4 w-4 animate-spin" />
             ) : (
-              "Save Company"
+              t("setting.companyProfile.save")
             )}
           </Button>
         </CardContent>

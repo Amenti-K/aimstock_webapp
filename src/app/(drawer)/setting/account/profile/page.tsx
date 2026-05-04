@@ -21,6 +21,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useUpdateUserProfile } from "@/api/setting/api.user";
+import { useLanguage } from "@/hooks/language.hook";
 
 const profileSchema = z.object({
   name: z.string().min(2, "Name is required"),
@@ -32,6 +33,7 @@ type ProfileFormValues = z.infer<typeof profileSchema>;
 export default function ProfilePage() {
   const router = useRouter();
   const { user } = useSelector((state: RootState) => state.userAuth);
+  const { t } = useLanguage();
 
   const {
     control,
@@ -62,18 +64,18 @@ export default function ProfilePage() {
         <Button variant="ghost" size="icon" onClick={() => router.back()}>
           <ArrowLeft className="h-4 w-4" />
         </Button>
-        <h1 className="text-2xl font-bold tracking-tight">Profile Settings</h1>
+        <h1 className="text-2xl font-bold tracking-tight">
+          {t("setting.section.profile")}
+        </h1>
       </div>
 
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <User className="h-5 w-5" />
-            Personal Information
+            {t("setting.profile.title")}
           </CardTitle>
-          <CardDescription>
-            Update your personal identity details.
-          </CardDescription>
+          <CardDescription>{t("setting.profile.description")}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
@@ -81,18 +83,19 @@ export default function ProfilePage() {
               name="name"
               control={control as any}
               type="text"
-              label="Full Name"
+              label={t("setting.profile.name")}
             />
           </div>
           <div className="space-y-2">
             <TextField
               name="phoneNumber"
               control={control as any}
+              label={t("setting.profile.phoneNum")}
               disabled={user?.role.name !== "OWNER"}
             />
             {user?.role.name !== "OWNER" && (
               <p className="text-xs text-muted-foreground">
-                Only owners can change phone number.
+                {t("setting.profile.ownerOnlyPhone")}
               </p>
             )}
           </div>
@@ -104,7 +107,7 @@ export default function ProfilePage() {
             {updateProfile.isPending ? (
               <Loader className="h-4 w-4 animate-spin" />
             ) : (
-              "Save Profile"
+              t("setting.profile.save")
             )}
           </Button>
         </CardContent>

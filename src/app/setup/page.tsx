@@ -16,7 +16,7 @@ export default function SetupRouterPage() {
 
     if (step === 1) {
       router.replace("/setup/step1-create-warehouse");
-    } else if (true) {
+    } else if (step === 2) {
       router.replace("/setup/step2-create-inventory");
     } else if (step === 3) {
       router.replace("/setup/step3-create-partners");

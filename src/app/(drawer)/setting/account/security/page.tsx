@@ -8,19 +8,12 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
-import {
-  Shield,
-  ArrowLeft,
-  Lock,
-  KeyRound,
-  Check,
-  Loader2,
-} from "lucide-react";
+import { useLanguage } from "@/hooks/language.hook";
+import { Shield, ArrowLeft, Lock, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
 import z from "zod";
@@ -69,6 +62,7 @@ export default function SecurityPage() {
   const router = useRouter();
   const { toast } = useToast();
   const changePassword = useChangePassword();
+  const { t } = useLanguage();
   const {
     hasPin,
     isLockEnabled,
@@ -101,8 +95,8 @@ export default function SecurityPage() {
       {
         onSuccess: () => {
           toast({
-            title: "Success",
-            description: "Password updated successfully",
+            title: t("common:success"),
+            description: t("setting.security.changePass.success"),
           });
           reset();
         },
@@ -113,8 +107,8 @@ export default function SecurityPage() {
   const onPinSubmit = async (data: PinFormValues) => {
     await setNewPin(data.pin);
     toast({
-      title: "PIN set",
-      description: "Session lock is now active.",
+      title: t("setting.security.2fa.pinSetMessage"),
+      description: t("setting.security.2fa.2faEnabled"),
     });
     setIsPinDialogOpen(false);
     pinForm.reset();
@@ -138,7 +132,9 @@ export default function SecurityPage() {
         <Button variant="ghost" size="icon" onClick={() => router.back()}>
           <ArrowLeft className="h-4 w-4" />
         </Button>
-        <h1 className="text-2xl font-bold tracking-tight">Security Settings</h1>
+        <h1 className="text-2xl font-bold tracking-tight">
+          {t("setting.security.title")}
+        </h1>
       </div>
 
       {/* Session Lock Section */}
@@ -148,16 +144,18 @@ export default function SecurityPage() {
             <Lock className="h-5 w-5" />
           </div>
           <div>
-            <p className="text-sm font-medium">Session Lock (PIN)</p>
+            <p className="text-sm font-medium">
+              {t("setting.security.sessionLock")}
+            </p>
             <p className="text-xs text-muted-foreground">
-              Automatically lock the screen after 5 minutes of inactivity.
+              {t("setting.security.sessionLockDesc")}
             </p>
           </div>
         </div>
         <div className="flex items-center gap-4">
           {hasPin && isLockEnabled && (
             <Button variant="outline" size="sm" onClick={lockSession}>
-              Lock Now
+              {t("setting.security.lockNow")}
             </Button>
           )}
           <Switch checked={isLockEnabled} onCheckedChange={handleToggleLock} />
@@ -172,7 +170,7 @@ export default function SecurityPage() {
             className="text-xs h-auto p-0"
             onClick={() => setIsPinDialogOpen(true)}
           >
-            Change PIN
+            {t("setting.security.changePin")}
           </Button>
           <Separator orientation="vertical" className="h-4" />
           <Button
@@ -180,10 +178,10 @@ export default function SecurityPage() {
             size="sm"
             className="text-xs h-auto p-0 text-destructive"
             onClick={() => {
-              if (confirm("Disable PIN and clear saved code?")) clearPin();
+              if (confirm(t("setting.security.confirmDisablePin"))) clearPin();
             }}
           >
-            Clear & Disable
+            {t("setting.security.clearDisable")}
           </Button>
         </div>
       )}
@@ -192,38 +190,38 @@ export default function SecurityPage() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Shield className="h-5 w-5" />
-            Security & Login
+            {t("setting.security.title")}
           </CardTitle>
           <CardDescription>
-            Password update and login safety controls.
+            {t("setting.security.changePass.passwordDesc")}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label>Current Password</Label>
+            <Label>{t("setting.security.changePass.currentPass")}</Label>
             <TextField
               control={control as any}
               name="currentPassword"
               type="password"
-              placeholder="Current Password"
+              placeholder="••••••••"
             />
           </div>
           <div className="space-y-2">
-            <Label>New Password</Label>
+            <Label>{t("setting.security.changePass.newPass")}</Label>
             <TextField
               control={control as any}
               name="newPassword"
               type="password"
-              placeholder="New Password"
+              placeholder="••••••••"
             />
           </div>
           <div className="space-y-2">
-            <Label>Confirm New Password</Label>
+            <Label>{t("setting.security.changePass.confirmPass")}</Label>
             <TextField
               control={control as any}
               name="confirmPassword"
               type="password"
-              placeholder="Confirm New Password"
+              placeholder="••••••••"
             />
           </div>
           <Button
@@ -234,7 +232,7 @@ export default function SecurityPage() {
             {changePassword.isPending && (
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
             )}
-            Update Security
+            {t("setting.security.changePass.updateSecurity")}
           </Button>
         </CardContent>
       </Card>
@@ -243,15 +241,14 @@ export default function SecurityPage() {
       <Dialog open={isPinDialogOpen} onOpenChange={setIsPinDialogOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Set Session PIN</DialogTitle>
+            <DialogTitle>{t("setting.security.setPinTitle")}</DialogTitle>
             <DialogDescription>
-              This PIN will be used to unlock your session after periods of
-              inactivity.
+              {t("setting.security.setPinDesc")}
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-2">
             <div className="space-y-2">
-              <Label>Enter 6-Digit PIN</Label>
+              <Label>{t("setting.pin.enterNew")}</Label>
               <TextField
                 control={pinForm.control as any}
                 name="pin"
@@ -260,7 +257,7 @@ export default function SecurityPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label>Confirm PIN</Label>
+              <Label>{t("setting.pin.confirmNew")}</Label>
               <TextField
                 control={pinForm.control as any}
                 name="confirmPin"
@@ -271,10 +268,10 @@ export default function SecurityPage() {
           </div>
           <DialogFooter>
             <Button variant="ghost" onClick={() => setIsPinDialogOpen(false)}>
-              Cancel
+              {t("common:cancel")}
             </Button>
             <Button onClick={pinForm.handleSubmit(onPinSubmit)}>
-              Save & Enable
+              {t("setting.security.saveEnable")}
             </Button>
           </DialogFooter>
         </DialogContent>

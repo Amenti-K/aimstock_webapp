@@ -1,5 +1,6 @@
 {
   "moduleName": "Subscription",
+  "description": "Manage your plan, usage, and billing.",
   "emptySub": "No subscription found. Start by adding your first subscription",
   "pendingSub": "Loading subscription details...",
   "errorSub": "Failed to load subscription details.",
@@ -16,7 +17,10 @@
     "remainingDays": "{{daysLeft}} days remaining in current period",
     "changePlan": "Change Plan",
     "resourceUsage": "Resource Usage",
-    "planFeatures": "Plan Features"
+    "usageDesc": "Track your feature utilization against plan limits.",
+    "planFeatures": "Plan Features",
+    "featuresDesc": "A complete list of modules and tools active on your plan.",
+    "noFeatures": "No features are explicitly listed for this plan."
   },
   "status": {
     "inActive": "In Active",
@@ -46,5 +50,42 @@
     "message": "Your subscription has ended. To continue managing your businesswithout interruption, please renew your plan.",
     "renewSub": "Renew Subscription"
   },
-  "unlimited": "Unlimited"
+  "planOverview": "Plan Overview",
+  "planOverviewDesc": "Your current subscription status and period.",
+  "periodEnds": "Period Ends",
+  "daysRemaining": "Days Remaining",
+  "unlimited": "Unlimited",
+  "plans": {
+    "title": "Subscription Plans",
+    "description": "Choose a plan to renew or upgrade your subscription. Select the billing cycle that best fits your needs.",
+    "intervals": {
+      "3months": "3 Months",
+      "6months": "6 Months",
+      "year": "1 Year"
+    },
+    "yearlySavings": "🎉 Best Value: Save 20% with yearly billing",
+    "recommended": "Recommended",
+    "keyFeatures": "Key Features",
+    "moreFeatures": "+{{count}} more features",
+    "selectPlan": "Select {{name}}",
+    "noPlans": "No plans available for this billing period."
+  },
+  "billing": {
+    "title": "Billing & Payment",
+    "description": "Complete your subscription payment below",
+    "orderSummary": "Order Summary",
+    "planLabel": "{{name}} Plan",
+    "totalDue": "Total Due",
+    "paymentMethod": "Payment Method",
+    "transferInstructions": "Transfer the exact amount to the following account:",
+    "copyHint": "Tap the account number to select and copy it",
+    "instructions": {
+      "title": "Payment Instructions",
+      "step1": "1. Transfer the exact amount shown above to the account number provided.",
+      "step2": "2. Take a screenshot or photo of your payment receipt / confirmation.",
+      "step3": "3. Send the receipt to our support team via Telegram for manual verification and activation."
+    },
+    "sendReceipt": "Send Payment Receipt to Support",
+    "notFound": "Plan not found. Please go back and select a plan."
+  }
 }

@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Lock } from "lucide-react";
 import { useAuthLock } from "@/context/AuthLockContext";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/hooks/language.hook";
 
 interface LockButtonProps {
   className?: string;
@@ -26,6 +27,7 @@ export function LockButton({
   showLabel = false,
 }: LockButtonProps) {
   const { lockSession, isLockEnabled, hasPin } = useAuthLock();
+  const { t } = useLanguage();
 
   if (!isLockEnabled || !hasPin) return null;
 
@@ -35,10 +37,10 @@ export function LockButton({
       size={size}
       className={cn("gap-2", className)}
       onClick={lockSession}
-      title="Lock Session"
+      title={t("setting.security.lockNow")}
     >
       <Lock className="h-4 w-4" />
-      {showLabel && <span>Lock Session</span>}
+      {showLabel && <span>{t("setting.security.lockNow")}</span>}
     </Button>
   );
 }

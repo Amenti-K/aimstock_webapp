@@ -64,7 +64,8 @@
     "delete": "Delete"
   },
   "unit": {
-    "items": "items"
+    "items": "items",
+    "days": "Days"
   },
   "for": "for",
   "date": "Date",

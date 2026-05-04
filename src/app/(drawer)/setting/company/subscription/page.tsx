@@ -24,9 +24,11 @@ import {
 import { useRouter } from "next/navigation";
 import { formatDate } from "@/lib/formatter";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/hooks/language.hook";
 
 export default function SubscriptionPage() {
   const router = useRouter();
+  const { t } = useLanguage();
   const {
     subscription,
     isActive,
@@ -40,7 +42,7 @@ export default function SubscriptionPage() {
   const statusMeta = useMemo(() => {
     if (isActive) {
       return {
-        label: "Active",
+        label: t("subscription.status.active"),
         icon: <CheckCircle2 className="h-4 w-4 text-emerald-600" />,
         style:
           "border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400",
@@ -48,7 +50,7 @@ export default function SubscriptionPage() {
     }
     if (isTrialing) {
       return {
-        label: "Trialing",
+        label: t("subscription.status.trialing"),
         icon: <Clock3 className="h-4 w-4 text-amber-600" />,
         style:
           "border-amber-500/30 bg-amber-500/10 text-amber-700 dark:text-amber-400",
@@ -56,7 +58,7 @@ export default function SubscriptionPage() {
     }
     if (isPastDue) {
       return {
-        label: "Past Due",
+        label: t("subscription.status.pastDue"),
         icon: <AlertTriangle className="h-4 w-4 text-rose-600" />,
         style:
           "border-rose-500/30 bg-rose-500/10 text-rose-700 dark:text-rose-400",
@@ -64,7 +66,7 @@ export default function SubscriptionPage() {
     }
     if (isExpired) {
       return {
-        label: "Expired",
+        label: t("subscription.status.expired"),
         icon: <AlertTriangle className="h-4 w-4 text-rose-600" />,
         style:
           "border-rose-500/30 bg-rose-500/10 text-rose-700 dark:text-rose-400",
@@ -72,11 +74,11 @@ export default function SubscriptionPage() {
     }
 
     return {
-      label: "Inactive",
+      label: t("subscription.status.inActive"),
       icon: <Clock3 className="h-4 w-4 text-muted-foreground" />,
       style: "border-border bg-muted text-muted-foreground",
     };
-  }, [isActive, isTrialing, isPastDue, isExpired]);
+  }, [isActive, isTrialing, isPastDue, isExpired, t]);
 
   const usagesWithLimits = useMemo(() => {
     if (!subscription?.usages || !subscription?.plan?.limits) return [];
@@ -112,9 +114,11 @@ export default function SubscriptionPage() {
           <ArrowLeft className="h-5 w-5" />
         </Button>
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Subscription</h1>
+          <h1 className="text-3xl font-bold tracking-tight">
+            {t("subscription.moduleName")}
+          </h1>
           <p className="text-muted-foreground">
-            Manage your plan, usage, and billing.
+            {t("subscription.description")}
           </p>
         </div>
       </div>
@@ -127,10 +131,10 @@ export default function SubscriptionPage() {
               <div className="space-y-1">
                 <CardTitle className="flex items-center gap-2 text-xl">
                   <CreditCard className="h-5 w-5 text-primary" />
-                  Plan Overview
+                  {t("subscription.planOverview")}
                 </CardTitle>
                 <CardDescription>
-                  Your current subscription status and period.
+                  {t("subscription.planOverviewDesc")}
                 </CardDescription>
               </div>
               <div
@@ -150,10 +154,10 @@ export default function SubscriptionPage() {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
               <div className="space-y-1">
                 <p className="text-sm font-medium text-muted-foreground uppercase tracking-widest">
-                  Current Plan
+                  {t("subscription.card.currentPlan")}
                 </p>
                 <h3 className="text-3xl font-black text-primary">
-                  {subscription?.plan?.name ?? "No Plan"}
+                  {subscription?.plan?.name ?? t("subscription.card.noPlan")}
                 </h3>
                 <p className="text-muted-foreground">
                   {subscription?.plan?.description ?? "No description"}
@@ -164,7 +168,7 @@ export default function SubscriptionPage() {
                   <Calendar className="h-5 w-5 text-muted-foreground" />
                   <div>
                     <p className="text-[10px] font-bold text-muted-foreground uppercase">
-                      Period Ends
+                      {t("subscription.periodEnds")}
                     </p>
                     <p className="text-sm font-bold">
                       {subscription?.currentPeriodEnd
@@ -181,9 +185,11 @@ export default function SubscriptionPage() {
                       <Clock3 className="h-5 w-5 text-primary" />
                       <div>
                         <p className="text-[10px] font-bold text-primary uppercase">
-                          Days Remaining
+                          {t("subscription.daysRemaining")}
                         </p>
-                        <p className="text-sm font-bold">{daysLeft} Days</p>
+                        <p className="text-sm font-bold">
+                          {daysLeft} {t("common:unit.days")}
+                        </p>
                       </div>
                     </div>
                   )}
@@ -196,7 +202,7 @@ export default function SubscriptionPage() {
                 onClick={() => router.push("/setting/subscription/plans")}
               >
                 <Zap className="mr-2 h-4 w-4 fill-current" />
-                Change / Upgrade Plan
+                {t("subscription.card.changePlan")}
               </Button>
             </div>
           </CardContent>
@@ -208,10 +214,10 @@ export default function SubscriptionPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-lg">
                 <Info className="h-5 w-5 text-primary" />
-                Resource Usage
+                {t("subscription.card.resourceUsage")}
               </CardTitle>
               <CardDescription>
-                Track your feature utilization against plan limits.
+                {t("subscription.card.usageDesc")}
               </CardDescription>
             </CardHeader>
             <CardContent className="grid gap-6 sm:grid-cols-2">
@@ -270,10 +276,10 @@ export default function SubscriptionPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-lg">
               <CheckCircle2 className="h-5 w-5 text-primary" />
-              Included Features
+              {t("subscription.card.planFeatures")}
             </CardTitle>
             <CardDescription>
-              A complete list of modules and tools active on your plan.
+              {t("subscription.card.featuresDesc")}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -296,7 +302,7 @@ export default function SubscriptionPage() {
               subscription.plan.features.filter((f) => f.enabled).length ===
                 0) && (
               <p className="text-center py-6 text-sm text-muted-foreground italic">
-                No features are explicitly listed for this plan.
+                {t("subscription.card.noFeatures")}
               </p>
             )}
           </CardContent>

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -11,20 +11,7 @@ import {
 } from "@/components/interface/subscription/subscription.interface";
 import { ArrowLeft, CheckCircle2, Loader2, Star } from "lucide-react";
 import { cn } from "@/lib/utils";
-
-// ─── Constants ────────────────────────────────────────────────────────────────
-
-const INTERVALS: { key: BillingInterval; label: string; badge?: string }[] = [
-  { key: BillingInterval.THREE_MONTHS, label: "3 Months" },
-  { key: BillingInterval.SIX_MONTHS, label: "6 Months" },
-  { key: BillingInterval.YEARLY, label: "1 Year", badge: "Save 20%" },
-];
-
-function formatPrice(amount: number) {
-  return new Intl.NumberFormat("en-ET", { minimumFractionDigits: 0 }).format(
-    amount,
-  );
-}
+import { useLanguage } from "@/hooks/language.hook";
 
 // ─── Plan Card ────────────────────────────────────────────────────────────────
 
@@ -41,18 +28,24 @@ function PlanCard({
     interval: BillingInterval,
   ) => void;
 }) {
+  const { t } = useLanguage();
   const priceObj = plan.prices.find((p) => p.interval === interval);
   const price = priceObj?.amount || 0;
   const currency = priceObj?.currency || "ETB";
   const isRecommended = plan.isEnterprise;
   const features = plan.features.filter((f) => f.enabled).map((f) => f.feature);
 
-  const intervalLabel =
-    interval === BillingInterval.THREE_MONTHS
-      ? "3 months"
-      : interval === BillingInterval.SIX_MONTHS
-        ? "6 months"
-        : "year";
+  const formatPrice = (amount: number) => {
+    return new Intl.NumberFormat("en-ET", { minimumFractionDigits: 0 }).format(
+      amount,
+    );
+  };
+
+  const intervalLabel = useMemo(() => {
+    if (interval === BillingInterval.THREE_MONTHS) return t("subscription.plans.intervals.3months");
+    if (interval === BillingInterval.SIX_MONTHS) return t("subscription.plans.intervals.6months");
+    return t("subscription.plans.intervals.year");
+  }, [interval, t]);
 
   return (
     <div
@@ -68,7 +61,7 @@ function PlanCard({
         <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 z-10">
           <Badge className="bg-primary text-primary-foreground px-4 py-1 text-xs font-bold uppercase tracking-wide shadow-md">
             <Star className="w-3 h-3 mr-1" />
-            Recommended
+            {t("subscription.plans.recommended")}
           </Badge>
         </div>
       )}
@@ -102,7 +95,7 @@ function PlanCard({
         {/* Features */}
         <div className="flex-1 space-y-2.5 mb-6">
           <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-3">
-            Key Features
+            {t("subscription.plans.keyFeatures")}
           </p>
           {features.slice(0, 6).map((feature, i) => (
             <div key={i} className="flex items-center gap-2.5">
@@ -114,7 +107,7 @@ function PlanCard({
           ))}
           {features.length > 6 && (
             <p className="text-xs text-muted-foreground pl-6 mt-1">
-              +{features.length - 6} more features
+              {t("subscription.plans.moreFeatures", { count: features.length - 6 })}
             </p>
           )}
         </div>
@@ -129,7 +122,7 @@ function PlanCard({
             onSelect(plan.id, isRecommended, interval);
           }}
         >
-          Select {plan.name}
+          {t("subscription.plans.selectPlan", { name: plan.name })}
         </Button>
       </div>
     </div>
@@ -138,17 +131,18 @@ function PlanCard({
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
-/**
- * setting/subscription/plans — plan chooser for EXISTING users (renewal).
- * Lives inside the drawer, so it has the full sidebar + header.
- * No trial banner (they already had a subscription).
- * Selecting a plan routes to setting/subscription/billing.
- */
 export default function SubscriptionPlansPage() {
   const router = useRouter();
+  const { t } = useLanguage();
   const [activeInterval, setActiveInterval] = useState<BillingInterval>(
     BillingInterval.YEARLY,
   );
+
+  const INTERVALS: { key: BillingInterval; label: string; badge?: string }[] = useMemo(() => [
+    { key: BillingInterval.THREE_MONTHS, label: t("subscription.plans.intervals.3months") },
+    { key: BillingInterval.SIX_MONTHS, label: t("subscription.plans.intervals.6months") },
+    { key: BillingInterval.YEARLY, label: t("subscription.plans.intervals.year") },
+  ], [t]);
 
   const { data: plansData, isLoading } = useFetchPlans();
   const plans = plansData?.data || [];
@@ -176,16 +170,17 @@ export default function SubscriptionPlansPage() {
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <div className="flex-1">
-            <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl">
-              Subscription Plans
+            <h1 className="text-xl sm:text-3xl font-extrabold tracking-tight sm:text-4xl">
+              {t("subscription.plans.title")}
             </h1>
-            <p className="text-muted-foreground mt-2 max-w-lg mx-auto">
-              Choose a plan to renew or upgrade your subscription. Select the billing cycle that best fits your needs.
-            </p>
           </div>
-          <div className="w-10" /> {/* Spacer to balance the back button */}
+          <div className="w-10" />
         </div>
       </div>
+
+      <p className="text-muted-foreground text-center max-w-lg mx-auto">
+        {t("subscription.plans.description")}
+      </p>
 
       {/* Interval Tabs */}
       <div className="flex flex-col items-center gap-4">
@@ -215,7 +210,7 @@ export default function SubscriptionPlansPage() {
         {/* Yearly savings note */}
         {activeInterval === BillingInterval.YEARLY && (
           <p className="text-sm text-emerald-600 dark:text-emerald-400 font-bold animate-pulse">
-            🎉 Best Value: Save 20% with yearly billing
+            {t("subscription.plans.yearlySavings")}
           </p>
         )}
       </div>
@@ -227,7 +222,9 @@ export default function SubscriptionPlansPage() {
         </div>
       ) : filteredPlans.length === 0 ? (
         <div className="text-center py-24 bg-muted/20 rounded-3xl border border-dashed border-border">
-          <p className="text-muted-foreground font-medium">No plans available for this billing period.</p>
+          <p className="text-muted-foreground font-medium">
+            {t("subscription.plans.noPlans")}
+          </p>
         </div>
       ) : (
         <div className="flex justify-center w-full">

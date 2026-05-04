@@ -6,6 +6,7 @@ import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { logoutUser } from "@/redux/slices/userAuthSlice";
 import { Button } from "@/components/ui/button";
 import { CreditCard, LogOut, TimerOff } from "lucide-react";
+import { useLanguage } from "@/hooks/language.hook";
 
 /**
  * blocked/pay — shown when a user's subscription has expired or been cancelled.
@@ -15,6 +16,7 @@ import { CreditCard, LogOut, TimerOff } from "lucide-react";
 export default function BlockedPayPage() {
   const router = useRouter();
   const dispatch = useAppDispatch();
+  const { t } = useLanguage();
   const { company } = useAppSelector((state) => state.userAuth);
 
   const handleLogout = () => {
@@ -36,16 +38,12 @@ export default function BlockedPayPage() {
 
         {/* Heading */}
         <h1 className="text-2xl font-bold tracking-tight mb-2">
-          Subscription Expired
+          {t("subscription.payToContinue.title")}
         </h1>
 
         {/* Description */}
         <p className="text-muted-foreground mb-8 leading-relaxed">
-          Your subscription for{" "}
-          <span className="font-semibold text-foreground">
-            {company?.name || "your company"}
-          </span>{" "}
-          has expired. Renew now to continue accessing all features.
+          {t("subscription.payToContinue.message")}
         </p>
 
         {/* Actions */}
@@ -57,7 +55,7 @@ export default function BlockedPayPage() {
             onClick={handleLogout}
           >
             <LogOut className="w-4 h-4" />
-            Logout
+            {t("common.confirmLogout.title")}
           </Button>
           <Button
             id="blocked-pay-renew"
@@ -65,7 +63,7 @@ export default function BlockedPayPage() {
             onClick={handleRenew}
           >
             <CreditCard className="w-4 h-4" />
-            Renew Subscription
+            {t("subscription.payToContinue.renewSub")}
           </Button>
         </div>
       </div>

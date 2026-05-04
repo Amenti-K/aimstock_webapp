@@ -25,10 +25,13 @@
   },
   "profile": {
     "title": "Profile",
+    "description": "Update your personal identity details.",
     "cantChangeProPic": "Profile picture cannot be changed.",
     "name": "Full Name",
     "phoneNum": "Phone Number",
-    "cantChangePhoneNum": "Phone number is managed by your organization admin."
+    "cantChangePhoneNum": "Phone number is managed by your organization admin.",
+    "ownerOnlyPhone": "Only owners can change phone number.",
+    "save": "Save Profile"
   },
   "pin": {
     "enterNew": "Enter New PIN",
@@ -38,6 +41,15 @@
   },
   "security": {
     "title": "Security & Login",
+    "sessionLock": "Session Lock (PIN)",
+    "sessionLockDesc": "Automatically lock the screen after 5 minutes of inactivity.",
+    "lockNow": "Lock Now",
+    "changePin": "Change PIN",
+    "clearDisable": "Clear & Disable",
+    "confirmDisablePin": "Disable PIN and clear saved code?",
+    "setPinTitle": "Set Session PIN",
+    "setPinDesc": "This PIN will be used to unlock your session after periods of inactivity.",
+    "saveEnable": "Save & Enable",
     "2fa": {
       "title": "2 Factor Authentication",
       "disableSecurity": "Disable Security?",
@@ -52,6 +64,7 @@
     },
     "changePass": {
       "title": "Change Password",
+      "passwordDesc": "Password update and login safety controls.",
       "password": "Password",
       "*": "******",
       "change": "Change",
@@ -61,12 +74,15 @@
       "newPass": "New Password",
       "confirmPass": "Confirm New Password",
       "success": "Password updated successfully",
-      "error": "Failed to update password"
+      "error": "Failed to update password",
+      "updateSecurity": "Update Security"
     }
   },
   "companyProfile": {
     "title": "Company Profile",
+    "description": "Organization profile and ownership-level settings.",
     "name": "Company Name",
-    "moreCompanySettings": "More company settings and configurations will be available in future updates."
+    "moreCompanySettings": "More company settings and configurations will be available in future updates.",
+    "save": "Save Company"
   }
 }

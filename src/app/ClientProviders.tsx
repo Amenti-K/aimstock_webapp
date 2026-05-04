@@ -95,8 +95,7 @@ function AuthGuard({ children }: { children: React.ReactNode }) {
     }
 
     // ── Step 4: Active subscription — check company setup ────────────────────
-    // if (company && company.setupStep !== 4) {
-    if (company && true) {
+    if (company && company.setupStep !== 4) {
       if (!isSetupPage) {
         router.replace("/setup");
       }
@@ -144,7 +143,6 @@ import { useIdleTimer } from "react-idle-timer";
 
 function SessionLockWrapper({ children }: { children: React.ReactNode }) {
   const { lockSession, isLocked, hasPin, isLockEnabled } = useAuthLock();
-  const pathname = usePathname();
 
   const canLock = hasPin && isLockEnabled;
 

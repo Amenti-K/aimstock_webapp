@@ -80,7 +80,7 @@ export default function Step2InventoryPage() {
     append({
       name: "",
       sku: "",
-      unit: "pcs",
+      unit: "",
       brand: "",
       boughtPrice: 0,
       sellingPrice: 0,
@@ -314,7 +314,10 @@ function WarehouseDistribution({
   return (
     <div className="space-y-4">
       {fields.map((field, wIndex) => (
-        <div className="overflow-x-auto grid grid-cols-16 gap-4 items-start">
+        <div
+          key={wIndex}
+          className="overflow-x-auto grid grid-cols-16 gap-4 items-start"
+        >
           <div className="col-span-8">
             <SelectField
               name={`inventories.${index}.warehouseInventories.${wIndex}.warehouseId`}

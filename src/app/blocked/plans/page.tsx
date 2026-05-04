@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useAppDispatch } from "@/redux/hooks";
 import { logoutUser } from "@/redux/slices/userAuthSlice";
@@ -25,24 +25,7 @@ import {
   Zap,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-
-// ─── Constants ────────────────────────────────────────────────────────────────
-
-const INTERVALS: {
-  key: BillingInterval;
-  label: string;
-  badge?: string;
-}[] = [
-  { key: BillingInterval.THREE_MONTHS, label: "3 Months" },
-  { key: BillingInterval.SIX_MONTHS, label: "6 Months" },
-  { key: BillingInterval.YEARLY, label: "1 Year", badge: "Save 20%" },
-];
-
-function formatPrice(amount: number) {
-  return new Intl.NumberFormat("en-ET", { minimumFractionDigits: 0 }).format(
-    amount
-  );
-}
+import { useLanguage } from "@/hooks/language.hook";
 
 // ─── Plan Card ────────────────────────────────────────────────────────────────
 
@@ -59,18 +42,24 @@ function PlanCard({
     interval: BillingInterval
   ) => void;
 }) {
+  const { t } = useLanguage();
   const priceObj = plan.prices.find((p) => p.interval === interval);
   const price = priceObj?.amount || 0;
   const currency = priceObj?.currency || "ETB";
   const isRecommended = plan.isEnterprise;
   const features = plan.features.filter((f) => f.enabled).map((f) => f.feature);
 
-  const intervalLabel =
-    interval === BillingInterval.THREE_MONTHS
-      ? "3 months"
-      : interval === BillingInterval.SIX_MONTHS
-        ? "6 months"
-        : "year";
+  const formatPrice = (amount: number) => {
+    return new Intl.NumberFormat("en-ET", { minimumFractionDigits: 0 }).format(
+      amount
+    );
+  };
+
+  const intervalLabel = useMemo(() => {
+    if (interval === BillingInterval.THREE_MONTHS) return t("subscription.plans.intervals.3months");
+    if (interval === BillingInterval.SIX_MONTHS) return t("subscription.plans.intervals.6months");
+    return t("subscription.plans.intervals.year");
+  }, [interval, t]);
 
   return (
     <div
@@ -86,7 +75,7 @@ function PlanCard({
         <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 z-10">
           <Badge className="bg-primary text-primary-foreground px-4 py-1 text-xs font-bold uppercase tracking-wide shadow-md">
             <Star className="w-3 h-3 mr-1" />
-            Recommended
+            {t("plan.card.recommended")}
           </Badge>
         </div>
       )}
@@ -120,7 +109,7 @@ function PlanCard({
         {/* Features */}
         <div className="flex-1 space-y-2.5 mb-6">
           <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-3">
-            Key Features
+            {t("plan.card.keyFeatures")}
           </p>
           {features.slice(0, 6).map((feature, i) => (
             <div key={i} className="flex items-center gap-2.5">
@@ -132,7 +121,7 @@ function PlanCard({
           ))}
           {features.length > 6 && (
             <p className="text-xs text-muted-foreground pl-6 mt-1">
-              +{features.length - 6} more features
+              {t("plan.card.moreFeatures", { count: features.length - 6 })}
             </p>
           )}
         </div>
@@ -147,7 +136,7 @@ function PlanCard({
             onSelect(plan.id, isRecommended, interval);
           }}
         >
-          Select {plan.name}
+          {t("plan.card.selectPlan", { name: plan.name })}
         </Button>
       </div>
     </div>
@@ -159,9 +148,20 @@ function PlanCard({
 export default function BlockedPlansPage() {
   const router = useRouter();
   const dispatch = useAppDispatch();
+  const { t } = useLanguage();
   const [activeInterval, setActiveInterval] = useState<BillingInterval>(
     BillingInterval.YEARLY
   );
+
+  const INTERVALS: {
+    key: BillingInterval;
+    label: string;
+    badge?: string;
+  }[] = useMemo(() => [
+    { key: BillingInterval.THREE_MONTHS, label: t("subscription.plans.intervals.3months") },
+    { key: BillingInterval.SIX_MONTHS, label: t("subscription.plans.intervals.6months") },
+    { key: BillingInterval.YEARLY, label: t("subscription.plans.intervals.year"), badge: t("plan.tabs.save20") },
+  ], [t]);
 
   const { subscription, isInitialized, loading: subLoading } = useSubscription();
   const { data: plansData, isLoading } = useFetchPlans();
@@ -220,7 +220,7 @@ export default function BlockedPlansPage() {
           onClick={handleLogout}
         >
           <LogOut className="w-4 h-4" />
-          Logout
+          {t("common.confirmLogout.title")}
         </Button>
       </header>
 
@@ -228,10 +228,10 @@ export default function BlockedPlansPage() {
         {/* ── Page Title ── */}
         <div className="text-center mb-10">
           <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight mb-2">
-            Choose Your Plan
+            {t("plan.choose")}
           </h1>
           <p className="text-muted-foreground text-lg">
-            Select the plan that fits your business needs
+            {t("plan.chooseDes")}
           </p>
         </div>
 
@@ -243,14 +243,10 @@ export default function BlockedPlansPage() {
             </div>
             <div className="flex-1 text-center sm:text-left">
               <h3 className="font-bold text-foreground text-lg">
-                Start Free — Try for 14 Days
+                {t("plan.trial.bannerTitle")}
               </h3>
               <p className="text-muted-foreground text-sm mt-1">
-                Get started with the{" "}
-                <span className="font-semibold text-foreground">
-                  {starterPlan.name}
-                </span>{" "}
-                plan — no payment required. Cancel anytime.
+                {t("plan.trial.bannerDescription", { planName: starterPlan.name })}
               </p>
             </div>
             <Button
@@ -265,7 +261,7 @@ export default function BlockedPlansPage() {
               ) : (
                 <Rocket className="w-4 h-4" />
               )}
-              {createTrial.isPending ? "Starting..." : "Start Free Trial"}
+              {createTrial.isPending ? t("common.loading") : t("plan.trial.startButton")}
             </Button>
           </div>
         )}
@@ -299,7 +295,7 @@ export default function BlockedPlansPage() {
         {/* Yearly savings note */}
         {activeInterval === BillingInterval.YEARLY && (
           <p className="text-center text-sm text-emerald-600 dark:text-emerald-400 font-medium mb-8">
-            🎉 Save up to 20% compared to 3-month billing
+            {t("plan.tabs.save20")}
           </p>
         )}
 
@@ -310,7 +306,7 @@ export default function BlockedPlansPage() {
           </div>
         ) : filteredPlans.length === 0 ? (
           <div className="text-center py-24 text-muted-foreground">
-            No plans available for this billing period.
+            {t("plan.tabs.noPlans")}
           </div>
         ) : (
           <div
