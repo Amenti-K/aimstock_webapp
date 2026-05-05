@@ -1,6 +1,7 @@
 "use client";
 
-import { Languages, Package2 } from "lucide-react";
+import logo from "@/../public/logo.png";
+import { Languages } from "lucide-react";
 import { useLanguage } from "@/hooks/language.hook";
 import {
   DropdownMenu,
@@ -9,6 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
+import Image from "next/image";
 
 export default function AuthLayout({
   children,
@@ -24,8 +26,14 @@ export default function AuthLayout({
         <div className="absolute inset-0 bg-gradient-to-tr from-black/80 via-black/40 to-transparent z-10" />
 
         <div className="absolute top-10 left-10 z-20 flex items-center gap-2 text-white">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-lg">
-            <Package2 className="w-6 h-6" />
+          <div className="flex h-10 w-10 items-center justify-center rounded-lg text-primary-foreground shadow-lg">
+            <Image
+              src={logo}
+              alt="Logo"
+              width={40}
+              height={40}
+              className="rounded-lg transition-all duration-300 group-data-[collapsible=icon]:w-7 group-data-[collapsible=icon]:h-7"
+            />
           </div>
           <span className="text-xl font-bold tracking-tight">AIM Stock</span>
         </div>
@@ -47,13 +55,16 @@ export default function AuthLayout({
         />
       </div>
 
-
       {/* Right side Auth Form Container */}
       <div className="flex flex-1 flex-col justify-center px-4 py-12 sm:px-6 lg:flex-none lg:px-20 xl:px-32 relative">
         <div className="absolute top-4 right-4 sm:top-8 sm:right-8 z-50">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="sm" className="gap-2 text-muted-foreground hover:text-foreground">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="gap-2 text-muted-foreground hover:text-foreground"
+              >
                 <Languages className="h-4 w-4" />
                 {language === "am" ? "አማርኛ" : "English"}
               </Button>
@@ -71,8 +82,14 @@ export default function AuthLayout({
 
         {/* Mobile Header */}
         <div className="lg:hidden absolute top-8 left-0 right-0 flex items-center justify-center gap-2 text-primary">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-md">
-            <Package2 className="w-6 h-6" />
+          <div className="flex h-10 w-10 items-center justify-center rounded-lg text-primary-foreground shadow-md">
+            <Image
+              src={logo}
+              alt="Logo"
+              width={40}
+              height={40}
+              className="rounded-lg transition-all duration-300 group-data-[collapsible=icon]:w-7 group-data-[collapsible=icon]:h-7"
+            />
           </div>
           <span className="text-2xl font-bold tracking-tight text-foreground">
             AIM Stock

@@ -1,6 +1,9 @@
 "use client";
 
 import React from "react";
+import { AuthLockProvider, useAuthLock } from "@/context/AuthLockContext";
+import { LockScreen } from "@/components/security/LockScreen";
+import { useIdleTimer } from "react-idle-timer";
 import { usePathname } from "next/navigation";
 import { UserDrawerSidebar } from "@/components/layout/UserDrawerSidebar";
 import {
@@ -90,6 +93,58 @@ function NetworkBanner() {
   );
 }
 
+function SessionLockWrapper({ children }: { children: React.ReactNode }) {
+  const { lockSession, isLocked, hasPin, isLockEnabled } = useAuthLock();
+
+  const canLock = hasPin && isLockEnabled;
+
+  // Idle Timer: 5 minutes
+  useIdleTimer({
+    timeout: 1000 * 60 * 5,
+    onIdle: () => {
+      if (canLock && !isLocked) {
+        lockSession();
+      }
+    },
+    debounce: 500,
+    disabled: !canLock,
+  });
+
+  // Tab Visibility: 30 seconds
+  React.useEffect(() => {
+    if (!canLock) return;
+
+    let timeoutId: NodeJS.Timeout;
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "hidden") {
+        // Start 30s timer when tab is hidden
+        timeoutId = setTimeout(() => {
+          if (canLock && !isLocked) {
+            lockSession();
+          }
+        }, 30000);
+      } else {
+        // Clear timer if tab becomes visible before 30s
+        clearTimeout(timeoutId);
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      clearTimeout(timeoutId);
+    };
+  }, [canLock, isLocked, lockSession]);
+
+  return (
+    <>
+      {children}
+      <LockScreen />
+    </>
+  );
+}
+
 export default function DrawerLayout({
   children,
 }: {
@@ -116,9 +171,19 @@ export default function DrawerLayout({
     pathname.startsWith(href),
   );
 
+  const routeMap: Record<string, string> = {
+    sales: "Sales Detail",
+    purchase: "Purchase Detail",
+    inventory: "Inventory Detail",
+  };
+
+  const segments = pathname.split("/").filter(Boolean);
+  const lastSegment = segments.pop();
+
   const pageName =
-    pathname.split("/").filter(Boolean).pop()?.replace(/-/g, " ") ||
-    "dashboard";
+    lastSegment && /^[a-zA-Z0-9]{10,}$/.test(lastSegment)
+      ? routeMap[segments.pop()!] || "Detail"
+      : lastSegment?.replace(/-/g, " ") || "dashboard";
 
   // Guard: if subscription is expired and user is NOT on an allowed page,
   // redirect to /blocked/pay. This is a secondary guard — ClientProviders
@@ -142,15 +207,19 @@ export default function DrawerLayout({
   }
 
   return (
-    <SidebarProvider>
-      <NetworkBanner />
+    <AuthLockProvider>
+      <SessionLockWrapper>
+        <SidebarProvider>
+          <NetworkBanner />
       <UserDrawerSidebar />
       <SidebarInset className="relative flex flex-col min-h-screen">
         <header className="flex h-14 items-center gap-2 border-b bg-background px-4 sticky top-0 z-10 sm:pt-0 pt-[env(safe-area-inset-top)]">
           <SidebarTrigger className="-ml-1" />
           <Separator orientation="vertical" className="h-4" />
-          <LockButton />
-          <h1 className="text-sm font-medium capitalize">{pageName}</h1>
+          <div className="flex justify-between items-center w-full">
+            <h1 className="text-sm font-medium capitalize">{pageName}</h1>
+            <LockButton />
+          </div>
         </header>
         <main className="flex-1 overflow-auto bg-muted/30 p-4 sm:p-5 space-y-4 pb-24 sm:pb-5">
           {/* Past Due Alert */}
@@ -235,7 +304,9 @@ export default function DrawerLayout({
         </main>
         {hideTabs && <MobileBottomTabs />}
       </SidebarInset>
-    </SidebarProvider>
+        </SidebarProvider>
+      </SessionLockWrapper>
+    </AuthLockProvider>
   );
 }
 
