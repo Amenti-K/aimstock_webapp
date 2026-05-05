@@ -1,12 +1,21 @@
 "use client";
 
-import { Package2 } from "lucide-react";
+import { Languages, Package2 } from "lucide-react";
+import { useLanguage } from "@/hooks/language.hook";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
 
 export default function AuthLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const { t, language, changeLanguage } = useLanguage();
   return (
     <div className="flex h-screen bg-background">
       {/* Left side Marketing Panel */}
@@ -23,12 +32,10 @@ export default function AuthLayout({
 
         <div className="absolute bottom-12 left-12 right-12 z-20 text-white p-8 rounded-2xl backdrop-blur-md border border-white/10 bg-white/5 shadow-2xl">
           <h2 className="text-3xl font-bold mb-4 tracking-tight leading-tight">
-            The simplest way to manage your growing business.
+            {t("auth.layout.title")}
           </h2>
           <p className="text-lg text-white/80 leading-relaxed max-w-lg text-pretty font-light">
-            Take control of your inventory, track sales, and monitor expenses
-            from anywhere in the world. Engineered entirely to elevate African
-            businesses.
+            {t("auth.layout.description")}
           </p>
         </div>
 
@@ -40,8 +47,28 @@ export default function AuthLayout({
         />
       </div>
 
+
       {/* Right side Auth Form Container */}
       <div className="flex flex-1 flex-col justify-center px-4 py-12 sm:px-6 lg:flex-none lg:px-20 xl:px-32 relative">
+        <div className="absolute top-4 right-4 sm:top-8 sm:right-8 z-50">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="sm" className="gap-2 text-muted-foreground hover:text-foreground">
+                <Languages className="h-4 w-4" />
+                {language === "am" ? "አማርኛ" : "English"}
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={() => changeLanguage("en")}>
+                English
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => changeLanguage("am")}>
+                አማርኛ
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+
         {/* Mobile Header */}
         <div className="lg:hidden absolute top-8 left-0 right-0 flex items-center justify-center gap-2 text-primary">
           <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-md">

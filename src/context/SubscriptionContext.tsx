@@ -116,10 +116,10 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const value: SubscriptionContextValue = {
     subscription,
-    isTrialing: false,
-    isActive: false,
-    isPastDue: false,
-    isExpired: true,
+    isTrialing,
+    isActive,
+    isPastDue,
+    isExpired,
     daysLeft,
     isInitialized,
     loading,

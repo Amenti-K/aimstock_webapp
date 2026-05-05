@@ -8,7 +8,6 @@ import { Loader2 } from "lucide-react";
 
 import { useSignUp } from "@/api/auth/api.auth";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
   Form,
   FormControl,
@@ -18,9 +17,12 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Checkbox } from "@/components/ui/checkbox";
+import TextField from "@/components/forms/fields/TextField";
 import { SignUpInput, signUpSchema } from "@/components/schema/auth.schema";
+import { useLanguage } from "@/hooks/language.hook";
 
 export default function RegisterPage() {
+  const { t } = useLanguage();
   const { mutate: signUp, isPending } = useSignUp();
 
   const form = useForm<SignUpInput>({
@@ -43,115 +45,60 @@ export default function RegisterPage() {
     <div className="flex flex-col space-y-6 lg:max-h-[85vh] lg:overflow-y-auto pr-2 pb-8 custom-scrollbar">
       <div className="flex flex-col space-y-2 text-center lg:text-left mt-4 lg:mt-0">
         <h1 className="text-3xl font-bold tracking-tight text-foreground">
-          Create an account
+          {t("auth.register.createAccount")}
         </h1>
         <p className="text-sm text-muted-foreground">
-          Sign up to streamline your stock and sales management
+          {t("auth.register.registerPrompt")}
         </p>
       </div>
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-          <FormField
-            control={form.control}
+          <TextField
+            control={form.control as any}
             name="name"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Full Name</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="Enter your full name"
-                    className="h-11"
-                    disabled={isPending}
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
+            label={t("auth.form.fullName")}
+            placeholder={t("auth.form.fullNamePlaceholder")}
+            disabled={isPending}
           />
 
-          <FormField
-            control={form.control}
+          <TextField
+            control={form.control as any}
             name="companyName"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Company Name</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="Enter your company name"
-                    className="h-11"
-                    disabled={isPending}
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
+            label={t("auth.form.companyName")}
+            placeholder={t("auth.form.companyNamePlaceholder")}
+            disabled={isPending}
           />
 
-          <FormField
-            control={form.control}
+          <TextField
+            control={form.control as any}
             name="phoneNumber"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Phone Number</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="e.g. 0912345678"
-                    type="tel"
-                    className="h-11"
-                    disabled={isPending}
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
+            label={t("auth.form.phoneNumber")}
+            placeholder={t("auth.form.phonePlaceholder")}
+            type="tel"
+            disabled={isPending}
           />
 
-          <FormField
-            control={form.control}
+          <TextField
+            control={form.control as any}
             name="password"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Password</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="Create a strong password"
-                    type="password"
-                    className="h-11"
-                    disabled={isPending}
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
+            label={t("auth.form.password")}
+            placeholder={t("auth.form.passwordPlaceholder")}
+            secureTextEntry={true}
+            disabled={isPending}
           />
 
-          <FormField
-            control={form.control}
+          <TextField
+            control={form.control as any}
             name="confirmPassword"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Confirm Password</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="Confirm your password"
-                    type="password"
-                    className="h-11"
-                    disabled={isPending}
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
+            label={t("auth.form.confirmPassword")}
+            placeholder={t("auth.form.confirmPasswordPlaceholder")}
+            secureTextEntry={true}
+            disabled={isPending}
           />
 
           <FormField
-            control={form.control}
+            control={form.control as any}
             name="acceptedTerms"
             render={({ field }) => (
               <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md py-4">
@@ -164,20 +111,21 @@ export default function RegisterPage() {
                 </FormControl>
                 <div className="space-y-1 leading-none">
                   <FormLabel className="text-sm font-normal text-muted-foreground">
-                    I agree to the{" "}
+                    {t("auth.register.agreeTo")}{" "}
                     <Link
                       href="https://aimstock.aimtechgroups.com/terms"
                       className="font-medium text-primary hover:underline"
                     >
-                      Terms & Conditions
+                      {t("auth.register.terms")}
                     </Link>{" "}
-                    and{" "}
+                    {t("auth.register.and")}{" "}
                     <Link
                       href="https://aimstock.aimtechgroups.com/privacy"
                       className="font-medium text-primary hover:underline"
                     >
-                      Privacy Policy
+                      {t("auth.register.privacy")}
                     </Link>
+                    {t("auth.register.agreeSuffix")}
                   </FormLabel>
                   <FormMessage />
                 </div>
@@ -193,22 +141,24 @@ export default function RegisterPage() {
             {isPending ? (
               <>
                 <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                Creating account...
+                {t("auth.register.signingUp")}
               </>
             ) : (
-              "Sign Up"
+              t("auth.register.signUp")
             )}
           </Button>
         </form>
       </Form>
 
       <div className="text-center text-sm pt-2">
-        <span className="text-muted-foreground">Already have an account? </span>
+        <span className="text-muted-foreground">
+          {t("auth.register.alreadyHaveAccount")}{" "}
+        </span>
         <Link
           href="/auth/login"
           className="font-semibold text-primary hover:text-primary/80 hover:underline transition-colors"
         >
-          Sign in
+          {t("auth.register.signIn")}
         </Link>
       </div>
 

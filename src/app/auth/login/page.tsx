@@ -8,19 +8,14 @@ import { Loader2 } from "lucide-react";
 
 import { useSignIn } from "@/api/auth/api.auth";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Form } from "@/components/ui/form";
+import TextField from "@/components/forms/fields/TextField";
 import { SignInInput, signInSchema } from "@/components/schema/auth.schema";
+import { useLanguage } from "@/hooks/language.hook";
 
 export default function LoginPage() {
   const { mutate: signIn, isPending } = useSignIn();
+  const { t } = useLanguage();
 
   const form = useForm<SignInInput>({
     resolver: zodResolver(signInSchema),
@@ -38,61 +33,31 @@ export default function LoginPage() {
     <div className="flex flex-col space-y-8">
       <div className="flex flex-col space-y-2 text-center lg:text-left">
         <h1 className="text-3xl font-bold tracking-tight text-foreground">
-          Welcome back
+          {t("auth.login.welcomeBack")}
         </h1>
         <p className="text-sm text-muted-foreground">
-          Enter your phone number and password to sign in
+          {t("auth.login.signInPrompt")}
         </p>
       </div>
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          <FormField
-            control={form.control}
+          <TextField
+            control={form.control as any}
             name="phoneNumber"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Phone Number</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="e.g. 0912345678"
-                    type="tel"
-                    className="h-11"
-                    disabled={isPending}
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
+            label={t("auth.form.phoneNumber")}
+            placeholder={t("auth.form.phonePlaceholder")}
+            type="tel"
+            disabled={isPending}
           />
 
-          <FormField
-            control={form.control}
+          <TextField
+            control={form.control as any}
             name="password"
-            render={({ field }) => (
-              <FormItem>
-                {/* <div className="flex items-center justify-between">
-                  <FormLabel>Password</FormLabel>
-                  <Link 
-                    href="/auth/forgot-password" 
-                    className="text-sm font-medium text-primary hover:underline hover:text-primary/80"
-                  >
-                    Forgot password?
-                  </Link>
-                </div> */}
-                <FormControl>
-                  <Input
-                    placeholder="••••••••"
-                    type="password"
-                    className="h-11"
-                    disabled={isPending}
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
+            label={t("auth.form.password")}
+            placeholder={t("auth.form.loginPasswordPlaceholder")}
+            secureTextEntry={true}
+            disabled={isPending}
           />
 
           <Button
@@ -103,22 +68,24 @@ export default function LoginPage() {
             {isPending ? (
               <>
                 <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                Signing in...
+                {t("auth.login.signingIn")}
               </>
             ) : (
-              "Sign In"
+              t("auth.login.signIn")
             )}
           </Button>
         </form>
       </Form>
 
       <div className="text-center text-sm">
-        <span className="text-muted-foreground">New here? </span>
+        <span className="text-muted-foreground">
+          {t("auth.login.newHere")}{" "}
+        </span>
         <Link
           href="/auth/register"
           className="font-semibold text-primary hover:text-primary/80 hover:underline transition-colors"
         >
-          Create an account
+          {t("auth.login.createAccount")}
         </Link>
       </div>
     </div>

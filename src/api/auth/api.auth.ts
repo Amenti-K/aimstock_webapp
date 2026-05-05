@@ -6,6 +6,7 @@ import { loginUser } from "@/redux/slices/userAuthSlice";
 import { useDispatch } from "react-redux";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
+import { UserInfo } from "@/components/interface/user/user.interface";
 
 // Sign In
 export const useSignIn = () => {
@@ -26,6 +27,7 @@ export const useSignIn = () => {
     // but the mobile relies on 'data' being the payload. Let's normalize it:
     toast({ title: "Success", description: "Logged in successfully" });
     const payload = data.data || data;
+    const userInfo: UserInfo = payload.user;
 
     dispatch(
       loginUser({
@@ -38,11 +40,10 @@ export const useSignIn = () => {
           subscription: payload.subscription,
         },
         user: {
-          id: payload.user.userId || payload.user.id,
+          userId: payload.user.userId || payload.user.id,
           name: payload.user.name,
           role: payload.user.role,
           phoneNumber: payload.user.phoneNumber,
-          companyId: payload.company.id,
         },
       }),
     );
@@ -83,11 +84,10 @@ export const useSignUp = () => {
           subscription: payload.subscription,
         },
         user: {
-          id: payload.user.userId || payload.user.id,
+          userId: payload.user.userId || payload.user.id,
           name: payload.user.name,
           role: payload.user.role,
           phoneNumber: payload.user.phoneNumber,
-          companyId: payload.company.id,
         },
       }),
     );
