@@ -11,7 +11,8 @@
   },
   "formHints": {
     "noBankPayments": "No bank payments added. Click 'Add Bank Payment' above.",
-    "balanceUpdateWarning": "Inventory and customer balances will be updated immediately."
+    "balanceUpdateWarning": "Inventory and customer balances will be updated immediately.",
+    "hasTransactionsWarning": "This inventory has transactions, you cannot edit initial quantity and distribution."
   },
   "reportAcco": {
     "title": "Daily Report",

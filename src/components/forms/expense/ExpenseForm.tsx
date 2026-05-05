@@ -80,8 +80,8 @@ export default function ExpenseForm({
       className="max-w-3xl mx-auto space-y-8 pb-10"
     >
       {/* General Info Section */}
-      <Card className="border-none shadow-lg bg-card/60 backdrop-blur-sm overflow-hidden">
-        <CardHeader className="bg-muted/30 pb-4">
+      <div className="rounded-xl border-none shadow-lg bg-card/60 backdrop-blur-sm overflow-hidden">
+        <CardHeader className="bg-muted/50 py-6 pb-2">
           <div className="flex items-center gap-2">
             <ReceiptText className="h-5 w-5 text-primary" />
             <CardTitle>{t("expense.detail.title")}</CardTitle>
@@ -95,13 +95,13 @@ export default function ExpenseForm({
             placeholder={t("expense.form.description")}
           />
         </CardContent>
-      </Card>
+      </div>
 
       {/* Payment Sections */}
       <div className="grid grid-cols-1 md:grid-cols-1 gap-8">
         {/* Cash Payment Section */}
-        <Card className="border-none shadow-lg bg-card/60 backdrop-blur-sm overflow-hidden">
-          <CardHeader className="bg-muted/30 pb-4">
+        <div className="rounded-xl border-none shadow-lg bg-card/60 backdrop-blur-sm overflow-hidden">
+          <CardHeader className="bg-muted/50 py-6 pb-2">
             <div className="flex items-center gap-2">
               <Banknote className="h-5 w-5 text-green-600" />
               <CardTitle>{t("expense.form.cashPay.title")}</CardTitle>
@@ -115,11 +115,11 @@ export default function ExpenseForm({
               placeholder="0.00"
             />
           </CardContent>
-        </Card>
+        </div>
 
         {/* Bank Payments Section */}
-        <Card className="border-none shadow-lg bg-card/60 backdrop-blur-sm overflow-hidden">
-          <CardHeader className="bg-muted/30 pb-4 flex flex-row items-center justify-between">
+        <div className="rounded-xl border-none shadow-lg bg-card/60 backdrop-blur-sm overflow-hidden">
+          <CardHeader className="bg-muted/50 py-6 pb-2 flex flex-row items-center justify-between">
             <div className="flex items-center gap-2">
               <CreditCard className="h-5 w-5 text-blue-600" />
               <CardTitle>{t("expense.form.bankPay.title")}</CardTitle>
@@ -144,12 +144,13 @@ export default function ExpenseForm({
               <div className="space-y-4">
                 {fields.map((field, index) => (
                   <div key={field.id} className="relative group">
-                    <div className="grid grid-cols-1 gap-4 md:grid-cols-12 items-end bg-muted/20 p-4 rounded-2xl border border-muted/30">
+                    <div className="grid grid-cols-1 gap-4 md:grid-cols-12 items-start bg-muted/20 p-4 rounded-2xl border border-muted/30">
                       <div className="md:col-span-7">
                         <SelectField
                           name={`paymentItems.${index}.accountId`}
                           control={control as any}
                           label={t("expense.form.bankPay.account")}
+                          placeholder={t("expense.form.bankPay.selectAcc")}
                           options={accountOptions}
                         />
                       </div>
@@ -161,7 +162,7 @@ export default function ExpenseForm({
                           placeholder="0.00"
                         />
                       </div>
-                      <div className="md:col-span-1 flex justify-end">
+                      <div className="md:col-span-1 flex items-end justify-end">
                         <Button
                           type="button"
                           variant="ghost"
@@ -178,7 +179,7 @@ export default function ExpenseForm({
               </div>
             )}
           </CardContent>
-        </Card>
+        </div>
       </div>
 
       {/* Summary & Submission */}

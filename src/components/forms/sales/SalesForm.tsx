@@ -28,12 +28,14 @@ import type {
   ISaleView,
 } from "@/components/interface/sales/interface.sale";
 import { IPartnerSelector } from "@/components/interface/partner/partner.interfacce";
+import { useFetchWarehouseSelector } from "@/api/warehouse/api.warehouse";
 
 type SalesFormValues = {
   partnerId: string;
   description: string;
   saleItems: Array<{
     inventoryId: string;
+    warehouseId: string;
     quantity: number;
     unitPrice: number;
   }>;
@@ -55,7 +57,14 @@ interface SalesFormProps {
 const defaultValues: SalesFormValues = {
   partnerId: "",
   description: "",
-  saleItems: [{ inventoryId: "", quantity: 1, unitPrice: 0 }],
+  saleItems: [
+    {
+      inventoryId: "",
+      warehouseId: "",
+      quantity: 1,
+      unitPrice: 0,
+    },
+  ],
   salePayments: [],
   saleCashPayment: { amount: 0 },
 };
@@ -86,9 +95,10 @@ export default function SalesForm({
     name: "salePayments",
   });
 
-  const { data: partnersData } = useFetchPartnerSelector();
+  const { data: partnersData, isLoading: partnersLoading } = useFetchPartnerSelector();
   const { data: inventoriesData } = useGetInventoriesInfinite({}, true);
   const { data: accountsData } = useFetchAccountSelector();
+  const { data: warehouses } = useFetchWarehouseSelector();
 
   const allInventories = useMemo(
     () => inventoriesData?.pages?.flatMap((page: any) => page.data ?? []) ?? [],
@@ -97,10 +107,12 @@ export default function SalesForm({
 
   const partnerOptions = useMemo(
     () =>
-      (partnersData?.data ?? []).map((partner: IPartnerSelector) => ({
-        label: partner?.name,
-        value: partner?.id ? String(partner.id) : "",
-      })),
+      (partnersData?.data ?? [])
+        .filter((partner: IPartnerSelector) => !!partner.id)
+        .map((partner: IPartnerSelector) => ({
+          label: partner?.name,
+          value: String(partner.id),
+        })),
     [partnersData],
   );
 
@@ -122,6 +134,11 @@ export default function SalesForm({
     [accountsData],
   );
 
+  const warehouseOptions = useMemo(() => {
+    if (!Array.isArray(warehouses?.data)) return [];
+    return warehouses.data.map((w: any) => ({ value: w.id, label: w.name }));
+  }, [warehouses]);
+
   useEffect(() => {
     if (!initialData) return;
 
@@ -135,6 +152,7 @@ export default function SalesForm({
       saleItems:
         initialData.saleItems?.map((item: any) => ({
           inventoryId: item.inventory?.id || "",
+          warehouseId: item.warehouse?.id || "",
           quantity: Number(item.quantity) || 1,
           unitPrice: Number(item.unitPrice) || 0,
         })) || defaultValues.saleItems,
@@ -191,13 +209,14 @@ export default function SalesForm({
       partnerId: values.partnerId,
       description: values.description?.trim() || undefined,
       saleItems: sanitizedItems.map((item) => ({
+        id: "",
         inventoryId: item.inventoryId,
+        warehouseId: item.warehouseId,
         quantity: Number(item.quantity),
         unitPrice: Number(item.unitPrice),
-        id: "",
       })),
       salePayments: sanitizedPayments,
-      saleCashPayments:
+      saleCashPayment:
         Number(values.saleCashPayment.amount) > 0
           ? { amount: Number(values.saleCashPayment.amount) }
           : undefined,
@@ -226,7 +245,11 @@ export default function SalesForm({
                   name="partnerId"
                   control={control as any}
                   label={t("sales.form.customer")}
-                  placeholder={t("sales.form.selectCustomer")}
+                  placeholder={
+                    partnersLoading
+                      ? t("common.loading")
+                      : t("sales.form.selectCustomer")
+                  }
                   options={partnerOptions}
                 />
                 <TextAreaField
@@ -251,7 +274,12 @@ export default function SalesForm({
                   size="sm"
                   className="h-8 border-primary text-primary hover:bg-primary/5"
                   onClick={() =>
-                    appendItem({ inventoryId: "", quantity: 1, unitPrice: 0 })
+                    appendItem({
+                      inventoryId: "",
+                      warehouseId: "",
+                      quantity: 1,
+                      unitPrice: 0,
+                    })
                   }
                 >
                   {t("sales.form.items.addItem")}
@@ -260,9 +288,12 @@ export default function SalesForm({
               <CardContent className="overflow-x-auto">
                 <div className="min-w-[750px] space-y-3">
                   {/* Header Row */}
-                  <div className="grid grid-cols-11 gap-3 px-2 text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
+                  <div className="grid grid-cols-15 gap-3 px-2 text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
                     <div className="col-span-4">
                       {t("sales.form.items.item")}
+                    </div>
+                    <div className="col-span-4">
+                      {t("sales.form.items.warehouse")}
                     </div>
                     <div className="col-span-2">
                       {t("sales.form.items.qty")}
@@ -273,9 +304,7 @@ export default function SalesForm({
                     <div className="col-span-2">
                       {t("sales.form.items.subTotal")}
                     </div>
-                    <div className="col-span-1 text-center">
-                      {t("common.action")}
-                    </div>
+                    <div className="col-span-1 text-center"></div>
                   </div>
 
                   {itemFields.map((field, index) => {
@@ -286,9 +315,9 @@ export default function SalesForm({
                     return (
                       <div
                         key={field.id}
-                        className="grid grid-cols-11 gap-3 items-start p-2 rounded-lg border hover:border-primary/30 transition-colors"
+                        className="grid grid-cols-15 gap-3 items-start p-2 rounded-lg border hover:border-primary/30 transition-colors"
                       >
-                        <div className="col-span-4 min-w-[250px]">
+                        <div className="col-span-4 min-w-[180px]">
                           <SelectField
                             name={`saleItems.${index}.inventoryId`}
                             control={control as any}
@@ -307,7 +336,15 @@ export default function SalesForm({
                             }}
                           />
                         </div>
-                        <div className="col-span-2 min-w-[100px]">
+                        <div className="col-span-4 min-w-[180px]">
+                          <SelectField
+                            name={`saleItems.${index}.warehouseId`}
+                            control={control as any}
+                            placeholder={t("sales.form.items.selectWarehouse")}
+                            options={warehouseOptions}
+                          />
+                        </div>
+                        <div className="col-span-2 min-w-[50px]">
                           <NumericField
                             name={`saleItems.${index}.quantity`}
                             control={control as any}
@@ -315,7 +352,7 @@ export default function SalesForm({
                             placeholder="0"
                           />
                         </div>
-                        <div className="col-span-2 min-w-[120px]">
+                        <div className="col-span-2 min-w-[80px]">
                           <NumericField
                             name={`saleItems.${index}.unitPrice`}
                             control={control as any}
@@ -323,12 +360,12 @@ export default function SalesForm({
                             placeholder="0"
                           />
                         </div>
-                        <div className="col-span-2 min-w-[120px]">
+                        <div className="col-span-2 min-w-[80px]">
                           <div className="h-9 flex items-center px-3 rounded-md bg-muted/50 border text-sm font-bold text-emerald-600">
-                            {formatCurrency(itemTotal)}
+                            {formatCurrency(itemTotal, true, 0)}
                           </div>
                         </div>
-                        <div className="col-span-1 flex justify-center min-w-[50px]">
+                        <div className="col-span-1 flex justify-center min-w-[20px]">
                           <Button
                             type="button"
                             variant="ghost"

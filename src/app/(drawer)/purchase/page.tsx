@@ -22,7 +22,6 @@ import {
 } from "@/components/ui/table";
 import { formatCurrency, formatDate } from "@/lib/formatter";
 import { Calendar, User, Package, ChevronRight } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
 import { InfiniteScrollTrigger } from "@/components/common/InfiniteScrollTrigger";
 import { useLanguage } from "@/hooks/language.hook";
 

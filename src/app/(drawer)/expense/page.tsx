@@ -8,13 +8,7 @@ import { LoadingView, ErrorView } from "@/components/common/StateView";
 import { AccessDeniedView } from "@/components/guards/AccessDeniedView";
 import { usePermissions } from "@/hooks/permission.hook";
 import { Button } from "@/components/ui/button";
-import {
-  Plus,
-  ReceiptText,
-  ChevronRight,
-  ArrowRight,
-  Banknote,
-} from "lucide-react";
+import { Plus, ReceiptText, ChevronRight, ArrowRight } from "lucide-react";
 import {
   Table,
   TableBody,

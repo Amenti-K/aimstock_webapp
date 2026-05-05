@@ -12,7 +12,6 @@ import {
   FileText,
   CreditCard,
   Banknote,
-  Info,
   MoreVertical,
 } from "lucide-react";
 import {
@@ -41,7 +40,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Separator } from "@/components/ui/separator";
 import LastAudit from "@/components/audit/LastAudit";
 
 export default function ExpenseDetailPage() {
@@ -177,7 +175,7 @@ export default function ExpenseDetailPage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Details Card */}
           <div className="border-none shadow-xl bg-card/50 overflow-hidden rounded-[2rem]">
             <CardContent className="p-8 space-y-6">

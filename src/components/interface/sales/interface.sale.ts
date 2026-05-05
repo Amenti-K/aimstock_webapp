@@ -29,7 +29,7 @@ export interface INewSale {
   partnerId: string;
   saleItems: ISellItem[];
   salePayments: IPaymentItem[];
-  saleCashPayments?: ICashPayment;
+  saleCashPayment?: ICashPayment;
 }
 
 export interface ISaleInventory {

@@ -27,12 +27,14 @@ import {
   INewPurchase,
   IPurchaseView,
 } from "../../interface/purchase/purchase.interface";
+import { useFetchWarehouseSelector } from "@/api/warehouse/api.warehouse";
 
 type PurchaseFormValues = {
   partnerId: string;
   description: string;
   purchaseItems: Array<{
     inventoryId: string;
+    warehouseId: string;
     quantity: number;
     unitPrice: number;
   }>;
@@ -54,7 +56,14 @@ interface PurchaseFormProps {
 const defaultValues: PurchaseFormValues = {
   partnerId: "",
   description: "",
-  purchaseItems: [{ inventoryId: "", quantity: 1, unitPrice: 0 }],
+  purchaseItems: [
+    {
+      inventoryId: "",
+      warehouseId: "",
+      quantity: 1,
+      unitPrice: 0,
+    },
+  ],
   purchasePayments: [],
   purchaseCashPayment: { amount: 0 },
 };
@@ -85,9 +94,14 @@ export default function PurchaseForm({
     name: "purchasePayments",
   });
 
-  const { data: partnersData } = useFetchPartnerSelector();
-  const { data: inventoriesData } = useGetInventoriesInfinite({}, true);
-  const { data: accountsData } = useFetchAccountSelector();
+  const { data: partnersData, isLoading: partnersLoading } =
+    useFetchPartnerSelector();
+  const { data: inventoriesData, isLoading: inventoriesLoading } =
+    useGetInventoriesInfinite({}, true);
+  const { data: accountsData, isLoading: accountsLoading } =
+    useFetchAccountSelector();
+  const { data: warehouses, isLoading: warehousesLoading } =
+    useFetchWarehouseSelector();
 
   const allInventories = useMemo(
     () => inventoriesData?.pages?.flatMap((page: any) => page.data ?? []) ?? [],
@@ -96,10 +110,12 @@ export default function PurchaseForm({
 
   const partnerOptions = useMemo(
     () =>
-      (partnersData?.data ?? []).map((partner: any) => ({
-        label: partner.name,
-        value: partner.id,
-      })),
+      (partnersData?.data ?? [])
+        .filter((partner: any) => !!partner.id)
+        .map((partner: any) => ({
+          label: partner.name,
+          value: String(partner.id),
+        })),
     [partnersData],
   );
 
@@ -121,19 +137,25 @@ export default function PurchaseForm({
     [accountsData],
   );
 
+  const warehouseOptions = useMemo(() => {
+    if (!Array.isArray(warehouses?.data)) return [];
+    return warehouses.data.map((w: any) => ({ value: w.id, label: w.name }));
+  }, [warehouses]);
+
   useEffect(() => {
     if (!initialData) return;
 
     reset({
-      partnerId: initialData.partnerId
+      partnerId: initialData?.partnerId
         ? String(initialData.partnerId)
-        : initialData.partner?.id
+        : initialData?.partner?.id
           ? String(initialData.partner.id)
           : "",
       description: initialData.description || "",
       purchaseItems:
         initialData.purchaseItems?.map((item: any) => ({
           inventoryId: item.inventory?.id || "",
+          warehouseId: item.warehouse?.id || "",
           quantity: Number(item.quantity) || 1,
           unitPrice: Number(item.unitPrice) || 0,
         })) || defaultValues.purchaseItems,
@@ -191,6 +213,7 @@ export default function PurchaseForm({
       description: values.description?.trim() || undefined,
       purchaseItems: sanitizedItems.map((item) => ({
         inventoryId: item.inventoryId,
+        warehouseId: item.warehouseId,
         quantity: Number(item.quantity),
         unitPrice: Number(item.unitPrice),
         id: "",
@@ -225,7 +248,11 @@ export default function PurchaseForm({
                   name="partnerId"
                   control={control as any}
                   label={t("purchase.form.supplier")}
-                  placeholder={t("purchase.form.selectPartner")}
+                  placeholder={
+                    partnersLoading
+                      ? t("common.loading")
+                      : t("purchase.form.selectPartner")
+                  }
                   options={partnerOptions}
                 />
                 <TextAreaField
@@ -250,7 +277,12 @@ export default function PurchaseForm({
                   size="sm"
                   className="h-8 border-primary text-primary hover:bg-primary/5"
                   onClick={() =>
-                    appendItem({ inventoryId: "", quantity: 1, unitPrice: 0 })
+                    appendItem({
+                      inventoryId: "",
+                      warehouseId: "",
+                      quantity: 1,
+                      unitPrice: 0,
+                    })
                   }
                 >
                   {t("purchase.form.items.addItem")}
@@ -259,12 +291,23 @@ export default function PurchaseForm({
               <CardContent className="overflow-x-auto">
                 <div className="min-w-[750px] space-y-3">
                   {/* Header Row */}
-                  <div className="grid grid-cols-11 gap-3 px-2 text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
-                    <div className="col-span-4">{t("purchase.form.items.item")}</div>
-                    <div className="col-span-2">{t("purchase.form.items.qty")}</div>
-                    <div className="col-span-2">{t("purchase.form.items.unitPrice")}</div>
-                    <div className="col-span-2">{t("purchase.form.items.subTotal")}</div>
-                    <div className="col-span-1 text-center">{t("common.action")}</div>
+                  <div className="grid grid-cols-15 gap-3 px-2 text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
+                    <div className="col-span-4">
+                      {t("purchase.form.items.item")}
+                    </div>
+                    <div className="col-span-4">
+                      {t("purchase.form.items.warehouse")}
+                    </div>
+                    <div className="col-span-2">
+                      {t("purchase.form.items.qty")}
+                    </div>
+                    <div className="col-span-2">
+                      {t("purchase.form.items.unitPrice")}
+                    </div>
+                    <div className="col-span-2">
+                      {t("purchase.form.items.subTotal")}
+                    </div>
+                    <div className="col-span-1 text-center"></div>
                   </div>
 
                   {itemFields.map((field, index) => {
@@ -275,13 +318,17 @@ export default function PurchaseForm({
                     return (
                       <div
                         key={field.id}
-                        className="grid grid-cols-11 gap-3 items-start p-2 rounded-lg border hover:border-primary/30 transition-colors"
+                        className="grid grid-cols-15 gap-3 items-start p-2 rounded-lg border hover:border-primary/30 transition-colors"
                       >
-                        <div className="col-span-4 min-w-[250px]">
+                        <div className="col-span-4 min-w-[180px]">
                           <SelectField
                             name={`purchaseItems.${index}.inventoryId`}
                             control={control as any}
-                            placeholder={t("purchase.form.items.selectItem")}
+                            placeholder={
+                              inventoriesLoading
+                                ? t("common.loading")
+                                : t("purchase.form.items.selectItem")
+                            }
                             options={inventoryOptions}
                             onValueChange={(val) => {
                               const item = allInventories.find(
@@ -296,7 +343,19 @@ export default function PurchaseForm({
                             }}
                           />
                         </div>
-                        <div className="col-span-2 min-w-[100px]">
+                        <div className="col-span-4 min-w-[180px]">
+                          <SelectField
+                            name={`purchaseItems.${index}.warehouseId`}
+                            control={control as any}
+                            placeholder={
+                              warehousesLoading
+                                ? t("common.loading")
+                                : t("purchase.form.items.selectWarehouse")
+                            }
+                            options={warehouseOptions}
+                          />
+                        </div>
+                        <div className="col-span-2 min-w-[50px]">
                           <NumericField
                             name={`purchaseItems.${index}.quantity`}
                             control={control as any}
@@ -304,7 +363,7 @@ export default function PurchaseForm({
                             placeholder="0"
                           />
                         </div>
-                        <div className="col-span-2 min-w-[120px]">
+                        <div className="col-span-2 min-w-[80px]">
                           <NumericField
                             name={`purchaseItems.${index}.unitPrice`}
                             control={control as any}
@@ -312,12 +371,12 @@ export default function PurchaseForm({
                             placeholder="0"
                           />
                         </div>
-                        <div className="col-span-2 min-w-[120px]">
+                        <div className="col-span-2 min-w-[80px]">
                           <div className="h-9 flex items-center px-3 rounded-md bg-muted/50 border text-sm font-bold text-primary">
-                            {formatCurrency(itemTotal)}
+                            {formatCurrency(itemTotal, true, 0)}
                           </div>
                         </div>
-                        <div className="col-span-1 flex justify-center min-w-[50px]">
+                        <div className="col-span-1 flex justify-center min-w-[20px]">
                           <Button
                             type="button"
                             variant="ghost"
@@ -398,7 +457,11 @@ export default function PurchaseForm({
                             <SelectField
                               name={`purchasePayments.${index}.accountId`}
                               control={control as any}
-                              placeholder={t("purchase.form.bankPay.selectAcc")}
+                              placeholder={
+                                accountsLoading
+                                  ? t("common.loading")
+                                  : t("purchase.form.bankPay.selectAcc")
+                              }
                               options={accountOptions}
                             />
                           </div>
@@ -474,7 +537,11 @@ export default function PurchaseForm({
 
                 <div className="pt-2 space-y-3">
                   <SubmitButton
-                    title={initialData ? t("purchase.form.editPur") : t("purchase.form.addPur")}
+                    title={
+                      initialData
+                        ? t("purchase.form.editPur")
+                        : t("purchase.form.addPur")
+                    }
                     loading={isLoading}
                     className="w-full py-5 text-base font-bold shadow-md shadow-primary/10"
                   />

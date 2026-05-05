@@ -16,7 +16,12 @@ export default function NewLoanTransactionPage() {
 
   const partnerId = params.id as string;
 
-  const { data: partnerData, isLoading, isError, refetch } = useFetchPartnerById(partnerId);
+  const {
+    data: partnerData,
+    isLoading,
+    isError,
+    refetch,
+  } = useFetchPartnerById(partnerId);
 
   if (isLoading) return <LoadingView />;
   if (isError) return <ErrorView refetch={refetch} />;
@@ -26,7 +31,12 @@ export default function NewLoanTransactionPage() {
   return (
     <div className="space-y-6 max-w-3xl mx-auto p-4 md:p-0">
       <div className="flex items-center gap-4">
-        <Button variant="ghost" size="icon" onClick={() => router.back()} className="rounded-full">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => router.back()}
+          className="rounded-full"
+        >
           <ChevronLeft className="h-5 w-5" />
         </Button>
         <div>
@@ -34,7 +44,8 @@ export default function NewLoanTransactionPage() {
             {t("loan.form.addTranx")}
           </h1>
           <p className="text-sm text-muted-foreground">
-            {t("loan.detail.createTransaction")} {t("common.for")} <span className="font-semibold text-primary">{partnerName}</span>
+            {t("loan.detail.createTransaction")} {t("common.for")}{" "}
+            <span className="font-semibold text-primary">{partnerName}</span>
           </p>
         </div>
       </div>
@@ -42,7 +53,7 @@ export default function NewLoanTransactionPage() {
       <div className="p-6 bg-card rounded-2xl border shadow-sm">
         <LoanTransactionForm
           partnerId={partnerId}
-          onSuccess={() => router.push(`/loan/${partnerId}`)}
+          onSuccess={() => router.back()}
         />
       </div>
     </div>

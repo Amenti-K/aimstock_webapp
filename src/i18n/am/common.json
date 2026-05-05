@@ -11,7 +11,8 @@
   },
   "formHints": {
     "noBankPayments": "ምንም የባንክ ክፍያ አልተጨመረም። እባክዎ ከላይ ያለውን 'የባንክ ክፍያ ጨምር' የሚለውን ይጫኑ።",
-    "balanceUpdateWarning": "የክምችት እና የደንበኛ ቀሪ ሂሳቦች ወዲያውኑ ይዘመናሉ።"
+    "balanceUpdateWarning": "የክምችት እና የደንበኛ ቀሪ ሂሳቦች ወዲያውኑ ይዘመናሉ።",
+    "hasTransactionsWarning": "ይህ ክምችት ግብይት አለው፣ የመነሻ ብዛት እና ስርጭትን ማስተካከል አይችሉም።"
   },
   "reportAcco": {
     "title": "ዕለታዊ ሪፖርት",

@@ -4,7 +4,6 @@ import React, { useState } from "react";
 import {
   useGetAccountsInfinite,
   useGetSummary,
-  useCreateAccount,
 } from "@/api/account/api.account";
 import { LoadingView, ErrorView } from "@/components/common/StateView";
 import { AccessDeniedView } from "@/components/guards/AccessDeniedView";
@@ -27,20 +26,12 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Card, CardContent } from "@/components/ui/card";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import AccountForm from "@/components/forms/account/AccountForm";
 import { IAccountDetail } from "@/components/interface/interface.account";
 import { useRouter } from "next/navigation";
 import { BankAvatar } from "@/components/account/BankAvatar";
 import { useLanguage } from "@/hooks/language.hook";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { motion, AnimatePresence } from "motion/react";
-import { cn } from "@/lib/utils";
 
 export default function AccountPage() {
   const router = useRouter();
@@ -50,7 +41,7 @@ export default function AccountPage() {
   const hasViewAccess = canView("ACCOUNT");
   const hasCreateAccess = canCreate("ACCOUNT");
 
-  const [showTotalBalance, setShowTotalBalance] = useState(true);
+  const [showTotalBalance, setShowTotalBalance] = useState(false);
 
   const { data, isLoading, isError, refetch } = useGetAccountsInfinite(
     {},

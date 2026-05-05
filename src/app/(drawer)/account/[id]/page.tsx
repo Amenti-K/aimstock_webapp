@@ -87,7 +87,7 @@ export default function AccountDetailPage() {
 
   const [isTransferOpen, setIsTransferOpen] = useState(false);
   const [isDeleteAlertOpen, setIsDeleteAlertOpen] = useState(false);
-  const [showBalance, setShowBalance] = useState(true);
+  const [showBalance, setShowBalance] = useState(false);
 
   const {
     data: accountData,
@@ -188,7 +188,7 @@ export default function AccountDetailPage() {
                 onClick={() => router.push(`/account/${id}/edit`)}
               >
                 <Pencil className="mr-2 h-4 w-4" />
-                {t("common:edit")}
+                {t("common.edit")}
               </Button>
             )}
             {!isCashAccount && hasDeleteAccess && (
@@ -199,7 +199,7 @@ export default function AccountDetailPage() {
                 onClick={() => setIsDeleteAlertOpen(true)}
               >
                 <Trash2 className="mr-2 h-4 w-4" />
-                {t("common:delete")}
+                {t("common.delete")}
               </Button>
             )}
           </div>
@@ -226,7 +226,7 @@ export default function AccountDetailPage() {
                       className="rounded-lg m-1 py-2.5 font-bold"
                       onClick={() => router.push(`/account/${id}/edit`)}
                     >
-                      <Pencil className="mr-2 h-4 w-4" /> {t("common:edit")}
+                      <Pencil className="mr-2 h-4 w-4" /> {t("common.edit")}
                     </DropdownMenuItem>
                   )}
                   {hasDeleteAccess && (
@@ -234,7 +234,7 @@ export default function AccountDetailPage() {
                       className="rounded-lg m-1 py-2.5 text-destructive font-bold"
                       onClick={() => setIsDeleteAlertOpen(true)}
                     >
-                      <Trash2 className="mr-2 h-4 w-4" /> {t("common:delete")}
+                      <Trash2 className="mr-2 h-4 w-4" /> {t("common.delete")}
                     </DropdownMenuItem>
                   )}
                 </DropdownMenuContent>
@@ -247,14 +247,14 @@ export default function AccountDetailPage() {
       {/* 2. Middle Part: Virtual Card and Transfer Form Next to Each Other */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
         {/* Virtual Card */}
-        <div className="relative h-64 sm:h-72 w-full max-w-md mx-auto lg:mx-0 rounded-[2.5rem] overflow-hidden shadow-2xl group cursor-pointer">
+        <div className="relative h-64 sm:h-72 w-full max-w-md mx-auto lg:mx-0 rounded-[1.5rem] overflow-hidden shadow-2xl group cursor-pointer">
           <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary to-[#ef4444] transition-transform duration-700 group-hover:scale-110" />
 
           {/* Decorative Elements */}
           <div className="absolute -top-12 -right-12 w-48 h-48 bg-white/10 rounded-full blur-3xl" />
           <div className="absolute -bottom-12 -left-12 w-48 h-48 bg-black/10 rounded-full blur-3xl" />
 
-          <div className="relative h-full p-8 sm:p-10 flex flex-col text-white">
+          <div className="relative h-full p-4 sm:p-6 flex flex-col text-white">
             <div className="flex justify-between items-start">
               <div className="flex items-center gap-4">
                 {isCashAccount ? (
@@ -348,10 +348,10 @@ export default function AccountDetailPage() {
             <div className="p-0 border-none shadow-xl rounded-[1.5rem] overflow-hidden bg-primary/5 border border-primary/10 h-full">
               <CardHeader className="p-4 text-primary-foreground">
                 <div className="flex items-center gap-3">
-                  <div className="p-2 bg-white/20 rounded-xl backdrop-blur-md">
+                  <div className="p-2 bg-primary rounded-xl backdrop-blur-md">
                     <ArrowLeftRight className="h-5 w-5" />
                   </div>
-                  <CardTitle className="text-lg font-black tracking-tight uppercase">
+                  <CardTitle className="text-lg text-primary tracking-tight uppercase">
                     {t("accounts.transfer.title")}
                   </CardTitle>
                 </div>
@@ -558,23 +558,23 @@ export default function AccountDetailPage() {
         <AlertDialogContent className="rounded-2xl max-w-[90vw] sm:max-w-md">
           <AlertDialogHeader>
             <AlertDialogTitle className="text-xl font-bold">
-              {t("common:confirmDelete.title", {
+              {t("common.confirmDelete.title", {
                 entity: t("accounts.moduleName"),
               })}
             </AlertDialogTitle>
             <AlertDialogDescription className="text-sm sm:text-base text-muted-foreground">
-              {t("common:confirmDelete.message", { entity: account.name })}
+              {t("common.confirmDelete.message", { entity: account.name })}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="gap-2 sm:gap-0 mt-4">
             <AlertDialogCancel className="rounded-full h-11 text-xs font-bold shrink-0">
-              {t("common:cancel")}
+              {t("common.cancel")}
             </AlertDialogCancel>
             <AlertDialogAction
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90 rounded-full h-11 px-6 text-xs font-bold shadow-lg shadow-destructive/20 shrink-0"
               onClick={handleDelete}
             >
-              {t("common:delete")}
+              {t("common.delete")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

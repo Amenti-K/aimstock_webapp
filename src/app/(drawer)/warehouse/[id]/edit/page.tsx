@@ -13,15 +13,16 @@ import { ErrorView, LoadingView } from "@/components/common/StateView";
 import { AccessDeniedView } from "@/components/guards/AccessDeniedView";
 import { usePermissions } from "@/hooks/permission.hook";
 import { Button } from "@/components/ui/button";
+import { useLanguage } from "@/hooks/language.hook";
 
 export default function EditWarehousePage() {
-  const { t } = useTranslation("warehouse");
+  const { t } = useLanguage();
   const router = useRouter();
   const { id } = useParams();
   const warehouseId = id as string;
   const { canUpdate } = usePermissions();
   if (!canUpdate("WAREHOUSES"))
-    return <AccessDeniedView moduleName={t("moduleName")} />;
+    return <AccessDeniedView moduleName={t("warehouse.moduleName")} />;
 
   const { data, isLoading, isError, refetch } = useFetchWarehouseById(
     warehouseId,
@@ -39,17 +40,17 @@ export default function EditWarehousePage() {
         </Button>
         <div>
           <h1 className="text-2xl font-bold tracking-tight">
-            {t("form.editWare")}
+            {t("warehouse.form.editWare")}
           </h1>
           <p className="text-sm text-muted-foreground">
-            {t("detail.title") || "Update warehouse information."}
+            {t("warehouse.description")}
           </p>
         </div>
       </div>
       <WarehouseForm
         initialData={data.data}
         isPending={updateWarehouse.isPending}
-        submitLabel={t("form.editWare")}
+        submitLabel={t("common.update")}
         onSubmit={(values: WarehouseFormValues) =>
           updateWarehouse.mutate(values as any, {
             onSuccess: () => router.push(`/warehouse/${warehouseId}`),

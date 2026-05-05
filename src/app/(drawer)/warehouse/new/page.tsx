@@ -2,16 +2,16 @@
 
 import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useTranslation } from "react-i18next";
 import { useCreateWarehouse } from "@/api/warehouse/api.warehouse";
 import WarehouseForm from "@/components/forms/warehouse/WarehouseForm";
 import { WarehouseFormValues } from "@/components/forms/warehouse/warehouse.schema";
 import { AccessDeniedView } from "@/components/guards/AccessDeniedView";
 import { usePermissions } from "@/hooks/permission.hook";
 import { Button } from "@/components/ui/button";
+import { useLanguage } from "@/hooks/language.hook";
 
 export default function NewWarehousePage() {
-  const { t } = useTranslation();
+  const { t } = useLanguage();
   const router = useRouter();
   const { canCreate } = usePermissions();
   const createWarehouse = useCreateWarehouse();
@@ -35,7 +35,7 @@ export default function NewWarehousePage() {
       </div>
       <WarehouseForm
         isPending={createWarehouse.isPending}
-        submitLabel={t("warehouse.form.addWare")}
+        submitLabel={t("common.save")}
         onSubmit={(values: WarehouseFormValues) =>
           createWarehouse.mutate(values as any, {
             onSuccess: () => router.push("/warehouse"),

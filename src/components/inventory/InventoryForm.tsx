@@ -143,13 +143,13 @@ export default function InventoryForm({
           <div className="flex items-start gap-3 rounded-2xl border border-yellow-500/20 bg-yellow-500/5 p-4 text-sm text-yellow-700 dark:text-yellow-500/80">
             <Info className="h-5 w-5 shrink-0" />
             <p className="font-medium leading-relaxed">
-              {t("common.formHints.balanceUpdateWarning")}
+              {t("common.formHints.hasTransactionsWarning")}
             </p>
           </div>
         )}
 
-        <Card className="rounded-[1.5rem] border-none shadow-sm bg-card overflow-hidden">
-          <CardHeader className="bg-muted/30 pb-6 border-b">
+        <div className="rounded-[1.5rem] border-none shadow-sm bg-card overflow-hidden">
+          <CardHeader className="bg-muted/50 pt-6 pb-0 border-b">
             <div className="flex items-center gap-3">
               <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
                 <Package className="h-5 w-5" />
@@ -216,7 +216,7 @@ export default function InventoryForm({
               </div>
             )}
           </CardContent>
-        </Card>
+        </div>
 
         {canEditDistribution && (
           <Card className="rounded-[1.5rem] border-none shadow-sm bg-card overflow-hidden">

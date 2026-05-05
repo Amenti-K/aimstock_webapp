@@ -59,22 +59,24 @@ export default function PartnerForm({
         label={t("partners.form.address")}
         placeholder={t("partners.form.address")}
       />
-      <div className="flex gap-3">
-        <SubmitButton
-          title={submitLabel || t("common.save")}
-          loading={isPending}
-        />
-        {onCancel && (
+      <div className="flex justify-between  gap-3">
+        <div className="w-full flex-1">
+          <SubmitButton
+            title={submitLabel || t("common.save")}
+            loading={isPending}
+          />
+        </div>
+        <div className="w-full flex-1">
           <Button
             type="button"
             variant="outline"
-            className="flex-1"
+            className="w-full"
             onClick={onCancel}
             disabled={isPending}
           >
             {t("common.cancel")}
           </Button>
-        )}
+        </div>
       </div>
     </form>
   );

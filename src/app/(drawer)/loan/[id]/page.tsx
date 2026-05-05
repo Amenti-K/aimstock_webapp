@@ -23,6 +23,8 @@ import {
   ExternalLink,
   History,
   Info,
+  Phone,
+  MapPin,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { usePermissions } from "@/hooks/permission.hook";
@@ -72,10 +74,12 @@ export default function LoanDetailPage() {
   const partnerId = params.id as string;
   const searchParams = useSearchParams();
 
-  const partnerName = searchParams.get("name") || "...";
-  const partnerBalance = Number(searchParams.get("balance") || 0);
-  const partnerPhone = searchParams.get("phone") || "...";
-  const partnerAddress = searchParams.get("address") || "...";
+  const loanPartner = {
+    name: searchParams.get("name") || "",
+    balance: Number(searchParams.get("balance") || 0),
+    phone: searchParams.get("phone") || "",
+    address: searchParams.get("address") || "",
+  };
 
   const { canView, canCreate, canUpdate, canDelete } = usePermissions();
   const hasViewAccess = canView("LOANS");
@@ -161,17 +165,17 @@ export default function LoanDetailPage() {
     return <AccessDeniedView moduleName={t("loan.moduleName")} />;
   }
 
-  const isPositiveBalance = partnerBalance > 0;
+  const isPositiveBalance = loanPartner.balance > 0;
 
   const handleAddTx = () => {
     router.push(
-      `/loan/${partnerId}/new?name=${encodeURIComponent(partnerName)}`,
+      `/loan/${partnerId}/new?name=${encodeURIComponent(loanPartner.name)}`,
     );
   };
 
   const handleEditTx = (tx: ILoanTranx) => {
     router.push(
-      `/loan/${partnerId}/edit?txId=${tx.id}&name=${encodeURIComponent(partnerName)}`,
+      `/loan/${partnerId}/edit?txId=${tx.id}&name=${encodeURIComponent(loanPartner.name)}`,
     );
   };
 
@@ -224,16 +228,31 @@ export default function LoanDetailPage() {
           <div className="flex items-center gap-3">
             <Avatar className="h-12 w-12 border-2 border-primary/10">
               <AvatarFallback className="bg-primary/5 text-primary font-bold">
-                {partnerName.substring(0, 2).toUpperCase()}
+                {loanPartner.name.substring(0, 2).toUpperCase()}
               </AvatarFallback>
             </Avatar>
             <div>
               <h1 className="text-xl md:text-2xl font-bold tracking-tight">
-                {partnerName}
+                {loanPartner.name}
               </h1>
-              <p className="text-sm text-muted-foreground flex items-center gap-1">
-                {partnerPhone}
-              </p>
+              <div className="flex flex-row">
+                {loanPartner.phone && (
+                  <div className="flex text-muted-foreground items-center gap-1 pr-2">
+                    <Phone className="h-4 w-4" />
+                    <p className="text-sm flex items-center gap-1">
+                      {loanPartner.phone}
+                    </p>
+                  </div>
+                )}
+                {loanPartner.address && (
+                  <div className="flex text-muted-foreground items-center gap-1">
+                    <MapPin className="h-4 w-4" />
+                    <p className="text-sm flex items-center gap-1">
+                      {loanPartner.address}
+                    </p>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
@@ -254,19 +273,19 @@ export default function LoanDetailPage() {
           <div className="p-6 flex items-center justify-between">
             <div>
               <div
-                className={`text-3xl md:text-4xl font-bold tracking-tight ${isPositiveBalance ? "text-emerald-600" : partnerBalance < 0 ? "text-red-600" : ""}`}
+                className={`text-3xl md:text-4xl font-bold tracking-tight ${isPositiveBalance ? "text-emerald-600" : loanPartner.balance < 0 ? "text-red-600" : ""}`}
               >
-                {formatCurrency(Math.abs(partnerBalance))}
+                {formatCurrency(Math.abs(loanPartner.balance))}
               </div>
               <p className="text-xs text-muted-foreground mt-1 font-medium uppercase">
                 {isPositiveBalance
                   ? t("loan.card.owesYou")
-                  : partnerBalance < 0
+                  : loanPartner.balance < 0
                     ? t("loan.card.youOwe")
                     : t("loan.card.settle")}
               </p>
             </div>
-            {partnerBalance !== 0 && (
+            {loanPartner.balance !== 0 && (
               <Badge
                 variant="outline"
                 className={`px-4 py-2 gap-2 text-sm font-semibold ${

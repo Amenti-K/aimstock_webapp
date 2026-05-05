@@ -136,7 +136,7 @@ export function LoanSettlingModal({
                 value: acc.id,
                 label: `${acc.name} (${acc.bank ?? "Cash"})`,
               }))}
-              placeholder={t("loan.form.bankPay.selectAccount")}
+              placeholder={t("loan.form.bankPay.selectAccount", { index: "" })}
               disabled={loadingAccounts}
             />
 
@@ -155,6 +155,15 @@ export function LoanSettlingModal({
             />
 
             <div className="flex flex-col sm:flex-row justify-end gap-2 pt-4">
+              <SubmitButton
+                title={
+                  isReceiving
+                    ? t("loan.modal.recivePay")
+                    : t("loan.modal.makePay")
+                }
+                loading={addLoanTranx.isPending}
+                className="h-11 rounded-xl sm:flex-1"
+              />
               <Button
                 type="button"
                 variant="outline"
@@ -163,11 +172,6 @@ export function LoanSettlingModal({
               >
                 {t("common.cancel")}
               </Button>
-              <SubmitButton
-                title={t("loan.form.settleLoan")}
-                loading={addLoanTranx.isPending}
-                className="h-11 rounded-xl sm:flex-1"
-              />
             </div>
           </form>
         </Form>

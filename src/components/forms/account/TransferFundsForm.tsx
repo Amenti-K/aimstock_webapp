@@ -29,7 +29,7 @@ export default function TransferFundsForm({
   loading = false,
 }: Props) {
   const { t } = useLanguage();
-  
+
   const form = useForm<TransferFormType>({
     resolver: zodResolver(transferSchema),
     defaultValues: {
@@ -55,7 +55,7 @@ export default function TransferFundsForm({
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5 py-1">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2 py-1">
         <div className="bg-primary/5 p-3 sm:p-4 rounded-xl sm:rounded-2xl border border-primary/10">
           <SelectField
             control={form.control as any}

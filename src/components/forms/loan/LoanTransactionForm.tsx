@@ -31,6 +31,7 @@ import NumericField from "@/components/forms/fields/NumericField";
 import TextField from "@/components/forms/fields/TextField";
 import TextAreaField from "@/components/forms/fields/TextAreaField";
 import SubmitButton from "@/components/forms/fields/SubmitButton";
+import DateField from "../fields/DateField";
 
 interface Props {
   initialValues?: Partial<LoanTransactionData> | null;
@@ -138,7 +139,10 @@ export default function LoanTransactionForm({
   ];
 
   return (
-    <>
+    <form
+      onSubmit={handleSubmit(onFormSubmit)}
+      className="flex flex-col gap-4 w-full"
+    >
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <SelectField
           control={control as any}
@@ -148,11 +152,11 @@ export default function LoanTransactionForm({
           placeholder={t("loan.form.selectTranxType")}
         />
 
-        <TextField
+        <DateField
           control={control as any}
           name="dueDate"
-          type="date"
           label={t("loan.form.dueDate")}
+          placeholder={t("loan.form.dueDate")}
         />
       </div>
 
@@ -229,7 +233,7 @@ export default function LoanTransactionForm({
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+      <div className="grid grid-cols-1 gap-8 items-start">
         <div className="space-y-6">
           <NumericField
             control={control as any}
@@ -287,6 +291,7 @@ export default function LoanTransactionForm({
 
       <div className="flex flex-col sm:flex-row gap-3 pt-4">
         <SubmitButton
+          type="submit"
           title={isEdit ? t("loan.form.editTranx") : t("loan.form.createTranx")}
           loading={createLoanTx.isPending || updateLoanTx.isPending}
           className="flex-1 h-12 md:h-14 rounded-2xl"
@@ -300,6 +305,6 @@ export default function LoanTransactionForm({
           {t("common.cancel")}
         </Button>
       </div>
-    </>
+    </form>
   );
 }

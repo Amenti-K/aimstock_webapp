@@ -81,19 +81,21 @@ export default function WarehouseForm({
         label={t("warehouse.form.description")}
         placeholder={t("warehouse.form.description")}
       />
-      <div className="flex gap-3">
-        <SubmitButton title={submitLabel} loading={isPending} />
-        {onCancel && (
+      <div className="flex justify-between  gap-3">
+        <div className="w-full flex-1">
+          <SubmitButton title={submitLabel} loading={isPending} />
+        </div>
+        <div className="w-full flex-1">
           <Button
             type="button"
             variant="outline"
-            className="flex-1"
             onClick={onCancel}
             disabled={isPending}
+            className="w-full"
           >
             {t("common.cancel")}
           </Button>
-        )}
+        </div>
       </div>
     </form>
   );

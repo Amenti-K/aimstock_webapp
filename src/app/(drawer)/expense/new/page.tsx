@@ -2,16 +2,16 @@
 
 import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useTranslation } from "react-i18next";
 import { useCreateExpense } from "@/api/expense/api.expense";
 import ExpenseForm from "@/components/forms/expense/ExpenseForm";
 import { ExpenseFormValues } from "@/components/forms/expense/expense.schema";
 import { AccessDeniedView } from "@/components/guards/AccessDeniedView";
 import { usePermissions } from "@/hooks/permission.hook";
 import { Button } from "@/components/ui/button";
+import { useLanguage } from "@/hooks/language.hook";
 
 export default function NewExpensePage() {
-  const { t } = useTranslation();
+  const { t } = useLanguage();
   const router = useRouter();
   const { canCreate } = usePermissions();
   const createExpense = useCreateExpense();

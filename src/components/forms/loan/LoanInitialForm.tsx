@@ -3,21 +3,32 @@
 import React, { useEffect, useMemo } from "react";
 import { useForm, useWatch, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { PlusCircle, Trash2 } from "lucide-react";
+import { CalendarIcon, PlusCircle, Trash2 } from "lucide-react";
 
 import TextField from "@/components/forms/fields/TextField";
 import NumericField from "@/components/forms/fields/NumericField";
 import SelectField from "@/components/forms/fields/SelectField";
 import SubmitButton from "@/components/forms/fields/SubmitButton";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
-import { loanInitialSchema, InitialLoanData } from "@/components/schema/loan.schema";
+import {
+  loanInitialSchema,
+  InitialLoanData,
+} from "@/components/schema/loan.schema";
 import { useCreateLoanTranx } from "@/api/loan/api.loan";
 import { LoanTxType } from "@/components/interface/loan/loan.interface";
 import { useFetchAccountSelector } from "@/api/account/api.account";
 import { useFetchPartnerSelector } from "@/api/partner/api.partner";
 import { Button } from "@/components/ui/button";
-import { formatCurrency } from "@/lib/formatter";
+import { formatCurrency, formatDate } from "@/lib/formatter";
 import { useLanguage } from "@/hooks/language.hook";
+import { cn } from "@/lib/utils";
+import DateField from "../fields/DateField";
 
 const LoanInitialSummary = ({ control }: { control: any }) => {
   const { t } = useLanguage();
@@ -90,6 +101,7 @@ export default function LoanInitialForm({
   mode = "add",
 }: Props) {
   const { t } = useLanguage();
+
   const {
     control,
     handleSubmit,
@@ -209,11 +221,11 @@ export default function LoanInitialForm({
                 placeholder={t("loan.form.selectTranxType")}
                 label={t("loan.form.tranxType")}
               />
-              <TextField
+              <DateField
                 name="dueDate"
                 control={control as any}
-                type="date"
                 label={t("loan.form.dueDate")}
+                placeholder={t("common.reportAcco.selectDate")}
               />
             </div>
 
@@ -241,38 +253,36 @@ export default function LoanInitialForm({
                     key={field.id}
                     className="flex items-center gap-2 p-2 rounded-2xl bg-muted/20 border border-muted-foreground/5 shadow-sm"
                   >
-                    <div className="w-[10%] flex justify-center flex-shrink-0">
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="icon"
-                        className="h-9 w-9 text-red-500 hover:text-red-600 hover:bg-red-50 rounded-full"
-                        onClick={() => removePayment(index)}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
+                    <div className="flex flex-1 items-start gap-2">
+                      <div className="w-[60%] shrink-0">
+                        <SelectField
+                          name={`paymentItems.${index}.accountId`}
+                          control={control as any}
+                          placeholder={
+                            loadingAccounts
+                              ? t("common.loading")
+                              : t("purchase.form.bankPay.selectAcc")
+                          }
+                          options={accountOptions}
+                        />
+                      </div>
+                      <div className="w-[40%] shrink-0">
+                        <NumericField
+                          name={`paymentItems.${index}.amount`}
+                          control={control as any}
+                          placeholder={t("loan.form.amount")}
+                        />
+                      </div>
                     </div>
-
-                    <div className="w-[40%] flex-shrink-0">
-                      <NumericField
-                        name={`paymentItems.${index}.amount`}
-                        control={control as any}
-                        placeholder={t("loan.form.amount")}
-                      />
-                    </div>
-
-                    <div className="w-[50%] flex-shrink-0">
-                      <SelectField
-                        name={`paymentItems.${index}.accountId`}
-                        control={control as any}
-                        options={accountOptions}
-                        placeholder={
-                          loadingAccounts
-                            ? t("common.loading")
-                            : t("loan.form.bankPay.selectAccount")
-                        }
-                      />
-                    </div>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      className="h-9 w-9 shrink-0 text-destructive hover:bg-destructive/10"
+                      onClick={() => removePayment(index)}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
                   </div>
                 ))}
 

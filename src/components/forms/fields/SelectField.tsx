@@ -48,7 +48,7 @@ const SelectField = ({
               onChange(val);
               if (onValueChange) onValueChange(val);
             }} 
-            value={value !== undefined && value !== null && value !== "" ? String(value) : undefined} 
+            value={value !== undefined && value !== null ? String(value) : ""} 
             disabled={disabled}
           >
             <SelectTrigger className={`w-full ${error ? "border-red-500" : ""}`}>
