@@ -38,6 +38,8 @@ type InventoryFormProps = {
   onSubmit: (payload: inventoryFormValues) => void;
   isLoading?: boolean;
   isEdit?: boolean;
+  showHint?: boolean;
+  onCancel?: () => void;
 };
 
 const defaultValues: inventoryFormValues = {
@@ -56,6 +58,8 @@ export default function InventoryForm({
   onSubmit,
   isLoading = false,
   isEdit = false,
+  showHint = isEdit,
+  onCancel,
 }: InventoryFormProps) {
   const { t } = useTranslation();
   const form = useForm<inventoryFormValues>({
@@ -139,7 +143,7 @@ export default function InventoryForm({
   return (
     <Form {...form}>
       <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-8">
-        {hasTransactions && (
+        {showHint && hasTransactions && (
           <div className="flex items-start gap-3 rounded-2xl border border-yellow-500/20 bg-yellow-500/5 p-4 text-sm text-yellow-700 dark:text-yellow-500/80">
             <Info className="h-5 w-5 shrink-0" />
             <p className="font-medium leading-relaxed">
@@ -168,45 +172,54 @@ export default function InventoryForm({
               </div>
             </div>
           </CardHeader>
-          <CardContent className="grid grid-cols-1 gap-6 md:grid-cols-2 p-6">
-            <TextField
-              name="sku"
-              control={control as any}
-              label={t("inventory.form.sku")}
-              placeholder="CRN-0001"
-            />
-            <TextField
-              name="name"
-              control={control as any}
-              label={t("inventory.form.name")}
-              placeholder={t("inventory.card.name")}
-            />
-            <TextField
-              name="brand"
-              control={control as any}
-              label={t("inventory.form.brand")}
-              placeholder={t("inventory.card.brand")}
-            />
-            <TextField
-              name="unit"
-              control={control as any}
-              label={t("inventory.form.unit")}
-              placeholder="pcs, kg, etc."
-            />
-            <NumericField
-              name="boughtPrice"
-              control={control as any}
-              label={t("inventory.form.boughtPrice")}
-              placeholder="0"
-            />
-            <NumericField
-              name="sellingPrice"
-              control={control as any}
-              label={t("inventory.form.sellingPrice")}
-              placeholder="0"
-            />
+          <CardContent className="grid grid-cols-1 gap-6 p-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <TextField
+                name="sku"
+                control={control as any}
+                label={t("inventory.form.sku")}
+                placeholder="CRN-0001"
+              />
+              <TextField
+                name="name"
+                control={control as any}
+                label={t("inventory.form.name")}
+                placeholder={t("inventory.card.name")}
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <TextField
+                name="brand"
+                control={control as any}
+                label={t("inventory.form.brand")}
+                placeholder={t("inventory.card.brand")}
+              />
+              <TextField
+                name="unit"
+                control={control as any}
+                label={t("inventory.form.unit")}
+                placeholder="pcs, kg, etc."
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <NumericField
+                name="boughtPrice"
+                control={control as any}
+                label={t("inventory.form.boughtPrice")}
+                placeholder="0"
+              />
+              <NumericField
+                name="sellingPrice"
+                control={control as any}
+                label={t("inventory.form.sellingPrice")}
+                placeholder="0"
+              />
+            </div>
+
             {canEditDistribution && (
-              <div className="md:col-span-2 pt-2">
+              <div className="grid grid-cols-2 gap-4">
                 <NumericField
                   name="initialQuantity"
                   control={control as any}
@@ -254,45 +267,53 @@ export default function InventoryForm({
                 {t("inventory.form.wareInv.addWare")}
               </Button>
             </CardHeader>
-            <CardContent className="space-y-6 p-6">
+            <CardContent className="space-y-4 p-6 overflow-x-auto">
               {fields.map((field, index) => (
                 <div
                   key={field.id}
-                  className="relative grid grid-cols-1 gap-4 rounded-2xl border bg-muted/20 p-5 md:grid-cols-4 items-end"
+                  className="flex items-start gap-4 min-w-[600px] rounded-2xl border bg-muted/20 p-4"
                 >
-                  <SelectField
-                    name={`warehouseInventories.${index}.warehouseId`}
-                    control={control as any}
-                    label={t("inventory.form.wareInv.ware")}
-                    placeholder={
-                      loadingWarehouses
-                        ? t("inventory.form.wareInv.loadingWare")
-                        : t("inventory.form.wareInv.selectWare")
-                    }
-                    options={optionsForRow(index)}
-                  />
-                  <NumericField
-                    name={`warehouseInventories.${index}.quantity`}
-                    control={control as any}
-                    label={t("inventory.form.wareInv.qty")}
-                    placeholder="0"
-                  />
-                  <NumericField
-                    name={`warehouseInventories.${index}.reorderQuantity`}
-                    control={control as any}
-                    label={t("inventory.form.wareInv.reorderQty")}
-                    placeholder="0"
-                  />
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    className="h-10 w-10 text-destructive hover:bg-destructive/10 hover:text-destructive rounded-xl self-end md:justify-self-center"
-                    onClick={() => remove(index)}
-                    disabled={fields.length === 1}
-                  >
-                    <Trash2 className="h-5 w-5" />
-                  </Button>
+                  <div className="flex-[5] min-w-0">
+                    <SelectField
+                      name={`warehouseInventories.${index}.warehouseId`}
+                      control={control as any}
+                      label={t("inventory.form.wareInv.ware")}
+                      placeholder={
+                        loadingWarehouses
+                          ? t("inventory.form.wareInv.loadingWare")
+                          : t("inventory.form.wareInv.selectWare")
+                      }
+                      options={optionsForRow(index)}
+                    />
+                  </div>
+                  <div className="flex-[2] min-w-0">
+                    <NumericField
+                      name={`warehouseInventories.${index}.quantity`}
+                      control={control as any}
+                      label={t("inventory.form.wareInv.qty")}
+                      placeholder="0"
+                    />
+                  </div>
+                  <div className="flex-[2] min-w-0">
+                    <NumericField
+                      name={`warehouseInventories.${index}.reorderQuantity`}
+                      control={control as any}
+                      label={t("inventory.form.wareInv.reorderQty")}
+                      placeholder="0"
+                    />
+                  </div>
+                  <div className="flex-[1] flex justify-center items-end h-full">
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      className="h-10 w-10 text-destructive hover:bg-destructive/10 hover:text-destructive rounded-xl"
+                      onClick={() => remove(index)}
+                      disabled={fields.length === 1}
+                    >
+                      <Trash2 className="h-5 w-5" />
+                    </Button>
+                  </div>
                 </div>
               ))}
             </CardContent>
@@ -304,7 +325,7 @@ export default function InventoryForm({
             type="button"
             variant="outline"
             className="rounded-full px-8"
-            onClick={() => window.history.back()}
+            onClick={() => (onCancel ? onCancel() : window.history.back())}
           >
             {t("common.cancel")}
           </Button>

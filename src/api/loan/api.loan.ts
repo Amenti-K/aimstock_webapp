@@ -3,9 +3,14 @@ import endpoints from "@/lib/endpoints";
 import { queryKeys } from "@/lib/queryKeys";
 import { toast } from "sonner";
 import {
+  ILoanTranx,
   INewLoanTranx,
   IUpdateLoanTranx,
 } from "@/components/interface/loan/loan.interface";
+import {
+  IPaginatedResponse,
+  IResponse,
+} from "@/components/interface/common.interface";
 
 const onErrorNotification = (error: any) => {
   toast.error(
@@ -34,11 +39,14 @@ export const useGetLoanTransactionsInfinite = (
   partnerId: string,
   enabled?: boolean,
 ) => {
-  return useInfiniteFetch<any>(endpoints.LOANPARTNERTRANX + `/${partnerId}`, {
-    queryKey: queryKeys.loans.partners.transactions(partnerId),
-    params: { limit: 10 },
-    enabled: enabled ?? true,
-  });
+  return useInfiniteFetch<IPaginatedResponse<Array<ILoanTranx>>>(
+    endpoints.LOANPARTNERTRANX + `/${partnerId}`,
+    {
+      queryKey: queryKeys.loans.partners.transactions(partnerId),
+      params: { limit: 10 },
+      enabled: enabled ?? true,
+    },
+  );
 };
 
 export const useCreateLoanTranx = () => {
@@ -50,7 +58,7 @@ export const useCreateLoanTranx = () => {
 };
 
 export const useFetchPartnersTranx = (id: string, enabled?: boolean) => {
-  return useFetch<any>(endpoints.LOANTRANSACTION + `/${id}`, {
+  return useFetch<IResponse<ILoanTranx>>(endpoints.LOANTRANSACTION + `/${id}`, {
     queryKey: queryKeys.loans.detail(id),
     enabled: enabled ?? !!id,
   });

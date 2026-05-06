@@ -9,7 +9,7 @@ import {
   Warehouse,
   MapPin,
 } from "lucide-react";
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import { useFieldArray, useForm, useWatch } from "react-hook-form";
 import { useFetchWarehouseInventorySelector } from "@/api/inventory/api.inventory";
 import { useFetchWarehouseSelector } from "@/api/warehouse/api.warehouse";
@@ -25,6 +25,7 @@ import {
   IAdjustment,
   IAdjustmentType,
 } from "@/components/interface/adjustment/adjustment.interface";
+import SelectSearchField from "../fields/SelectSearchField";
 
 interface Props {
   item?: IAdjustment | null;
@@ -42,16 +43,25 @@ export default function AdjustmentForm({
   submitLabel,
 }: Props) {
   const { t } = useLanguage();
-  const { control, handleSubmit, reset, setValue } =
-    useForm<AdjustmentFormValues>({
-      resolver: zodResolver(adjustmentSchema),
-      defaultValues: {
-        warehouseId: "",
-        type: IAdjustmentType.stockIn,
-        note: "",
-        items: [],
-      },
-    });
+
+  // Mirror the mobile pattern: bake item values directly into defaultValues
+  // at form init time. The edit page already guards behind isLoading, so
+  // `item` is guaranteed to be present when this form mounts in edit mode.
+  const { control, handleSubmit } = useForm<AdjustmentFormValues>({
+    resolver: zodResolver(adjustmentSchema),
+    defaultValues: {
+      warehouseId: item?.warehouseId || item?.warehouse?.id || "",
+      type: (item?.type as IAdjustmentType) || IAdjustmentType.stockIn,
+      note: item?.note || "",
+      items: item?.items
+        ? (item.items as any[]).map((i) => ({
+            inventoryId: i.inventoryId || i.inventory?.id || "",
+            quantity: i.quantity || 0,
+            toWarehouseId: i.toWarehouseId || i.toWarehouse?.id || "",
+          }))
+        : [],
+    },
+  });
 
   const { fields, append, remove } = useFieldArray({ control, name: "items" });
   const sourceWarehouseId = useWatch({ control, name: "warehouseId" });
@@ -63,46 +73,24 @@ export default function AdjustmentForm({
     !!sourceWarehouseId,
   );
 
-  useEffect(() => {
-    if (!item) return;
-
-    reset({
-      warehouseId: item.warehouseId || item.warehouse?.id || "",
-      type: item.type || IAdjustmentType.stockIn,
-      note: item.note || "",
-      items: (item.items || []).map((i: any) => ({
-        inventoryId: i.inventoryId || i.inventory?.id || "",
-        quantity: i.quantity || 0,
-        toWarehouseId: i.toWarehouseId || i.toWarehouse?.id || undefined,
-      })),
-    });
-  }, [item, reset]);
-
-  // Clear items if warehouse changes to prevent invalid inventory items
-  useEffect(() => {
-    if (sourceWarehouseId && !item) {
-      // Only clear if it's a new entry or warehouse changed manually
-    }
-  }, [sourceWarehouseId, item]);
-
   const warehouseOptions = useMemo(() => {
     if (!Array.isArray(warehouses?.data)) return [];
-    return warehouses.data.map((item: any) => ({
-      value: item.id,
-      label: item.name,
+    return warehouses.data.map((w: any) => ({
+      value: w.id,
+      label: w.name,
     }));
   }, [warehouses]);
 
   const inventoryOptions = useMemo(() => {
     if (!Array.isArray(inventorySelector?.data)) return [];
-    return inventorySelector.data.map((item: any) => ({
-      value: item.inventory.id,
-      label: `${item.inventory.name} - ${item.quantity} ${item.inventory.unit}`,
+    return inventorySelector.data.map((w: any) => ({
+      value: w.inventory.id,
+      label: `${w.inventory.name} - ${w.quantity} ${w.inventory.unit}`,
     }));
   }, [inventorySelector]);
 
   const destinationOptions = useMemo(
-    () => warehouseOptions.filter((item) => item.value !== sourceWarehouseId),
+    () => warehouseOptions.filter((w) => w.value !== sourceWarehouseId),
     [warehouseOptions, sourceWarehouseId],
   );
 
@@ -205,22 +193,30 @@ export default function AdjustmentForm({
           </Button>
         </div>
 
-        <div className="p-6 space-y-4">
+        <div className="p-6 space-y-4 overflow-x-auto custom-scrollbar">
           {!isStep1Complete && (
             <div className="flex items-center justify-center py-8 text-center text-muted-foreground italic">
               {t("adjustment.form.selectSourceAndType")}
             </div>
           )}
 
-          {fields.map((field, index) => (
-            <div
-              key={field.id}
-              className="group flex flex-col gap-2 p-4 rounded-xl border bg-muted/10 hover:bg-muted/20 transition-colors"
-            >
-              <div className="flex flex-col sm:flex-row items-end gap-4 w-full">
-                {/* Inventory Selection - 50% */}
-                <div className="w-full sm:w-1/2">
-                  <SelectField
+          {fields.map((field, index) => {
+            const isTransfer = type === IAdjustmentType.transfer;
+            return (
+              <div
+                key={field.id}
+                className={cn(
+                  "group flex items-start gap-3 p-4 rounded-xl bg-muted/10 hover:bg-muted/20 transition-all",
+                  isTransfer ? "min-w-[500px]" : "min-w-[300px] sm:min-w-0",
+                )}
+              >
+                <div
+                  className={cn(
+                    "flex-[3] min-w-[200px]",
+                    isTransfer ? "flex-[2]" : "flex-[3]",
+                  )}
+                >
+                  <SelectSearchField
                     name={`items.${index}.inventoryId`}
                     control={control as any}
                     label={t("adjustment.form.inventoryItem")}
@@ -229,8 +225,8 @@ export default function AdjustmentForm({
                   />
                 </div>
 
-                {/* Quantity - 30% */}
-                <div className="w-full sm:w-[30%]">
+                {/* Quantity */}
+                <div className="flex-1 min-w-[100px]">
                   <NumericField
                     name={`items.${index}.quantity`}
                     control={control as any}
@@ -238,43 +234,34 @@ export default function AdjustmentForm({
                   />
                 </div>
 
-                {/* Delete Button - 20% */}
-                <div className="w-full sm:w-[20%] flex items-end">
+                {/* To Warehouse — only shown for transfer */}
+                {isTransfer && (
+                  <div className="flex-[2] min-w-[200px]">
+                    <SelectField
+                      name={`items.${index}.toWarehouseId`}
+                      control={control as any}
+                      label={t("adjustment.form.toWarehouse")}
+                      placeholder={t("adjustment.form.selectDest")}
+                      options={destinationOptions}
+                    />
+                  </div>
+                )}
+
+                {/* Delete — icon-only button, always at the right */}
+                <div className="flex-none pb-[2px]">
                   <Button
                     type="button"
                     variant="outline"
-                    className="w-full h-10 border-destructive/20 text-destructive hover:bg-destructive/10 rounded-xl"
+                    size="icon"
+                    className="h-10 w-10 border-destructive/20 text-destructive hover:bg-destructive/10 rounded-xl"
                     onClick={() => remove(index)}
                   >
-                    <Trash2 className="h-4 w-4 mr-2" />
-                    <span className="sm:hidden lg:inline">
-                      {t("common.delete")}
-                    </span>
+                    <Trash2 className="h-4 w-4" />
                   </Button>
                 </div>
               </div>
-
-              {/* Transfer Destination - Sliding/Flexible Row */}
-              {type === IAdjustmentType.transfer && (
-                <div className="pt-2 border-t border-dashed animate-in slide-in-from-top-2 duration-300">
-                  <div className="flex flex-col sm:flex-row gap-4">
-                    <div className="w-full sm:w-1/2">
-                      <SelectField
-                        name={`items.${index}.toWarehouseId`}
-                        control={control as any}
-                        label={t("adjustment.form.toWarehouse")}
-                        placeholder={t("adjustment.form.selectDest")}
-                        options={destinationOptions}
-                      />
-                    </div>
-                    {/* Spacer to keep alignment */}
-                    <div className="hidden sm:block sm:w-[30%]" />
-                    <div className="hidden sm:block sm:w-[20%]" />
-                  </div>
-                </div>
-              )}
-            </div>
-          ))}
+            );
+          })}
 
           {fields.length === 0 && isStep1Complete && (
             <div className="text-center py-12 bg-muted/20 rounded-xl border-2 border-dashed">

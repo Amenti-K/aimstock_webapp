@@ -48,7 +48,11 @@ const NumericField = ({
         fieldState: { error },
       }) => (
         <div className="space-y-2">
-          {label && <Label htmlFor={name}>{label}</Label>}
+          {label && (
+            <Label className="whitespace-nowrap" htmlFor={name}>
+              {label}
+            </Label>
+          )}
           <div className="relative">
             <Input
               id={name}

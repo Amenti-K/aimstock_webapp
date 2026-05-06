@@ -1,8 +1,7 @@
 "use client";
 
-import React, { useEffect } from "react";
-import { z } from "zod";
-import { useForm } from "react-hook-form";
+import React, { useEffect, useMemo } from "react";
+import { useForm, useFieldArray, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Dialog,
@@ -24,7 +23,18 @@ import { useLanguage } from "@/hooks/language.hook";
 import SelectField from "@/components/forms/fields/SelectField";
 import NumericField from "@/components/forms/fields/NumericField";
 import TextField from "@/components/forms/fields/TextField";
+import TextAreaField from "@/components/forms/fields/TextAreaField";
 import SubmitButton from "@/components/forms/fields/SubmitButton";
+import {
+  Landmark,
+  PlusCircle,
+  Trash2,
+  Wallet,
+  FileText,
+  Info,
+} from "lucide-react";
+import { formatCurrency } from "@/lib/formatter";
+import { Badge } from "@/components/ui/badge";
 
 interface Props {
   open: boolean;
@@ -53,125 +63,241 @@ export function LoanSettlingModal({
     resolver: zodResolver(settlingSchema),
     defaultValues: {
       txType: isReceiving ? LoanTxType.LOAN_RECEIPT : LoanTxType.LOAN_PAYMENT,
-      accountId: "",
-      amount: maxAmount,
       note: "",
+      paymentItems: [],
+      loanCashPayment: { amount: 0, description: "" },
     },
   });
 
+  const { control, handleSubmit, reset } = form;
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "paymentItems",
+  });
+
+  const watchBankPayments = useWatch({ control, name: "paymentItems" }) || [];
+  const watchCash = useWatch({ control, name: "loanCashPayment" });
+
+  const totalAmount = useMemo(() => {
+    const bankTotal = watchBankPayments.reduce(
+      (sum, item) => sum + (Number(item.amount) || 0),
+      0,
+    );
+    const cashTotal = Number(watchCash?.amount || 0);
+    return bankTotal + cashTotal;
+  }, [watchBankPayments, watchCash]);
+
   useEffect(() => {
     if (open) {
-      form.reset({
+      reset({
         txType: isReceiving ? LoanTxType.LOAN_RECEIPT : LoanTxType.LOAN_PAYMENT,
-        accountId: "",
-        amount: undefined as any,
         note: "",
+        paymentItems: [{ accountId: "", amount: 0 }],
+        loanCashPayment: { amount: 0, description: "" },
       });
     }
-  }, [open, isReceiving, form]);
+  }, [open, isReceiving, reset]);
 
   const onSubmit = (data: SettlingFormData) => {
-    if (data.amount > maxAmount) {
-      form.setError("amount", {
-        message: `Amount cannot exceed balance of ${maxAmount.toLocaleString()}`,
-      });
-      return;
-    }
+    const payload = {
+      partnerId,
+      txType: data.txType,
+      note: data.note,
+      paymentItems: data.paymentItems
+        .filter((item) => item.accountId && Number(item.amount) > 0)
+        .map((item) => ({
+          accountId: item.accountId,
+          amount: Number(item.amount),
+        })),
+      loanCashPayment:
+        data.loanCashPayment && Number(data.loanCashPayment.amount) > 0
+          ? {
+              amount: Number(data.loanCashPayment.amount),
+              description: data.loanCashPayment.description || "",
+            }
+          : undefined,
+    };
 
-    addLoanTranx.mutate(
-      {
-        partnerId,
-        txType: data.txType,
-        paymentItems: [{ accountId: data.accountId, amount: data.amount }],
-        note: data.note,
+    addLoanTranx.mutate(payload, {
+      onSuccess: () => {
+        onOpenChange(false);
       },
-      {
-        onSuccess: () => {
-          onOpenChange(false);
-        },
-      },
-    );
+    });
   };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
-          <DialogTitle>Settle Loan - {partnerName}</DialogTitle>
-          <DialogDescription className="text-sm mt-1">
-            Outstanding Balance:{" "}
-            <span className="font-bold text-foreground">
-              Br {maxAmount.toLocaleString()}
-            </span>{" "}
-            ({isReceiving ? "Owes You" : "You Owe"})
-          </DialogDescription>
-        </DialogHeader>
-        <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(onSubmit)}
-            className="space-y-4 pt-4"
-          >
-            <SelectField
-              control={form.control as any}
-              name="txType"
-              label={t("loan.form.tranxType")}
-              options={[
-                {
-                  value: LoanTxType.LOAN_RECEIPT,
-                  label: t("loan.form.paymentReceived"),
-                },
-                {
-                  value: LoanTxType.LOAN_PAYMENT,
-                  label: t("loan.form.paymentMade"),
-                },
-              ]}
-              disabled
-            />
-
-            <SelectField
-              control={form.control as any}
-              name="accountId"
-              label={t("loan.form.bankPay.selectAccount")}
-              options={accounts.map((acc: any) => ({
-                value: acc.id,
-                label: `${acc.name} (${acc.bank ?? "Cash"})`,
-              }))}
-              placeholder={t("loan.form.bankPay.selectAccount", { index: "" })}
-              disabled={loadingAccounts}
-            />
-
-            <NumericField
-              control={form.control as any}
-              name="amount"
-              label={t("loan.form.amount")}
-              placeholder="0.00"
-            />
-
-            <TextField
-              control={form.control as any}
-              name="note"
-              label={t("loan.form.note")}
-              placeholder={t("loan.form.note")}
-            />
-
-            <div className="flex flex-col sm:flex-row justify-end gap-2 pt-4">
-              <SubmitButton
-                title={
-                  isReceiving
-                    ? t("loan.modal.recivePay")
-                    : t("loan.modal.makePay")
-                }
-                loading={addLoanTranx.isPending}
-                className="h-11 rounded-xl sm:flex-1"
-              />
-              <Button
-                type="button"
+      <DialogContent className="sm:max-w-[600px] w-[95vw] max-h-[92vh] overflow-y-auto p-6 md:p-10 rounded-[0.5rem] border-none shadow-2xl">
+        <DialogHeader className="space-y-4 mb-8">
+          <div className="flex items-center justify-between">
+            <div className="space-y-1">
+              <DialogTitle className="text-2xl font-black tracking-tight">
+                {t("loan.card.settle")}
+              </DialogTitle>
+              <DialogDescription className="text-base font-medium text-primary/60">
+                {partnerName}
+              </DialogDescription>
+            </div>
+            <div className="flex items-center justify-between p-5 rounded-2xl bg-primary/[0.03] border border-primary/5">
+              <div>
+                <p className="text-[10px] font-bold uppercase tracking-[0.1em] text-muted-foreground mb-1">
+                  {t("loan.modal.outStandingBal")}
+                </p>
+                <p className="text-2xl font-black text-primary">
+                  {formatCurrency(maxAmount)}
+                </p>
+              </div>
+              <Badge
                 variant="outline"
-                onClick={() => onOpenChange(false)}
-                className="h-11 rounded-xl sm:flex-1"
+                className={`rounded-lg px-3 py-1 border-none font-bold text-[10px] uppercase tracking-widest ${
+                  isReceiving
+                    ? "bg-emerald-500/10 text-emerald-600"
+                    : "bg-amber-500/10 text-amber-600"
+                }`}
               >
-                {t("common.cancel")}
-              </Button>
+                {isReceiving ? t("loan.modal.oweYou") : t("loan.modal.youOwe")}
+              </Badge>
+            </div>
+          </div>
+        </DialogHeader>
+
+        <Form {...form}>
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-10">
+            {/* Bank Payments */}
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground flex items-center gap-2">
+                  <Landmark className="h-3.5 w-3.5" />{" "}
+                  {t("loan.form.bankPay.bankPayments")}
+                </h3>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="h-8 text-primary hover:bg-primary/5 rounded-lg gap-2 text-xs font-bold"
+                  onClick={() => append({ accountId: "", amount: 0 })}
+                >
+                  <PlusCircle className="h-3.5 w-3.5" />{" "}
+                  {t("loan.form.bankPay.addBankPayment")}
+                </Button>
+              </div>
+
+              <div className="space-y-3">
+                {fields.map((field, index) => (
+                  <div
+                    key={field.id}
+                    className="flex items-start gap-3 animate-in fade-in slide-in-from-top-2 duration-300"
+                  >
+                    <div className="flex-1">
+                      <SelectField
+                        control={control as any}
+                        name={`paymentItems.${index}.accountId`}
+                        options={accounts.map((acc: any) => ({
+                          value: acc.id,
+                          label: `${acc.name} (${acc.bank || t("common.bank")})`,
+                        }))}
+                        placeholder={t("loan.form.bankPay.selectAccount", {
+                          index: index + 1,
+                        })}
+                        disabled={loadingAccounts}
+                      />
+                    </div>
+                    <div className="w-32 md:w-40">
+                      <NumericField
+                        control={control as any}
+                        name={`paymentItems.${index}.amount`}
+                        placeholder="0.00"
+                      />
+                    </div>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      className="h-10 w-10 text-muted-foreground hover:text-red-500 hover:bg-red-50 rounded-xl"
+                      onClick={() => remove(index)}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Cash Payment */}
+            <div className="space-y-4">
+              <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground flex items-center gap-2">
+                <Wallet className="h-3.5 w-3.5" />{" "}
+                {t("loan.form.cashPay.cashPayments")}
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <NumericField
+                  control={control as any}
+                  name="loanCashPayment.amount"
+                  label={t("loan.form.amount")}
+                  placeholder="0.00"
+                />
+                <TextField
+                  control={control as any}
+                  name="loanCashPayment.description"
+                  label={t("loan.form.cashPay.description")}
+                  placeholder={t("loan.form.cashPay.description")}
+                />
+              </div>
+            </div>
+
+            {/* Note */}
+            <div className="space-y-4">
+              <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground flex items-center gap-2">
+                <FileText className="h-3.5 w-3.5" /> {t("loan.form.note")}
+              </h3>
+              <TextAreaField
+                control={control as any}
+                name="note"
+                placeholder={t("loan.form.note")}
+              />
+            </div>
+
+            {/* Summary & Actions */}
+            <div className="pt-6 space-y-6">
+              <div className="flex items-center justify-between border-t border-dashed pt-6">
+                <div>
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1">
+                    {t("loan.form.totalTranx")}
+                  </p>
+                  <p className="text-3xl font-black text-primary tracking-tighter">
+                    {formatCurrency(totalAmount)}
+                  </p>
+                </div>
+                <Badge
+                  variant="secondary"
+                  className="bg-primary/10 text-primary border-none rounded-lg px-4 py-1 text-[10px] font-bold uppercase tracking-widest"
+                >
+                  {isReceiving
+                    ? t("loan.modal.recivePay")
+                    : t("loan.modal.makePay")}
+                </Badge>
+              </div>
+
+              <div className="flex gap-3">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => onOpenChange(false)}
+                  className="flex-1 h-12 rounded-2xl font-bold border-muted-foreground/10"
+                >
+                  {t("common.cancel")}
+                </Button>
+                <SubmitButton
+                  onClick={handleSubmit(onSubmit)}
+                  title={
+                    isReceiving
+                      ? t("loan.modal.recivePay")
+                      : t("loan.modal.makePay")
+                  }
+                  loading={addLoanTranx.isPending}
+                  className="flex-[2] h-12 rounded-2xl font-black shadow-lg shadow-primary/10"
+                />
+              </div>
             </div>
           </form>
         </Form>

@@ -82,25 +82,36 @@ export type LoanTransactionData = z.infer<typeof loanTransactionSchema>;
 export type PaymentItemData = z.infer<typeof paymentItemSchema>;
 export type LoanCashPaymentData = z.infer<typeof loanCashPaymentSchema>;
 
-export const loanSettlingSchema = z.object({
-  txType: z.enum([LoanTxType.LOAN_PAYMENT, LoanTxType.LOAN_RECEIPT]),
-  accountId: z.string().min(1, "Account is required"),
-  amount: z
-    .union([z.string(), z.number()])
-    .transform((val) => Number(val))
-    .refine(
-      (val) => !isNaN(val) && val > 0,
-      "Amount must be a positive number",
+export const settlingSchema = z
+  .object({
+    txType: z.enum([LoanTxType.LOAN_PAYMENT, LoanTxType.LOAN_RECEIPT]),
+    note: z.string().optional(),
+    paymentItems: z.array(
+      z.object({
+        accountId: z.string().min(1, "Account is required"),
+        amount: z.number().positive("Amount must be positive"),
+      }),
     ),
-  note: z.string().optional(),
-});
-
-export const settlingSchema = z.object({
-  txType: z.enum([LoanTxType.LOAN_PAYMENT, LoanTxType.LOAN_RECEIPT]),
-  accountId: z.string().min(1, "Account is required"),
-  amount: z.number().positive("Amount must be positive"),
-  note: z.string().optional(),
-});
+    loanCashPayment: z
+      .object({
+        amount: z.number().min(0, "Amount cannot be negative"),
+        description: z.string().optional(),
+      })
+      .optional(),
+  })
+  .refine(
+    (data) => {
+      const bankTotal = data.paymentItems.reduce(
+        (sum, item) => sum + (item.amount || 0),
+        0,
+      );
+      const cashTotal = data.loanCashPayment?.amount || 0;
+      return bankTotal + cashTotal > 0;
+    },
+    {
+      message: "Total amount must be greater than 0",
+      path: ["paymentItems"],
+    },
+  );
 
 export type SettlingFormData = z.infer<typeof settlingSchema>;
-export type LoanSettlingFormData = z.infer<typeof loanSettlingSchema>;

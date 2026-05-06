@@ -221,30 +221,6 @@ export default function LoanPage() {
                               : t("loan.card.receive")}
                           </Button>
                         )}
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" className="h-8 w-8 p-0">
-                              <MoreHorizontal className="h-4 w-4" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuItem
-                              onClick={() => {
-                                const queryObj = new URLSearchParams({
-                                  balance: balance.toString(),
-                                  name: lp.name,
-                                  phone: lp.phone,
-                                  address: lp.address,
-                                });
-                                router.push(
-                                  `/loan/${lp.id}?${queryObj.toString()}`,
-                                );
-                              }}
-                            >
-                              {t("loan.detail.transactions")}
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
                       </div>
                     </TableCell>
                   </TableRow>

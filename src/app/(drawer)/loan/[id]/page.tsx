@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import {
   ChevronLeft,
@@ -33,6 +33,7 @@ import { LoadingView, ErrorView } from "@/components/common/StateView";
 import {
   useGetLoanTransactionsInfinite,
   useDeleteLoanTx,
+  useFetchPartnersTranx,
 } from "@/api/loan/api.loan";
 import {
   LoanTxType,
@@ -74,12 +75,40 @@ export default function LoanDetailPage() {
   const partnerId = params.id as string;
   const searchParams = useSearchParams();
 
-  const loanPartner = {
-    name: searchParams.get("name") || "",
-    balance: Number(searchParams.get("balance") || 0),
-    phone: searchParams.get("phone") || "",
-    address: searchParams.get("address") || "",
-  };
+  // Keep partner data in state and sync with sessionStorage
+  const [loanPartner, setLoanPartner] = useState(() => {
+    const fromParams = {
+      name: searchParams.get("name") || "",
+      balance: Number(searchParams.get("balance") || 0),
+      phone: searchParams.get("phone") || "",
+      address: searchParams.get("address") || "",
+    };
+
+    // If we have params, use them and we'll save to session storage in useEffect
+    if (fromParams.name) return fromParams;
+
+    // Fallback to session storage if possible
+    if (typeof window !== "undefined") {
+      const saved = sessionStorage.getItem(`loan_partner_${partnerId}`);
+      if (saved) return JSON.parse(saved);
+    }
+
+    return fromParams;
+  });
+
+  useEffect(() => {
+    const name = searchParams.get("name");
+    if (name) {
+      const info = {
+        name,
+        balance: Number(searchParams.get("balance") || 0),
+        phone: searchParams.get("phone") || "",
+        address: searchParams.get("address") || "",
+      };
+      setLoanPartner(info);
+      sessionStorage.setItem(`loan_partner_${partnerId}`, JSON.stringify(info));
+    }
+  }, [searchParams, partnerId]);
 
   const { canView, canCreate, canUpdate, canDelete } = usePermissions();
   const hasViewAccess = canView("LOANS");
@@ -99,6 +128,9 @@ export default function LoanDetailPage() {
     fetchNextPage,
     isFetchingNextPage,
   } = useGetLoanTransactionsInfinite(partnerId, hasViewAccess);
+  const { data: loanTranxResponse, isLoading: isLoadingLoanTranx } =
+    useFetchPartnersTranx(selectedTx?.id as string, !!selectedTx);
+  const loanTranx = loanTranxResponse?.data;
 
   const deleteTxMutate = useDeleteLoanTx();
 
@@ -490,10 +522,17 @@ export default function LoanDetailPage() {
         )}
       </div>
 
-      <Dialog open={isDetailModalOpen} onOpenChange={setIsDetailModalOpen}>
+      <Dialog
+        open={isDetailModalOpen}
+        onOpenChange={(open) => {
+          setIsDetailModalOpen(open);
+          if (!open) setSelectedTx(null);
+        }}
+      >
         <DialogContent className="sm:max-w-2xl md:max-w-3xl p-0 overflow-scroll rounded-2xl max-h-[90vh]">
           {selectedTx && (
             <div className="flex flex-col h-full overflow-hidden">
+              {/* Header — always available from the list item */}
               <div className="p-6 pb-4">
                 <div className="flex items-start justify-between mb-6">
                   <div className="flex items-center gap-4">
@@ -515,144 +554,156 @@ export default function LoanDetailPage() {
                       </DialogDescription>
                     </div>
                   </div>
-                  <LastAudit
-                    lastAudit={selectedTx.lastAuditLog as ILastAudit}
-                  />
                 </div>
-                <div className="flex-1 overflow-y-auto p-6 pt-0">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
-                    <div className="space-y-6">
-                      <div className="bg-muted/30 p-5 rounded-2xl border border-muted-foreground/10">
-                        <p className="text-[10px] font-bold uppercase text-muted-foreground mb-1 tracking-wider">
-                          {t("loan.detail.tranx.totalAmt")}
-                        </p>
-                        <p
-                          className={`text-3xl md:text-4xl font-black ${getTxTypeConfig(selectedTx.txType).colorClass.split(" ")[0]}`}
-                        >
-                          {formatCurrency(Number(selectedTx.amount || 0))}
-                        </p>
-                      </div>
 
-                      {selectedTx.note && (
-                        <div className="space-y-1">
-                          <p className="text-[10px] font-bold uppercase text-muted-foreground flex items-center gap-1.5">
-                            <Info className="h-3 w-3" />{" "}
-                            {t("loan.detail.tranx.note")}
+                {/* Loading state */}
+                {isLoadingLoanTranx && (
+                  <div className="flex flex-col items-center justify-center py-16 gap-3 text-muted-foreground">
+                    <div className="h-8 w-8 rounded-full border-4 border-primary/20 border-t-primary animate-spin" />
+                    <p className="text-sm">{t("common.loading")}</p>
+                  </div>
+                )}
+
+                {/* Detail body — only when data has arrived */}
+                {!isLoadingLoanTranx && loanTranx && (
+                  <div className="flex-1 overflow-y-auto pt-0">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+                      <div className="space-y-6">
+                        <div className="bg-muted/30 p-5 rounded-2xl border border-muted-foreground/10">
+                          <p className="text-[10px] font-bold uppercase text-muted-foreground mb-1 tracking-wider">
+                            {t("loan.detail.tranx.totalAmt")}
                           </p>
-                          <p className="text-sm text-muted-foreground italic bg-muted/10 p-3 rounded-xl border border-dashed">
-                            "{selectedTx.note}"
+                          <p
+                            className={`text-3xl md:text-4xl font-black ${getTxTypeConfig(selectedTx.txType).colorClass.split(" ")[0]}`}
+                          >
+                            {formatCurrency(Number(loanTranx.amount || 0))}
                           </p>
+                          <LastAudit
+                            lastAudit={loanTranx.lastAuditLog as ILastAudit}
+                          />
                         </div>
-                      )}
-                    </div>
 
-                    <div className="space-y-6">
-                      {(selectedTx.loanPayments?.length ?? 0) > 0 ||
-                      selectedTx.loanCashPayment ? (
-                        <div className="space-y-3">
-                          <p className="text-[10px] font-bold uppercase text-muted-foreground tracking-wider flex items-center gap-2">
-                            <Wallet className="h-3 w-3" />{" "}
-                            {t("loan.detail.tranx.paymentDetails")}
-                          </p>
-                          <div className="space-y-2 max-h-[200px] overflow-y-auto pr-2 scrollbar-thin">
-                            {selectedTx.loanPayments?.map((p: any) => (
-                              <div
-                                key={p.id}
-                                className="flex items-center justify-between p-3 rounded-xl bg-muted/20 border border-muted-foreground/5"
-                              >
-                                <div className="flex items-center gap-3">
-                                  <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center">
-                                    <ArrowUpCircle className="h-4 w-4 text-primary" />
-                                  </div>
-                                  <div>
-                                    <p className="text-xs font-semibold truncate max-w-[120px]">
-                                      {p.account?.name ||
-                                        t("loan.detail.tranx.bankAcc")}
-                                    </p>
-                                    <p className="text-[10px] text-muted-foreground">
-                                      {p.account?.bank || "—"}
-                                    </p>
-                                  </div>
-                                </div>
-                                <p className="font-bold text-sm">
-                                  {formatCurrency(Number(p.amount))}
-                                </p>
-                              </div>
-                            ))}
-                            {selectedTx.loanCashPayment && (
-                              <div className="flex items-center justify-between p-3 rounded-xl bg-muted/20 border border-muted-foreground/5">
-                                <div className="flex items-center gap-3">
-                                  <div className="h-8 w-8 rounded-lg bg-secondary/20 flex items-center justify-center">
-                                    <Wallet className="h-4 w-4 text-secondary-foreground" />
-                                  </div>
-                                  <div>
-                                    <p className="text-xs font-semibold">
-                                      {t("loan.detail.tranx.cashPay")}
-                                    </p>
-                                  </div>
-                                </div>
-                                <p className="font-bold text-sm">
-                                  {formatCurrency(
-                                    Number(selectedTx.loanCashPayment.amount),
-                                  )}
-                                </p>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      ) : null}
-
-                      <Separator className="opacity-50" />
-
-                      <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-1">
-                          <p className="text-[10px] font-bold uppercase text-muted-foreground flex items-center gap-1.5">
-                            <Calendar className="h-3 w-3" />{" "}
-                            {t("loan.detail.tranx.createdDate")}
-                          </p>
-                          <p className="text-sm font-medium">
-                            {new Date(
-                              selectedTx.createdAt || "",
-                            ).toLocaleDateString()}
-                          </p>
-                        </div>
-                        {selectedTx.dueDate && (
+                        {loanTranx.note && (
                           <div className="space-y-1">
                             <p className="text-[10px] font-bold uppercase text-muted-foreground flex items-center gap-1.5">
-                              <Clock className="h-3 w-3" />{" "}
-                              {t("loan.detail.tranx.dueDate")}
+                              <Info className="h-3 w-3" />{" "}
+                              {t("loan.detail.tranx.note")}
                             </p>
-                            <p className="text-sm font-medium text-red-600">
-                              {new Date(
-                                selectedTx.dueDate,
-                              ).toLocaleDateString()}
+                            <p className="text-sm text-muted-foreground italic bg-muted/10 p-3 rounded-xl border border-dashed">
+                              "{loanTranx.note}"
                             </p>
                           </div>
                         )}
                       </div>
 
-                      {(selectedTx.saleId || selectedTx.purchaseId) && (
-                        <div className="pt-2">
-                          <Badge
-                            variant="outline"
-                            className="h-9 px-4 rounded-xl gap-2 cursor-pointer hover:bg-muted/50 transition-colors w-full justify-center"
-                          >
-                            <ExternalLink className="h-3 w-3" />
-                            <span className="text-xs">
-                              {selectedTx.saleId
-                                ? t("loan.detail.tranx.linkToEntity", {
-                                    entity: "Sale",
-                                  })
-                                : t("loan.detail.tranx.linkToEntity", {
-                                    entity: "Purchase",
-                                  })}
-                            </span>
-                          </Badge>
+                      <div className="space-y-6">
+                        {((loanTranx.loanPayments?.length ?? 0) > 0 ||
+                          loanTranx.loanCashPayment) && (
+                          <div className="space-y-3">
+                            <p className="text-[10px] font-bold uppercase text-muted-foreground tracking-wider flex items-center gap-2">
+                              <Wallet className="h-3 w-3" />{" "}
+                              {t("loan.detail.tranx.paymentDetails")}
+                            </p>
+                            <div className="space-y-2 max-h-[200px] overflow-y-auto pr-2 scrollbar-thin">
+                              {loanTranx.loanPayments?.map((p: any) => (
+                                <div
+                                  key={p.id}
+                                  className="flex items-center justify-between p-3 rounded-xl bg-muted/20 border border-muted-foreground/5"
+                                >
+                                  <div className="flex items-center gap-3">
+                                    <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                                      <ArrowUpCircle className="h-4 w-4 text-primary" />
+                                    </div>
+                                    <div>
+                                      <p className="text-xs font-semibold truncate max-w-[120px]">
+                                        {p.account?.name ||
+                                          t("loan.detail.tranx.bankAcc")}
+                                      </p>
+                                      <p className="text-[10px] text-muted-foreground">
+                                        {p.account?.bank || "—"}
+                                      </p>
+                                    </div>
+                                  </div>
+                                  <p className="font-bold text-sm">
+                                    {formatCurrency(Number(p.amount))}
+                                  </p>
+                                </div>
+                              ))}
+                              {loanTranx.loanCashPayment && (
+                                <div className="flex items-center justify-between p-3 rounded-xl bg-muted/20 border border-muted-foreground/5">
+                                  <div className="flex items-center gap-3">
+                                    <div className="h-8 w-8 rounded-lg bg-secondary/20 flex items-center justify-center">
+                                      <Wallet className="h-4 w-4 text-secondary-foreground" />
+                                    </div>
+                                    <div>
+                                      <p className="text-xs font-semibold">
+                                        {t("loan.detail.tranx.cashPay")}
+                                      </p>
+                                    </div>
+                                  </div>
+                                  <p className="font-bold text-sm">
+                                    {formatCurrency(
+                                      Number(loanTranx.loanCashPayment.amount),
+                                    )}
+                                  </p>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        )}
+
+                        <Separator className="opacity-50" />
+
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="space-y-1">
+                            <p className="text-[10px] font-bold uppercase text-muted-foreground flex items-center gap-1.5">
+                              <Calendar className="h-3 w-3" />{" "}
+                              {t("loan.detail.tranx.createdDate")}
+                            </p>
+                            <p className="text-sm font-medium">
+                              {new Date(
+                                loanTranx.createdAt || "",
+                              ).toLocaleDateString()}
+                            </p>
+                          </div>
+                          {loanTranx.dueDate && (
+                            <div className="space-y-1">
+                              <p className="text-[10px] font-bold uppercase text-muted-foreground flex items-center gap-1.5">
+                                <Clock className="h-3 w-3" />{" "}
+                                {t("loan.detail.tranx.dueDate")}
+                              </p>
+                              <p className="text-sm font-medium text-red-600">
+                                {new Date(
+                                  loanTranx.dueDate,
+                                ).toLocaleDateString()}
+                              </p>
+                            </div>
+                          )}
                         </div>
-                      )}
+
+                        {(loanTranx.saleId || loanTranx.purchaseId) && (
+                          <div className="pt-2">
+                            <Badge
+                              variant="outline"
+                              className="h-9 px-4 rounded-xl gap-2 cursor-pointer hover:bg-muted/50 transition-colors w-full justify-center"
+                            >
+                              <ExternalLink className="h-3 w-3" />
+                              <span className="text-xs">
+                                {loanTranx.saleId
+                                  ? t("loan.detail.tranx.linkToEntity", {
+                                      entity: "Sale",
+                                    })
+                                  : t("loan.detail.tranx.linkToEntity", {
+                                      entity: "Purchase",
+                                    })}
+                              </span>
+                            </Badge>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
-                </div>
+                )}
               </div>
 
               <div className="bg-muted/30 p-4 flex gap-3">

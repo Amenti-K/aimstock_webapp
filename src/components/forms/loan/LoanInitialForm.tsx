@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useForm, useWatch, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CalendarIcon, PlusCircle, Trash2 } from "lucide-react";
+import { CalendarIcon, PlusCircle, Trash2, UserPlus } from "lucide-react";
 
 import TextField from "@/components/forms/fields/TextField";
 import NumericField from "@/components/forms/fields/NumericField";
@@ -15,6 +15,13 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import PartnerForm from "@/components/forms/partner/PartnerForm";
 
 import {
   loanInitialSchema,
@@ -23,7 +30,11 @@ import {
 import { useCreateLoanTranx } from "@/api/loan/api.loan";
 import { LoanTxType } from "@/components/interface/loan/loan.interface";
 import { useFetchAccountSelector } from "@/api/account/api.account";
-import { useFetchPartnerSelector } from "@/api/partner/api.partner";
+import {
+  useFetchPartnerSelector,
+  useCreatePartner,
+} from "@/api/partner/api.partner";
+import { PartnerFormValues } from "@/components/forms/partner/partner.schema";
 import { Button } from "@/components/ui/button";
 import { formatCurrency, formatDate } from "@/lib/formatter";
 import { useLanguage } from "@/hooks/language.hook";
@@ -101,13 +112,9 @@ export default function LoanInitialForm({
   mode = "add",
 }: Props) {
   const { t } = useLanguage();
+  const [showAddPartner, setShowAddPartner] = useState(false);
 
-  const {
-    control,
-    handleSubmit,
-    reset,
-    formState: { isSubmitting },
-  } = useForm<InitialLoanData>({
+  const form = useForm<InitialLoanData>({
     resolver: zodResolver(loanInitialSchema),
     defaultValues: {
       partnerId: "",
@@ -119,6 +126,8 @@ export default function LoanInitialForm({
     },
   });
 
+  const { control, handleSubmit, reset, setValue, formState: { isSubmitting } } = form;
+
   const {
     fields: paymentFields,
     append: appendPayment,
@@ -129,8 +138,13 @@ export default function LoanInitialForm({
   });
 
   const createLoanTranx = useCreateLoanTranx();
-  const { data: partnersData, isPending: loadingPartners } =
-    useFetchPartnerSelector();
+  const {
+    data: partnersData,
+    isPending: loadingPartners,
+    refetch: refetchPartners,
+  } = useFetchPartnerSelector();
+  const { mutate: createPartner, isPending: creatingPartner } =
+    useCreatePartner();
   const { data: accounts, isPending: loadingAccounts } =
     useFetchAccountSelector();
 
@@ -155,6 +169,18 @@ export default function LoanInitialForm({
       reset(data as any);
     }
   }, [data, reset]);
+
+  const handlePartnerCreated = (values: PartnerFormValues) => {
+    createPartner(values as any, {
+      onSuccess: (res: any) => {
+        const newId = res?.data?.id ?? res?.id;
+        refetchPartners().then(() => {
+          if (newId) form.setValue("partnerId", String(newId));
+        });
+        setShowAddPartner(false);
+      },
+    });
+  };
 
   const handleSave = (formData: InitialLoanData) => {
     const payload = {
@@ -183,6 +209,7 @@ export default function LoanInitialForm({
   };
 
   return (
+    <>
     <form
       onSubmit={handleSubmit(handleSave)}
       className="space-y-6 w-full max-w-full overflow-x-hidden"
@@ -196,6 +223,9 @@ export default function LoanInitialForm({
           placeholder={
             loadingPartners ? t("loan.pendingLoan") : t("loan.form.selectPar")
           }
+          canAdd
+          addLabel={t("partners.form.addNewPar")}
+          onAddClick={() => setShowAddPartner(true)}
         />
 
         <div className="pt-2">
@@ -343,5 +373,23 @@ export default function LoanInitialForm({
         )}
       </div>
     </form>
+
+    {/* Quick-Add Partner Dialog */}
+    <Dialog open={showAddPartner} onOpenChange={setShowAddPartner}>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2">
+            <UserPlus className="h-5 w-5 text-primary" />
+            {t("partners.form.addNewPar")}
+          </DialogTitle>
+        </DialogHeader>
+        <PartnerForm
+          onSubmit={handlePartnerCreated}
+          onCancel={() => setShowAddPartner(false)}
+          isPending={creatingPartner}
+        />
+      </DialogContent>
+    </Dialog>
+    </>
   );
 }

@@ -40,13 +40,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function RolePage() {
   const { t } = useLanguage();
@@ -170,7 +164,7 @@ export default function RolePage() {
     return (
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
         {Object.entries(grouped).map(([module, perms]: [string, any]) => (
-          <div key={module} className="space-y-1.5">
+          <div key={module} className="flex flex-row items-center gap-2">
             <span className="text-xs font-bold uppercase text-muted-foreground tracking-wider">
               {module}
             </span>
@@ -293,7 +287,7 @@ export default function RolePage() {
         ) : (
           <Accordion
             type="multiple"
-            defaultValue={roles.map((r) => r.id)}
+            defaultValue={selectedRoleId ? [selectedRoleId] : []}
             className="space-y-4"
           >
             {roles.map((role) => (

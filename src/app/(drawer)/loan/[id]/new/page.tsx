@@ -53,7 +53,7 @@ export default function NewLoanTransactionPage() {
       <div className="p-6 bg-card rounded-2xl border shadow-sm">
         <LoanTransactionForm
           partnerId={partnerId}
-          onSuccess={() => router.back()}
+          onSuccess={() => router.replace("/loan")}
         />
       </div>
     </div>

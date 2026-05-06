@@ -23,7 +23,7 @@ export default function NewInventoryPage() {
   }
 
   return (
-    <div className="space-y-8 max-w-5xl mx-auto pb-10">
+    <div className="space-y-8 w-full mx-auto pb-10">
       {/* Page Header */}
       <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between px-1">
         <div className="flex items-center gap-4">

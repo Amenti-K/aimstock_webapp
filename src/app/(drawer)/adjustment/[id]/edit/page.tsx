@@ -13,6 +13,7 @@ import { AccessDeniedView } from "@/components/guards/AccessDeniedView";
 import { usePermissions } from "@/hooks/permission.hook";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/hooks/language.hook";
+import { IAdjustment } from "@/components/interface/adjustment/adjustment.interface";
 
 export default function EditAdjustmentPage() {
   const router = useRouter();
@@ -28,7 +29,7 @@ export default function EditAdjustmentPage() {
     adjustmentId,
     true,
   );
-  
+
   const updateAdjustment = useUpdateAdjustment(adjustmentId);
 
   if (isLoading) return <LoadingView />;
@@ -61,7 +62,7 @@ export default function EditAdjustmentPage() {
             {t("adjustment.form.basicInfoDescription")}
           </p>
         </div>
-        
+
         <AdjustmentForm
           item={data.data}
           isPending={updateAdjustment.isPending}

@@ -60,7 +60,7 @@ export default function EditLoanTransactionPage() {
           txId={txId || undefined}
           partnerId={partnerId}
           initialValues={txData?.data}
-          onSuccess={() => router.push(`/loan/${partnerId}`)}
+          onSuccess={() => router.replace("/loan")}
         />
       </div>
     </div>

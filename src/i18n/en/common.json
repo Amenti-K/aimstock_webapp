@@ -88,6 +88,7 @@
   "close": "Close",
   "errorView": "Something went wrong",
   "search": "Search...",
+  "noResults": "No results found",
   "loading": "Loading...",
   "loadingMore": "Loading more...",
   "emptyView": "No data found",
