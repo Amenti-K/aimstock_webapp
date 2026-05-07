@@ -19,9 +19,9 @@ export default function AuthLayout({
 }) {
   const { t, language, changeLanguage } = useLanguage();
   return (
-    <div className="flex h-screen bg-background">
+    <div className="flex min-h-screen bg-background overflow-x-hidden">
       {/* Left side Marketing Panel */}
-      <div className="hidden w-1/2 lg:block relative overflow-hidden bg-muted">
+      <div className="hidden w-1/2 lg:block relative overflow-hidden bg-muted h-screen sticky top-0">
         <div className="absolute inset-0 bg-primary/20 z-10 mix-blend-overlay dark:bg-primary/10" />
         <div className="absolute inset-0 bg-gradient-to-tr from-black/80 via-black/40 to-transparent z-10" />
 
@@ -56,8 +56,25 @@ export default function AuthLayout({
       </div>
 
       {/* Right side Auth Form Container */}
-      <div className="flex flex-1 flex-col justify-center px-4 py-12 sm:px-6 lg:flex-none lg:px-20 xl:px-32 relative">
-        <div className="absolute top-4 right-4 sm:top-8 sm:right-8 z-50">
+      <div className="flex flex-1 flex-col">
+        {/* Auth Header (Mobile Logo & Language) */}
+        <div className="flex items-center justify-between px-6 py-6 lg:px-12 lg:py-8 lg:justify-end shrink-0">
+          {/* Mobile Header Logo */}
+          <div className="lg:hidden flex items-center gap-2 text-primary">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg text-primary-foreground shadow-md">
+              <Image
+                src={logo}
+                alt="Logo"
+                width={40}
+                height={40}
+                className="rounded-lg"
+              />
+            </div>
+            <span className="text-2xl font-bold tracking-tight text-foreground">
+              AIM Stock
+            </span>
+          </div>
+
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
@@ -80,24 +97,9 @@ export default function AuthLayout({
           </DropdownMenu>
         </div>
 
-        {/* Mobile Header */}
-        <div className="lg:hidden absolute top-8 left-0 right-0 flex items-center justify-center gap-2 text-primary">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg text-primary-foreground shadow-md">
-            <Image
-              src={logo}
-              alt="Logo"
-              width={40}
-              height={40}
-              className="rounded-lg transition-all duration-300 group-data-[collapsible=icon]:w-7 group-data-[collapsible=icon]:h-7"
-            />
-          </div>
-          <span className="text-2xl font-bold tracking-tight text-foreground">
-            AIM Stock
-          </span>
-        </div>
-
-        <div className="mx-auto w-full max-w-md">
-          <div className="animate-in fade-in duration-700 slide-in-from-bottom-4">
+        {/* Form Content Area */}
+        <div className="flex-1 flex flex-col justify-center px-4 py-8 sm:px-6 lg:px-20 xl:px-32">
+          <div className="mx-auto w-full max-w-md animate-in fade-in duration-700 slide-in-from-bottom-4">
             {children}
           </div>
         </div>

@@ -42,7 +42,7 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="flex flex-col space-y-6 lg:max-h-[85vh] lg:overflow-y-auto pr-2 pb-8 custom-scrollbar">
+    <div className="flex flex-col space-y-6 pr-2 pb-12">
       <div className="flex flex-col space-y-2 text-center lg:text-left mt-4 lg:mt-0">
         <h1 className="text-3xl font-bold tracking-tight text-foreground">
           {t("auth.register.createAccount")}
@@ -149,8 +149,7 @@ export default function RegisterPage() {
           </Button>
         </form>
       </Form>
-
-      <div className="text-center text-sm pt-2">
+      <div className="text-center text-sm pb-8">
         <span className="text-muted-foreground">
           {t("auth.register.alreadyHaveAccount")}{" "}
         </span>
@@ -161,22 +160,6 @@ export default function RegisterPage() {
           {t("auth.register.signIn")}
         </Link>
       </div>
-
-      <style jsx global>{`
-        .custom-scrollbar::-webkit-scrollbar {
-          width: 6px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-          background: transparent;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: hsl(var(--muted));
-          border-radius: 10px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-          background: hsl(var(--muted-foreground));
-        }
-      `}</style>
     </div>
   );
 }
