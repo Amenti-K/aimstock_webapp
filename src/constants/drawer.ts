@@ -88,12 +88,6 @@ export const drawerNavItems = [
     translationKey: "role.moduleName",
   },
   {
-    title: "Audit",
-    href: "/audit",
-    icon: Activity,
-    translationKey: "audit.moduleName",
-  },
-  {
     title: "Settings",
     href: "/setting",
     icon: Settings,

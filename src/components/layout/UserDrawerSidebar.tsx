@@ -1,7 +1,7 @@
 "use client";
 
 import logo from "@/../public/logo.png";
-import { ChevronUp, LogOut, User2 } from "lucide-react";
+import { Activity, ChevronUp, LogOut, User2 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import {
   Sidebar,
@@ -48,6 +48,13 @@ export function UserDrawerSidebar(props: React.ComponentProps<typeof Sidebar>) {
     return true;
   });
 
+  const auditItem = {
+    title: "Audit",
+    href: "/audit",
+    icon: Activity,
+    translationKey: "audit.moduleName",
+  };
+
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader className="border-b border-sidebar-border px-1 sm:px-2 py-6 sm:py-4 pt-[calc(env(safe-area-inset-top)+1.5rem)] sm:pt-4 bg-sidebar/50 backdrop-blur-sm transition-all duration-300">
@@ -92,6 +99,27 @@ export function UserDrawerSidebar(props: React.ComponentProps<typeof Sidebar>) {
               </SidebarMenuButton>
             </SidebarMenuItem>
           ))}
+          {user?.role?.name === "OWNER" && (
+            <SidebarMenuItem key={auditItem.href}>
+              <SidebarMenuButton
+                asChild
+                tooltip={t(auditItem.translationKey || "")}
+              >
+                <NavLink
+                  to={auditItem.href}
+                  end={auditItem.href === "/dashboard"}
+                  onClick={handleNavClick}
+                  className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-all hover:bg-sidebar-accent/60 group/item"
+                  activeClassName="bg-primary/10 text-primary font-semibold shadow-sm border border-primary/10"
+                >
+                  <auditItem.icon className="size-4.5 transition-transform group-hover/item:scale-110" />
+                  <span className="tracking-tight">
+                    {t(auditItem.translationKey || "")}
+                  </span>
+                </NavLink>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          )}
         </SidebarMenu>
       </SidebarContent>
 
