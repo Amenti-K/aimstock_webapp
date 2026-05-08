@@ -130,7 +130,7 @@ export default function EmployeePage() {
   const handleResetPassword = (values: ResetPasswordFormValues) => {
     if (!selectedEmployee?.id) return;
     resetPassword.mutate(
-      { id: selectedEmployee.id, password: values.password },
+      { id: selectedEmployee.id, newPassword: values.newPassword },
       {
         onSuccess: () => {
           setIsResetPasswordOpen(false);
@@ -346,9 +346,7 @@ export default function EmployeePage() {
             onClick={() => fetchNextPage()}
             disabled={isFetchingNextPage}
           >
-            {isFetchingNextPage
-              ? t("common.loading")
-              : t("common.loadMore")}
+            {isFetchingNextPage ? t("common.loading") : t("common.loadMore")}
           </Button>
         </div>
       )}
@@ -405,10 +403,14 @@ export default function EmployeePage() {
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>
-              {t("common.confirmDelete.title", { entity: t("employee.moduleName") })}
+              {t("common.confirmDelete.title", {
+                entity: t("employee.moduleName"),
+              })}
             </AlertDialogTitle>
             <AlertDialogDescription>
-              {t("common.confirmDelete.message", { entity: t("employee.moduleName") })}
+              {t("common.confirmDelete.message", {
+                entity: t("employee.moduleName"),
+              })}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -423,6 +425,5 @@ export default function EmployeePage() {
         </AlertDialogContent>
       </AlertDialog>
     </div>
-
   );
 }

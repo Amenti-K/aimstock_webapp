@@ -21,7 +21,11 @@ export interface INewEmployee {
 }
 
 const onErrorNotification = (error: any) => {
-  toast.error(error.response?.data?.message || error.response?.data?.msg || "An error occurred");
+  toast.error(
+    error.response?.data?.message ||
+      error.response?.data?.msg ||
+      "An error occurred",
+  );
 };
 
 const onSuccessNotification = (data: any) => {
@@ -30,7 +34,7 @@ const onSuccessNotification = (data: any) => {
 
 export const useGetEmployeesInfinite = (
   filterOptions?: Record<string, any>,
-  enabled?: boolean
+  enabled?: boolean,
 ) => {
   const { search, ...filter } = filterOptions ?? { search: undefined };
   const queryParams = {
@@ -61,21 +65,26 @@ export const useFetchEmployeeById = (id: string, enabled?: boolean) => {
 };
 
 export const useUpdateEmployee = (id: string) => {
-  return useMutate<Partial<INewEmployee>>(`${endpoints.EMPLOYEE}/${id}`, "put", {
-    onError: onErrorNotification,
-    onSuccess: onSuccessNotification,
-    queryKey: queryKeys.employees.root,
-  });
+  return useMutate<Partial<INewEmployee>>(
+    `${endpoints.EMPLOYEE}/${id}`,
+    "put",
+    {
+      onError: onErrorNotification,
+      onSuccess: onSuccessNotification,
+      queryKey: queryKeys.employees.root,
+    },
+  );
 };
 
 export const useResetPassword = () => {
   return useMutate(
-    (data: { id: string; password?: string }) => `${endpoints.EMPLOYEE}/${data.id}/reset-password`,
+    (data: { id: string; newPassword?: string }) =>
+      `${endpoints.EMPLOYEE}/${data.id}/reset-password`,
     "put",
     {
       onError: onErrorNotification,
       onSuccess: () => toast.success("Password reset successfully!"),
-    }
+    },
   );
 };
 
@@ -87,6 +96,6 @@ export const useDeactivateEmployee = () => {
       onError: onErrorNotification,
       onSuccess: () => toast.success("Employee deactivated successfully!"),
       queryKey: queryKeys.employees.root,
-    }
+    },
   );
 };
