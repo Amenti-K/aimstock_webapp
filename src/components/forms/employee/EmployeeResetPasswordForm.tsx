@@ -25,13 +25,13 @@ export default function EmployeeResetPasswordForm({
   const { t } = useLanguage();
   const form = useForm<ResetPasswordFormValues>({
     resolver: zodResolver(resetPasswordSchema),
-    defaultValues: { password: "" },
+    defaultValues: { newPassword: "" },
   });
 
   return (
     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
       <TextField
-        name="password"
+        name="newPassword"
         control={form.control as any}
         label={t("employee.form.newPass")}
         placeholder="********"
