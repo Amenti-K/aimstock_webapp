@@ -51,8 +51,15 @@ const SelectField = ({
       control={control}
       name={name}
       render={({ field: { onChange, value }, fieldState: { error } }) => (
-        <div className="space-y-2">
-          {label && <Label htmlFor={name}>{label}</Label>}
+        <div className="space-y-1.5 shrink-0">
+          {label && (
+            <Label
+              htmlFor={name}
+              className="text-[11px] font-bold uppercase tracking-tight text-muted-foreground/70 ml-1 whitespace-nowrap"
+            >
+              {label}
+            </Label>
+          )}
           <Select
             onValueChange={(val) => {
               if (val === "__add_new__") {

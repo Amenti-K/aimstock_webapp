@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -10,6 +10,7 @@ import {
   Warehouse,
   Package,
   BadgeDollarSign,
+  PlusIcon,
 } from "lucide-react";
 import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
@@ -20,6 +21,12 @@ import {
   CardTitle,
   CardDescription,
 } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import TextField from "@/components/forms/fields/TextField";
 import NumericField from "@/components/forms/fields/NumericField";
 import SelectField from "@/components/forms/fields/SelectField";
@@ -31,7 +38,10 @@ import {
 import { useFetchWarehouseSelector } from "@/api/warehouse/api.warehouse";
 import { useTranslation } from "react-i18next";
 import { cn } from "@/lib/utils";
-import { IInventory } from "../interface/inventory/inventory.interface";
+import { IInventory } from "../../interface/inventory/inventory.interface";
+import DateField from "../fields/DateField";
+import { useFetchCategories, useCreateCategory } from "@/api/inventory/api.inventory";
+import CategoryForm from "@/components/forms/category/categoryForm";
 
 type InventoryFormProps = {
   initialData?: IInventory | null;
@@ -49,8 +59,11 @@ const defaultValues: inventoryFormValues = {
   boughtPrice: 0,
   sellingPrice: 0,
   unit: "",
+  expiryDate: "",
+  inventoryCategoryId: "",
   initialQuantity: 0,
   warehouseInventories: [{ warehouseId: "", quantity: 0, reorderQuantity: 0 }],
+  hasTransactions: false,
 };
 
 export default function InventoryForm({
@@ -71,11 +84,28 @@ export default function InventoryForm({
     control,
     name: "warehouseInventories",
   });
+  const { data: categoriesData, isLoading: loadingCategories, refetch: refetchCategories } =
+    useFetchCategories();
   const { data: warehousesData, isLoading: loadingWarehouses } =
     useFetchWarehouseSelector();
 
   const hasTransactions = isEdit && !!initialData?.hasTransactions;
   const canEditDistribution = !hasTransactions;
+
+  const [showAddCategory, setShowAddCategory] = useState(false);
+  const { mutate: createCategory, isPending: creatingCategory } = useCreateCategory();
+
+  const handleCategoryCreated = (values: any) => {
+    createCategory(values, {
+      onSuccess: (data: any) => {
+        const newId = data?.data?.id ?? data?.id;
+        refetchCategories().then(() => {
+          if (newId) form.setValue("inventoryCategoryId", String(newId));
+        });
+        setShowAddCategory(false);
+      },
+    });
+  };
 
   useEffect(() => {
     if (!initialData) return;
@@ -86,6 +116,8 @@ export default function InventoryForm({
       boughtPrice: Number(initialData.boughtPrice) || 0,
       sellingPrice: Number(initialData.sellingPrice) || 0,
       unit: initialData.unit || "",
+      expiryDate: initialData.expiryDate || "",
+      inventoryCategoryId: initialData.inventoryCategory?.id || "",
       initialQuantity: Number(initialData.initialQuantity) || 0,
       warehouseInventories:
         initialData.warehouseInventories?.map((wi) => ({
@@ -93,8 +125,18 @@ export default function InventoryForm({
           quantity: Number(wi.quantity) || 0,
           reorderQuantity: Number(wi.reorderQuantity) || 0,
         })) || defaultValues.warehouseInventories,
+      hasTransactions: !!initialData.hasTransactions,
     });
   }, [initialData, reset]);
+
+  const categoryOptions = useMemo(
+    () =>
+      (categoriesData?.data ?? []).map((category) => ({
+        value: category.id,
+        label: category.name,
+      })),
+    [categoriesData],
+  );
 
   const warehouseOptions = useMemo(
     () =>
@@ -136,6 +178,8 @@ export default function InventoryForm({
       delete payload.initialQuantity;
       delete payload.warehouseInventories;
     }
+
+    delete payload.hasTransactions;
 
     onSubmit(payload as inventoryFormValues);
   };
@@ -215,6 +259,26 @@ export default function InventoryForm({
                 control={control as any}
                 label={t("inventory.form.sellingPrice")}
                 placeholder="0"
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <DateField
+                name="expiryDate"
+                control={control as any}
+                label={t("inventory.form.expiryDate")}
+                placeholder="YYYY-MM-DD"
+              />
+
+              <SelectField
+                name="inventoryCategoryId"
+                control={control as any}
+                label={t("inventory.form.category.title")}
+                placeholder={t("inventory.form.category.placeholder")}
+                options={categoryOptions}
+                canAdd
+                addLabel={t("inventory.form.category.add")}
+                onAddClick={() => setShowAddCategory(true)}
               />
             </div>
 
@@ -336,6 +400,23 @@ export default function InventoryForm({
           />
         </div>
       </form>
+
+      {/* ── Quick-Add Category Dialog ────────────────────────────────────── */}
+      <Dialog open={showAddCategory} onOpenChange={setShowAddCategory}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <PlusIcon className="h-5 w-5 text-primary" />
+              {t("inventory.form.category.add", { defaultValue: "Add New Category" })}
+            </DialogTitle>
+          </DialogHeader>
+          <CategoryForm
+            onSubmit={handleCategoryCreated}
+            onCancel={() => setShowAddCategory(false)}
+            isPending={creatingCategory}
+          />
+        </DialogContent>
+      </Dialog>
     </Form>
   );
 }

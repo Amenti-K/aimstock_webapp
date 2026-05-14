@@ -19,6 +19,7 @@ import {
   LayoutGrid,
   MoreVertical,
   MapPin,
+  Calendar,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -31,7 +32,7 @@ import {
 } from "@/api/inventory/api.inventory";
 import { usePermissions } from "@/hooks/permission.hook";
 import { AccessDeniedView } from "@/components/guards/AccessDeniedView";
-import { formatCurrency } from "@/lib/formatter";
+import { formatCurrency, formatDate } from "@/lib/formatter";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -222,31 +223,59 @@ export default function InventoryDetailPage() {
                       ? t("inventory.card.lowStock").toUpperCase()
                       : t("inventory.card.inStock").toUpperCase()}
                 </Badge>
+                {inventory.inventoryCategory && (
+                  <Badge
+                    className={cn(
+                      "rounded-lg px-2 py-0.5 text-[10px] font-extrabold border bg-primary/10 text-primary border-primary",
+                    )}
+                    variant="outline"
+                  >
+                    {inventory.inventoryCategory.name.toUpperCase()}
+                  </Badge>
+                )}
               </div>
             </div>
 
-            <div className="flex items-center gap-4">
-              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary shrink-0 border border-primary/20">
-                <Package className="h-8 w-8" />
-              </div>
-              <div className="flex flex-col">
-                <span className="text-[13px] text-muted-foreground">
-                  {t("inventory.card.name")}
-                </span>
-                <h1 className="text-[18px] font-bold tracking-tight leading-tight">
-                  {inventory.name}
-                </h1>
-                {inventory.brand && (
-                  <span className="text-xs text-muted-foreground mt-0.5">
-                    {t("inventory.card.brand")} :- {inventory.brand}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="flex items-center gap-4">
+                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary shrink-0 border border-primary/20">
+                  <Package className="h-8 w-8" />
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-[13px] text-muted-foreground">
+                    {t("inventory.card.name")}
                   </span>
-                )}
-                {!inventory.brand && (
-                  <span className="text-xs text-muted-foreground mt-0.5">
-                    {t("inventory.detail.unit")} :- {inventory.unit || "Units"}
-                  </span>
-                )}
+                  <h1 className="text-[18px] font-bold tracking-tight leading-tight">
+                    {inventory.name}
+                  </h1>
+                  {inventory.brand && (
+                    <span className="text-xs text-muted-foreground mt-0.5">
+                      {t("inventory.card.brand")} :- {inventory.brand}
+                    </span>
+                  )}
+                  {!inventory.brand && (
+                    <span className="text-xs text-muted-foreground mt-0.5">
+                      {t("inventory.detail.unit")} :-{" "}
+                      {inventory.unit || "Units"}
+                    </span>
+                  )}
+                </div>
               </div>
+              {inventory.expiryDate && (
+                <div className="flex items-center gap-4">
+                  <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary shrink-0 border border-primary/20">
+                    <Calendar className="h-8 w-8" />
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-[13px] text-muted-foreground">
+                      {t("inventory.card.expiryDate")}
+                    </span>
+                    <span className="text-[18px] font-bold tracking-tight leading-tight">
+                      {formatDate(inventory.expiryDate)}
+                    </span>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </CardContent>

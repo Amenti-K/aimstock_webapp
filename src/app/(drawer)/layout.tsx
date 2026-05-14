@@ -40,7 +40,7 @@ function MobileBottomTabs() {
     .filter(Boolean);
 
   return (
-    <div className="fixed bottom-4 left-4 right-4 z-50 flex items-center justify-around rounded-2xl border bg-background/85 backdrop-blur-md supports-[backdrop-filter]:bg-background/60 sm:hidden h-16 px-2 shadow-[0_8px_32px_rgba(0,0,0,0.12)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.4)] border-border/50">
+    <div className="fixed bottom-4 left-4 right-4 z-50 flex items-center justify-around rounded-2xl border bg-background/85 backdrop-blur-md supports-[backdrop-filter]:bg-background/60 md:hidden h-16 px-2 shadow-[0_8px_32px_rgba(0,0,0,0.12)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.4)] border-border/50">
       {orderedTabs.map((item: any) => (
         <NavLink
           key={item.href}

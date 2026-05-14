@@ -41,7 +41,7 @@ import {
 } from "../../interface/purchase/purchase.interface";
 import { useFetchWarehouseSelector } from "@/api/warehouse/api.warehouse";
 import { PartnerFormValues } from "@/components/forms/partner/partner.schema";
-import InventoryForm from "@/components/inventory/InventoryForm";
+import InventoryForm from "@/components/forms/inventory/InventoryForm";
 import { useCreateInventory } from "@/api/inventory/api.inventory";
 import { inventoryFormValues } from "@/components/schema/inventory.schema";
 

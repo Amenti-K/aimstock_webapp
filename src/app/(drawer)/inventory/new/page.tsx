@@ -4,7 +4,7 @@ import React from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, PackagePlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import InventoryForm from "@/components/inventory/InventoryForm";
+import InventoryForm from "@/components/forms/inventory/InventoryForm";
 import { useCreateInventory } from "@/api/inventory/api.inventory";
 import { usePermissions } from "@/hooks/permission.hook";
 import { AccessDeniedView } from "@/components/guards/AccessDeniedView";

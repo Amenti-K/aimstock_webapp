@@ -10,6 +10,7 @@ const endpoints = {
   WAREHOUSE: "/warehouse",
   PARTNER: "/partner",
   INVENTORY: "/inventory",
+  CATEGORIES: "/inventory-category",
   PURCHASE: "/purchase",
   SALE: "/sale",
   ROLE: "/role",
@@ -32,6 +33,5 @@ const endpoints = {
   MAILCONTACT: "/mail/contact",
   AUDITLOG: "/audit-log",
 };
-
 
 export default endpoints;

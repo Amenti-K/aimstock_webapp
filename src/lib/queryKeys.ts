@@ -79,6 +79,15 @@ export const queryKeys = {
       [...queryKeys.inventories.root, "report", filters ?? {}] as const,
   },
 
+  categories: {
+    root: ["categories"] as const,
+    // lists: () => [...queryKeys.categories.root, "list"] as const,
+    // list: () => [...queryKeys.categories.lists()] as const,
+    selector: () => [...queryKeys.categories.root, "selector"] as const,
+    detail: (id: string) =>
+      [...queryKeys.categories.root, "detail", id] as const,
+  },
+
   loans: {
     root: ["loans"] as const,
     partners: {

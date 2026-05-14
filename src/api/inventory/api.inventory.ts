@@ -5,8 +5,10 @@ import {
 import {
   IInventory,
   IInventoryAnalytics,
+  IInventoryCategory,
   IInventoryDetail,
   INewInventory,
+  INewInventoryCategory,
   ISelectorWarehouseInventoryResponse,
 } from "@/components/interface/inventory/inventory.interface";
 import { useFetch, useMutate, useInfiniteFetch } from "@/hooks/query.hook";
@@ -129,6 +131,46 @@ export const useDeleteInventory = () => {
       onError: onErrorNotification,
       onSuccess: () => toast.success("Inventory deleted successfully!"),
       queryKey: queryKeys.inventories.root,
+    },
+  );
+};
+
+// /categories
+
+export const useFetchCategories = () => {
+  return useFetch<IResponse<Array<IInventoryCategory>>>(endpoints.CATEGORIES, {
+    queryKey: queryKeys.categories.root,
+  });
+};
+
+export const useCreateCategory = () => {
+  return useMutate<INewInventoryCategory>(endpoints.CATEGORIES, "post", {
+    onError: onErrorNotification,
+    onSuccess: onSuccessNotification,
+    queryKey: queryKeys.categories.root,
+  });
+};
+
+export const useUpdateCategory = (id: string) => {
+  return useMutate<INewInventoryCategory>(
+    `${endpoints.CATEGORIES}/${id}`,
+    "patch",
+    {
+      onError: onErrorNotification,
+      onSuccess: onSuccessNotification,
+      queryKey: queryKeys.categories.root,
+    },
+  );
+};
+
+export const useDeleteCategory = (id: string) => {
+  return useMutate<INewInventoryCategory>(
+    `${endpoints.CATEGORIES}/${id}`,
+    "delete",
+    {
+      onError: onErrorNotification,
+      onSuccess: onSuccessNotification,
+      queryKey: queryKeys.categories.root,
     },
   );
 };

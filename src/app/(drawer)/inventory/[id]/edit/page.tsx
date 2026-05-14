@@ -4,7 +4,7 @@ import React from "react";
 import { useParams, useRouter } from "next/navigation";
 import { ArrowLeft, Edit3 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import InventoryForm from "@/components/inventory/InventoryForm";
+import InventoryForm from "@/components/forms/inventory/InventoryForm";
 import {
   useFetchInventory,
   useUpdateInventory,

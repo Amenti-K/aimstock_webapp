@@ -16,6 +16,12 @@ import {
   Boxes,
   TrendingUp,
   TrendingDown,
+  Calendar,
+  Filter,
+  FilterX,
+  Check,
+  ChevronDown,
+  X,
 } from "lucide-react";
 import {
   Table,
@@ -42,9 +48,45 @@ import {
 import {
   IInventory,
   StockStatus,
+  ExpiryStatus,
 } from "@/components/interface/inventory/inventory.interface";
-import { formatCurrency } from "@/lib/formatter";
+import { formatCurrency, formatDate } from "@/lib/formatter";
 import { cn } from "@/lib/utils";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+} from "@/components/ui/command";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useFetchCategories } from "@/api/inventory/api.inventory";
+import { Skeleton } from "@/components/ui/skeleton";
+import SelectField from "@/components/forms/fields/SelectField";
+import MultiSelectField from "@/components/forms/fields/MultiSelectField";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+
+const filterSchema = z.object({
+  search: z.string().optional(),
+  stockStatus: z.nativeEnum(StockStatus).optional(),
+  expiryStatus: z.nativeEnum(ExpiryStatus).optional(),
+  categoryIds: z.array(z.string()).optional(),
+});
+
+type FilterForm = z.infer<typeof filterSchema>;
 
 export default function InventoryPage() {
   const router = useRouter();
@@ -55,25 +97,57 @@ export default function InventoryPage() {
   const hasUpdateAccess = canUpdate("INVENTORY");
   const hasDeleteAccess = canDelete("INVENTORY");
   const [searchText, setSearchText] = useState("");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [stockStatus, setStockStatus] = useState<StockStatus>(StockStatus.ALL);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [selectedInventoryId, setSelectedInventoryId] = useState<string | null>(
     null,
   );
+
+  const { control, watch, reset, setValue } = useForm<FilterForm>({
+    resolver: zodResolver(filterSchema),
+    defaultValues: {
+      search: "",
+      stockStatus: StockStatus.ALL,
+      expiryStatus: ExpiryStatus.NONE,
+      categoryIds: [],
+    },
+  });
+
+  const {
+    stockStatus: selectedStockStatus,
+    expiryStatus: selectedExpiryStatus,
+    categoryIds: selectedCategoryIds,
+  } = watch();
+
+  const { data: categoriesData } = useFetchCategories();
   const deleteInventory = useDeleteInventory();
 
   useEffect(() => {
-    const timeout = setTimeout(() => setSearchQuery(searchText.trim()), 300);
+    const timeout = setTimeout(() => {
+      setValue("search", searchText.trim());
+    }, 300);
     return () => clearTimeout(timeout);
-  }, [searchText]);
+  }, [searchText, setValue]);
+
+  const searchQuery = watch("search");
 
   const filters = useMemo(
     () => ({
       ...(searchQuery ? { search: searchQuery } : {}),
-      stockStatus,
+      stockStatus: selectedStockStatus,
+      expiryStatus:
+        selectedExpiryStatus === ExpiryStatus.NONE
+          ? undefined
+          : selectedExpiryStatus,
+      categoryIds: selectedCategoryIds?.length
+        ? selectedCategoryIds
+        : undefined,
     }),
-    [searchQuery, stockStatus],
+    [
+      searchQuery,
+      selectedStockStatus,
+      selectedExpiryStatus,
+      selectedCategoryIds,
+    ],
   );
 
   const {
@@ -107,11 +181,8 @@ export default function InventoryPage() {
     return <AccessDeniedView moduleName={t("inventory.moduleName")} />;
   }
 
-  if (isLoading) return <LoadingView />;
-  if (isError) return <ErrorView refetch={refetch} />;
-
   return (
-    <div className="space-y-6 pb-20 md:pb-6">
+    <div className="space-y-6 pb-20 md:pb-6 relative">
       <div className="hidden md:flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <div className="flex items-center gap-2">
@@ -136,43 +207,128 @@ export default function InventoryPage() {
         )}
       </div>
 
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-        <div className="relative flex-1 max-w-sm">
-          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder={t("inventory.form.searchPlaceholder")}
-            className="pl-8 bg-card border-none shadow-sm focus-visible:ring-1"
-            value={searchText}
-            onChange={(e) => setSearchText(e.target.value)}
-          />
-        </div>
-        <div className="flex flex-wrap gap-2">
-          {[
-            { label: t("inventory.tabs.all"), value: StockStatus.ALL },
-            { label: t("inventory.tabs.low"), value: StockStatus.LOW },
-            { label: t("inventory.tabs.out"), value: StockStatus.OUT },
-          ].map((tab) => (
-            <Button
-              key={tab.value}
-              type="button"
-              variant={stockStatus === tab.value ? "default" : "outline"}
-              onClick={() => setStockStatus(tab.value)}
-              className={cn(
-                "rounded-full px-4 h-9",
-                stockStatus === tab.value
-                  ? "bg-primary text-primary-foreground shadow-md"
-                  : "bg-card border-none shadow-sm hover:bg-muted",
-              )}
-            >
-              {tab.label}
-            </Button>
-          ))}
+      <div className="p-4 bg-card rounded-2xl border-none shadow-sm space-y-4">
+        <div className="flex flex-col md:flex-row md:items-end gap-4">
+          {/* Search Row/Col */}
+          <div className="w-full md:w-72 shrink-0 space-y-1.5 flex items-center gap-2">
+            <div className="relative flex-1">
+              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder={t("inventory.form.searchPlaceholder")}
+                className="pl-8 bg-muted/30 border-none shadow-none focus-visible:ring-1 h-10"
+                value={searchText}
+                onChange={(e) => setSearchText(e.target.value)}
+              />
+            </div>
+            {(selectedExpiryStatus !== ExpiryStatus.NONE ||
+              (selectedCategoryIds?.length ?? 0) > 0 ||
+              selectedStockStatus !== StockStatus.ALL) && (
+              <div className="">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => {
+                    reset({
+                      search: searchQuery,
+                      stockStatus: StockStatus.ALL,
+                      expiryStatus: ExpiryStatus.NONE,
+                      categoryIds: [],
+                    });
+                  }}
+                  className="w-fit p-1 text-destructive hover:bg-destructive/10 rounded-xl border border-destructive/10 bg-destructive/5"
+                >
+                  {t("common.clearAll")}
+                  <X className="h-5 w-5" />
+                </Button>
+              </div>
+            )}
+          </div>
+
+          {/* Filters Row */}
+          <div className="flex flex-row items-center gap-3 overflow-x-hidden flex-1 pb-1 lg:pb-0 scrollbar-hide">
+            <div className="w-[100px] flex-1">
+              <SelectField
+                name="stockStatus"
+                control={control as any}
+                label={t("inventory.tabs.stockStatus")}
+                options={[
+                  { label: t("inventory.tabs.none"), value: StockStatus.ALL },
+                  { label: t("inventory.tabs.low"), value: StockStatus.LOW },
+                  { label: t("inventory.tabs.out"), value: StockStatus.OUT },
+                ]}
+              />
+            </div>
+
+            <div className="w-[100px] flex-1">
+              <SelectField
+                name="expiryStatus"
+                control={control as any}
+                label={t("inventory.card.expiryStatus")}
+                options={[
+                  { label: t("inventory.tabs.none"), value: ExpiryStatus.NONE },
+                  {
+                    label: t("inventory.tabs.expired"),
+                    value: ExpiryStatus.EXPIRED,
+                  },
+                  {
+                    label: t("inventory.tabs.in1Month", {
+                      defaultValue: "In 1 Month",
+                    }),
+                    value: ExpiryStatus.IN_1_MONTH,
+                  },
+                  {
+                    label: t("inventory.tabs.in3Month", {
+                      defaultValue: "In 3 Months",
+                    }),
+                    value: ExpiryStatus.IN_3_MONTH,
+                  },
+                  {
+                    label: t("inventory.tabs.in6Month", {
+                      defaultValue: "In 6 Months",
+                    }),
+                    value: ExpiryStatus.IN_6_MONTH,
+                  },
+                ]}
+              />
+            </div>
+
+            <div className="w-[110px] flex-1">
+              <MultiSelectField
+                name="categoryIds"
+                control={control as any}
+                label={t("inventory.table.category")}
+                options={(categoriesData?.data ?? []).map((c) => ({
+                  label: c.name,
+                  value: c.id,
+                }))}
+              />
+            </div>
+          </div>
         </div>
       </div>
 
       {/* Mobile View: Cards */}
-      <div className="grid grid-cols-1 gap-4 md:hidden">
-        {items.length === 0 ? (
+      <div className="grid grid-cols-1 gap-4 md:hidden relative min-h-[200px]">
+        {isLoading || (isFetchingNextPage && items.length === 0) ? (
+          Array.from({ length: 5 }).map((_, i) => (
+            <div
+              key={i}
+              className="bg-card rounded-2xl p-4 shadow-sm border-none flex flex-col gap-4 animate-pulse"
+            >
+              <div className="flex items-center gap-4">
+                <div className="h-14 w-14 rounded-2xl bg-muted" />
+                <div className="flex-1 space-y-2">
+                  <div className="h-4 w-2/3 bg-muted rounded" />
+                  <div className="h-3 w-1/3 bg-muted rounded" />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="h-12 bg-muted rounded-xl" />
+                <div className="h-12 bg-muted rounded-xl" />
+              </div>
+            </div>
+          ))
+        ) : items.length === 0 ? (
           <div className="flex flex-col items-center justify-center p-8 text-center bg-card rounded-xl border border-dashed">
             <Package className="h-10 w-10 text-muted-foreground mb-2" />
             <p className="text-muted-foreground text-sm font-medium">
@@ -205,7 +361,7 @@ export default function InventoryPage() {
                 {t("inventory.table.item")}
               </TableHead>
               <TableHead className="font-semibold">
-                {t("inventory.table.sku")}
+                {t("inventory.table.category")}
               </TableHead>
               <TableHead className="font-semibold text-right">
                 {t("inventory.table.stockLevel")}
@@ -222,7 +378,30 @@ export default function InventoryPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {items.length === 0 ? (
+            {isLoading || (isFetchingNextPage && items.length === 0) ? (
+              Array.from({ length: 5 }).map((_, i) => (
+                <TableRow key={i}>
+                  <TableCell>
+                    <div className="h-10 w-48 bg-muted animate-pulse rounded-lg" />
+                  </TableCell>
+                  <TableCell>
+                    <div className="h-4 w-24 bg-muted animate-pulse rounded" />
+                  </TableCell>
+                  <TableCell>
+                    <div className="h-10 w-16 bg-muted animate-pulse rounded ml-auto" />
+                  </TableCell>
+                  <TableCell>
+                    <div className="h-4 w-20 bg-muted animate-pulse rounded ml-auto" />
+                  </TableCell>
+                  <TableCell>
+                    <div className="h-4 w-20 bg-muted animate-pulse rounded ml-auto" />
+                  </TableCell>
+                  <TableCell>
+                    <div className="h-6 w-20 bg-muted animate-pulse rounded-full" />
+                  </TableCell>
+                </TableRow>
+              ))
+            ) : items.length === 0 ? (
               <TableRow>
                 <TableCell
                   colSpan={6}
@@ -261,18 +440,28 @@ export default function InventoryPage() {
                           <span className="font-semibold text-sm">
                             {item.name}
                           </span>
-                          {item.brand && (
-                            <span className="text-xs text-muted-foreground">
-                              {item.brand}
+                          {item.sku && (
+                            <span className="text-[10px] text-muted-foreground font-mono">
+                              {item.sku}{" "}
+                              {item.brand && (
+                                <>
+                                  <span className="text-xs text-muted-foreground">
+                                    •
+                                  </span>
+                                  {" " + item.brand}
+                                </>
+                              )}
                             </span>
                           )}
                         </div>
                       </div>
                     </TableCell>
                     <TableCell>
-                      <code className="text-[10px] font-mono bg-muted px-1.5 py-0.5 rounded text-muted-foreground">
-                        {item.sku || t("inventory.card.noSku")}
-                      </code>
+                      <div className="flex flex-col gap-1.5">
+                        <span className="text-sm">
+                          {item.inventoryCategory?.name || "-"}
+                        </span>
+                      </div>
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex flex-col items-end">
@@ -310,19 +499,35 @@ export default function InventoryPage() {
                           {t("inventory.card.outOfStock")}
                         </Badge>
                       ) : lowStock ? (
-                        <Badge
-                          variant="secondary"
-                          className="bg-yellow-100 text-yellow-700 border-none rounded-full px-3 text-[10px] font-bold"
-                        >
-                          {t("inventory.card.lowStock")}
-                        </Badge>
+                        <div className="flex flex-col gap-1.5">
+                          <Badge
+                            variant="secondary"
+                            className="bg-yellow-100 text-yellow-700 border-none rounded-full px-3 text-[10px] font-bold"
+                          >
+                            {t("inventory.card.lowStock")}
+                          </Badge>
+                          {item.expiryDate && (
+                            <div className="flex items-center gap-1.5 text-[10px] text-destructive/70 font-semibold">
+                              <Calendar className="h-3 w-3" />
+                              <span>{formatDate(item.expiryDate)}</span>
+                            </div>
+                          )}
+                        </div>
                       ) : (
-                        <Badge
-                          variant="secondary"
-                          className="bg-green-100 text-green-700 border-none rounded-full px-3 text-[10px] font-bold"
-                        >
-                          {t("inventory.card.inStock")}
-                        </Badge>
+                        <div className="flex flex-col gap-1.5">
+                          <Badge
+                            variant="secondary"
+                            className="bg-green-100 text-green-700 border-none rounded-full px-3 text-[10px] font-bold"
+                          >
+                            {t("inventory.card.inStock")}
+                          </Badge>
+                          {item.expiryDate && (
+                            <div className="flex items-center gap-1.5 text-[10px] text-destructive/70 font-semibold">
+                              <Calendar className="h-3 w-3" />
+                              <span>{formatDate(item.expiryDate)}</span>
+                            </div>
+                          )}
+                        </div>
                       )}
                     </TableCell>
                   </TableRow>
@@ -434,11 +639,25 @@ function InventoryMobileCard({
             <code className="text-[10px] font-mono bg-muted px-1.5 py-0.5 rounded-md text-muted-foreground border">
               {item.sku || t("inventory.card.noSku")}
             </code>
-            <span className="text-xs text-muted-foreground">•</span>
-            <span className="text-xs text-muted-foreground font-medium">
-              {item.brand || t("inventory.card.generics")}
-            </span>
+            {item.brand && (
+              <>
+                <span className="text-xs text-muted-foreground">•</span>
+                <span className="text-xs text-muted-foreground font-medium">
+                  {item.brand}
+                </span>
+              </>
+            )}
           </div>
+          {item.inventoryCategory && (
+            <div className="mt-1">
+              <Badge
+                variant="outline"
+                className="px-1.5 py-0 text-[9px] font-bold bg-primary/5 border-primary/20 text-primary/80"
+              >
+                {item.inventoryCategory.name.toUpperCase()}
+              </Badge>
+            </div>
+          )}
         </div>
       </div>
 
@@ -490,6 +709,21 @@ function InventoryMobileCard({
             {t("inventory.card.currentStock")}
           </span>
         </div>
+
+        {item.expiryDate && (
+          <div className="flex flex-col items-center gap-1.5 ">
+            <span className="text-xs text-muted-foreground">
+              {" "}
+              {t("inventory.card.expiryDate")}
+            </span>
+            <div className="flex items-center gap-1.5 text-destructive/70">
+              <Calendar className="h-3 w-3" />
+              <span className="text-[10px] font-bold uppercase tracking-wider">
+                {formatDate(item.expiryDate)}
+              </span>
+            </div>
+          </div>
+        )}
 
         {outOfStock ? (
           <Badge

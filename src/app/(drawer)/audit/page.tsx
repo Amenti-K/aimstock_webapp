@@ -108,11 +108,17 @@ export default function AuditPage() {
     return <AccessDeniedView moduleName={t("audit.moduleName")} />;
   }
 
-  if (isLoading) return <LoadingView />;
-  if (isError) return <ErrorView refetch={refetch} />;
-
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 relative">
+      {(isLoading || (isFetchingNextPage && logs.length === 0)) && (
+        <div className="absolute inset-x-0 top-32 z-50 flex justify-center">
+          <div className="bg-background/80 backdrop-blur-sm p-4 rounded-2xl shadow-xl border flex items-center gap-3">
+            <div className="h-5 w-5 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+            <span className="text-sm font-medium">{t("common.loading")}</span>
+          </div>
+        </div>
+      )}
+      {/* Header - Hidden on mobile */}
       {/* Header - Hidden on mobile */}
       <div className="hidden md:block">
         <h1 className="text-2xl font-bold tracking-tight">{t("audit.moduleName")}</h1>

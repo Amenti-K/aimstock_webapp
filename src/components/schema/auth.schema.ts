@@ -4,11 +4,13 @@ export const signUpSchema = z
   .object({
     name: z
       .string()
+      .trim()
       .min(5, "Name must be at least 5 characters long")
       .nonempty("Name is required"),
 
     phoneNumber: z
       .string()
+      .trim()
       .regex(
         /^(09[0-9]{8}|07[0-9]{8}|\+2519[0-9]{8}|\+2517[0-9]{8})$/,
         "Phone number must be a valid Ethiopian number (e.g. 0912345678 or +251912345678 or 0712345678 or +251712345678)",
@@ -17,18 +19,23 @@ export const signUpSchema = z
 
     companyName: z
       .string()
+      .trim()
       .min(5, "Company name must be at least 5 characters long")
       .nonempty("Company name is required"),
 
     password: z
       .string()
+      .trim()
       .min(6, "Password must be at least 6 characters long")
       .nonempty("Password is required"),
 
-    confirmPassword: z.string().nonempty("Confirm password is required"),
+    confirmPassword: z.string().trim().nonempty("Confirm password is required"),
     acceptedTerms: z
       .boolean()
-      .refine((val) => val === true, "You must accept the terms and conditions"),
+      .refine(
+        (val) => val === true,
+        "You must accept the terms and conditions",
+      ),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords do not match",

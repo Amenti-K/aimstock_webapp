@@ -36,12 +36,20 @@ export const inventorySchema = z
       .number("initialQuantity is required")
       .min(0, "initialQuantity must be >= 0"),
 
+    expiryDate: z.string("expiryDate must be a date string").optional(),
+
+    inventoryCategoryId: z.string("inventoryCategoryId is required").optional(),
+
     warehouseInventories: z
       .array(CreateWarehouseInventorySchema)
       .min(1, "warehouseInventories must contain at least one item"),
+
+    hasTransactions: z.boolean().optional(),
   })
   .refine(
     (data) => {
+      if (data.hasTransactions) return true;
+
       // Calculate the sum of all warehouse quantities
       const totalWarehouseQuantity = data.warehouseInventories.reduce(
         (sum, warehouse) => sum + (warehouse.quantity || 0),
@@ -57,31 +65,56 @@ export const inventorySchema = z
     },
   );
 
-export const inventoryUpdateSchema = z.object({
-  sku: z.string("sku must be a string").optional(),
+export const inventoryUpdateSchema = z
+  .object({
+    sku: z.string("sku must be a string").optional(),
 
-  name: z.string("name is required").min(1, "name cannot be empty"),
+    name: z.string("name is required").min(1, "name cannot be empty"),
 
-  boughtPrice: z
-    .number("boughtPrice is required")
-    .min(0, "boughtPrice must be >= 0"),
+    boughtPrice: z
+      .number("boughtPrice is required")
+      .min(0, "boughtPrice must be >= 0"),
 
-  sellingPrice: z
-    .number("sellingPrice is required")
-    .min(0, "sellingPrice must be >= 0"),
+    sellingPrice: z
+      .number("sellingPrice is required")
+      .min(0, "sellingPrice must be >= 0"),
 
-  brand: z.string("brand must be a string").optional(),
+    brand: z.string("brand must be a string").optional(),
 
-  unit: z.string("unit is required").min(1, "unit cannot be empty"),
+    unit: z.string("unit is required").min(1, "unit cannot be empty"),
 
-  initialQuantity: z
-    .number("initialQuantity is required")
-    .min(0, "initialQuantity must be >= 0"),
+    initialQuantity: z
+      .number("initialQuantity is required")
+      .min(0, "initialQuantity must be >= 0"),
 
-  warehouseInventories: z
-    .array(CreateWarehouseInventorySchema)
-    .min(1, "warehouseInventories must contain at least one item"),
-});
+    expiryDate: z.string("expiryDate must be a date string").optional(),
+
+    inventoryCategoryId: z.string("inventoryCategoryId is required").optional(),
+
+    warehouseInventories: z
+      .array(CreateWarehouseInventorySchema)
+      .min(1, "warehouseInventories must contain at least one item"),
+
+    hasTransactions: z.boolean().optional(),
+  })
+  .refine(
+    (data) => {
+      if (data.hasTransactions) return true;
+
+      // Calculate the sum of all warehouse quantities
+      const totalWarehouseQuantity = data.warehouseInventories.reduce(
+        (sum, warehouse) => sum + (warehouse.quantity || 0),
+        0,
+      );
+      // Ensure it equals the initial quantity
+      return totalWarehouseQuantity === data.initialQuantity;
+    },
+    {
+      message:
+        "The sum of warehouse quantities must equal the initial quantity",
+      path: ["initialQuantity"], // This will show the error on the warehouse inventories field
+    },
+  );
 
 // Schema for array of inventory items (bulk creation)
 export const inventoriesArraySchema = z.object({
@@ -89,10 +122,6 @@ export const inventoriesArraySchema = z.object({
     .array(inventorySchema)
     .min(1, "At least one product is required"),
 });
-
-export type inventoriesArrayFormValues = z.infer<typeof inventoriesArraySchema>;
-export type inventoryFormValues = z.infer<typeof inventorySchema>;
-export type inventoryUpdateFormValues = z.infer<typeof inventoryUpdateSchema>;
 
 export const QuickInventorySchema = z.object({
   sku: z.string("sku must be a string").optional(),
@@ -110,9 +139,25 @@ export const QuickInventorySchema = z.object({
   brand: z.string("brand must be a string").optional(),
 
   unit: z.string("unit is required").min(1, "unit cannot be empty"),
+
+  expiryDate: z.string("expiryDate must be a date string").optional(),
+
+  inventoryCategoryId: z.string("inventoryCategoryId is required").optional(),
 });
 
+export type inventoriesArrayFormValues = z.infer<typeof inventoriesArraySchema>;
+export type inventoryFormValues = z.infer<typeof inventorySchema>;
+export type inventoryUpdateFormValues = z.infer<typeof inventoryUpdateSchema>;
 export type QuickInventoryFormValues = z.infer<typeof QuickInventorySchema>;
 export type warehouseInventoryFormValues = z.infer<
   typeof CreateWarehouseInventorySchema
+>;
+
+export const InventoryCategorySchema = z.object({
+  name: z.string("name is required").min(1, "name cannot be empty"),
+  description: z.string("description must be a string").optional(),
+});
+
+export type InventoryCategoryFormValues = z.infer<
+  typeof InventoryCategorySchema
 >;
