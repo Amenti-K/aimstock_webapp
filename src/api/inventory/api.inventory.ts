@@ -143,6 +143,28 @@ export const useFetchCategories = () => {
   });
 };
 
+export const useFetchCategoryById = (id: string, enabled?: boolean) => {
+  return useFetch<IResponse<IInventoryCategory>>(
+    `${endpoints.CATEGORIES}/${id}`,
+    {
+      queryKey: queryKeys.categories.detail(id),
+      enabled: enabled ?? !!id,
+    },
+  );
+};
+
+export const useAssignInventoryCategory = (inventoryId: string) => {
+  return useMutate<{ inventoryCategoryId: string | null }>(
+    `${endpoints.INVENTORY}/${inventoryId}`,
+    "patch",
+    {
+      onError: onErrorNotification,
+      onSuccess: onSuccessNotification,
+      queryKey: queryKeys.inventories.root,
+    },
+  );
+};
+
 export const useCreateCategory = () => {
   return useMutate<INewInventoryCategory>(endpoints.CATEGORIES, "post", {
     onError: onErrorNotification,
@@ -171,6 +193,18 @@ export const useDeleteCategory = (id: string) => {
       onError: onErrorNotification,
       onSuccess: onSuccessNotification,
       queryKey: queryKeys.categories.root,
+    },
+  );
+};
+
+export const useAssignInventoriesToCategory = (categoryId: string) => {
+  return useMutate<{ inventoryIds: string[] }>(
+    `${endpoints.CATEGORIES}/${categoryId}/assign-inventories`,
+    "patch",
+    {
+      onError: onErrorNotification,
+      onSuccess: onSuccessNotification,
+      queryKey: [queryKeys.inventories.root, queryKeys.categories.root],
     },
   );
 };

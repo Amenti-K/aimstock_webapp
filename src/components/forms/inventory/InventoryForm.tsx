@@ -273,11 +273,11 @@ export default function InventoryForm({
               <SelectField
                 name="inventoryCategoryId"
                 control={control as any}
-                label={t("inventory.form.category.title")}
-                placeholder={t("inventory.form.category.placeholder")}
+                label={t("category.form.title")}
+                placeholder={t("category.form.placeholder")}
                 options={categoryOptions}
                 canAdd
-                addLabel={t("inventory.form.category.add")}
+                addLabel={t("category.form.add")}
                 onAddClick={() => setShowAddCategory(true)}
               />
             </div>
@@ -407,7 +407,7 @@ export default function InventoryForm({
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <PlusIcon className="h-5 w-5 text-primary" />
-              {t("inventory.form.category.add", { defaultValue: "Add New Category" })}
+              {t("category.form.add", { defaultValue: "Add New Category" })}
             </DialogTitle>
           </DialogHeader>
           <CategoryForm

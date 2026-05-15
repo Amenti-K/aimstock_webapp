@@ -1,0 +1,33 @@
+{
+  "moduleName": "Categories",
+  "description": "Manage and organize your inventory into categories.",
+  "emptyCategory": "No categories found. Start by adding your first category.",
+  "emptyInventory": "No inventory items in this category yet.",
+  "table": {
+    "name": "Name",
+    "description": "Description",
+    "actions": "Actions",
+    "itemCount": "Items"
+  },
+  "form": {
+    "add": "New Category",
+    "edit": "Edit Category",
+    "name": "Name *",
+    "description": "Description (optional)",
+    "namePlaceholder": "e.g., Electronics",
+    "descriptionPlaceholder": "Enter category description...",
+    "title": "Category (optional)",
+    "placeholder": "Select Category",
+    "searchPlaceholder": "Search categories..."
+  },
+  "detail": {
+    "title": "Category Detail",
+    "inventories": "Inventories in Category",
+    "addInventory": "Add Inventory",
+    "addInventoryTitle": "Add Inventory to this Category",
+    "addInventoryDescription": "Select an inventory item to assign to this category.",
+    "removeInventory": "Remove",
+    "removeInventoryTitle": "Remove from Category",
+    "removeInventoryMessage": "Are you sure you want to remove this item from the category?"
+  }
+}

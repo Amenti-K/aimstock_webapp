@@ -49,14 +49,14 @@ export default function CategoryForm({
       <TextField
         name="name"
         control={control as any}
-        label={t("inventory.form.category.name")}
-        placeholder={t("inventory.form.category.namePlaceholder")}
+        label={t("category.form.name")}
+        placeholder={t("category.form.namePlaceholder")}
       />
       <TextAreaField
         name="description"
         control={control as any}
-        label={t("inventory.form.category.description")}
-        placeholder={t("inventory.form.category.descriptionPlaceholder")}
+        label={t("category.form.description")}
+        placeholder={t("category.form.descriptionPlaceholder")}
       />
       <div className="flex justify-between  gap-3">
         <div className="w-full flex-1">

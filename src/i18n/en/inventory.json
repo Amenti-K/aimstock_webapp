@@ -112,15 +112,6 @@
     "unit": "Unit(psc,kg,ltr,etc) *",
     "mfgDate": "Manufacturing Date (optional)",
     "expiryDate": "Expiry Date (optional)",
-    "category": {
-      "add": "Add New Category",
-      "name": "Name *",
-      "description": "Description (optional)",
-      "namePlaceholder": "e.g., Electronics",
-      "descriptionPlaceholder": "Enter category description...",
-      "title": "Category (optional)",
-      "placeholder": "Select Category"
-    },
     "inventoryInfo": "Inventory Information",
     "inventoryInfoDesc": "Enter basic item details and pricing",
     "wareInv": {

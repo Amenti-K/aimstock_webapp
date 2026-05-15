@@ -112,15 +112,7 @@
     "unit": "መለኪያ(psc,kg,ltr,etc) *",
     "mfgDate": "የምርት ቀን (አማራጭ)",
     "expiryDate": "የማብቂያ ቀን (አማራጭ)",
-    "category": {
-      "add": "ምድብ ጨምር",
-      "name": "ስም *",
-      "description": "መግለጫ (አማራጭ)",
-      "namePlaceholder": "ለምሳሌ: ኤሌክትሮኒክስ",
-      "descriptionPlaceholder": "የምድብ መግለጫ ያስገቡ...",
-      "title": "ምድብ (አማራጭ)",
-      "placeholder": "ምድብ ይምረጡ"
-    },
+
     "inventoryInfo": "የክምችት መረጃ",
     "inventoryInfoDesc": "መሰረታዊ የዕቃ ዝርዝሮችን እና ዋጋዎችን ያስገቡ",
     "wareInv": {

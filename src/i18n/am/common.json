@@ -2,8 +2,8 @@
   "saving": "በማስቀመጥ ላይ...",
   "skip": "ዝለል",
   "confirmDelete": {
-    "title": "{entity} ሰርዝ",
-    "message": "ይህን {entity.toLowerCase()} መሰረዝ እንደሚፈልጉ እርግጠኛ ነዎት?"
+    "title": "{{entity}} ሰርዝ",
+    "message": "ይህን {{entity}} መሰረዝ እንደሚፈልጉ እርግጠኛ ነዎት?"
   },
   "confirmLogout": {
     "title": "ውጣ",
@@ -73,6 +73,7 @@
   "others": "ሌሎች",
   "share": "ድርሻ",
   "select": "ይምረጡ",
+  "add": "ጨምር",
   "addNew": "አዲስ ጨምር",
   "cash": "ጥሬ ገንዘብ",
   "birr": "ብር",
@@ -98,6 +99,7 @@
   "back": "ወደኋላ",
   "disable": "አሰናክል",
   "success": "ተሳክቷል",
+  "selected": "ተመርጠዋል",
   "type": "ዓይነት",
   "notSpecified": "አልተገለጸም",
   "noContact": "መገናኛ የለም",

@@ -5,7 +5,6 @@ import {
   useDeleteInventory,
   useGetInventoriesInfinite,
 } from "@/api/inventory/api.inventory";
-import { LoadingView, ErrorView } from "@/components/common/StateView";
 import { AccessDeniedView } from "@/components/guards/AccessDeniedView";
 import { usePermissions } from "@/hooks/permission.hook";
 import { Button } from "@/components/ui/button";
@@ -17,11 +16,8 @@ import {
   TrendingUp,
   TrendingDown,
   Calendar,
-  Filter,
-  FilterX,
-  Check,
-  ChevronDown,
   X,
+  Box,
 } from "lucide-react";
 import {
   Table,
@@ -52,27 +48,7 @@ import {
 } from "@/components/interface/inventory/inventory.interface";
 import { formatCurrency, formatDate } from "@/lib/formatter";
 import { cn } from "@/lib/utils";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-} from "@/components/ui/command";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { useFetchCategories } from "@/api/inventory/api.inventory";
-import { Skeleton } from "@/components/ui/skeleton";
 import SelectField from "@/components/forms/fields/SelectField";
 import MultiSelectField from "@/components/forms/fields/MultiSelectField";
 import { useForm } from "react-hook-form";
@@ -197,14 +173,22 @@ export default function InventoryPage() {
             {t("inventory.description")}
           </p>
         </div>
-        {hasCreateAccess && (
+        <div className="flex gap-2">
           <Button
-            className="w-full sm:w-auto bg-primary hover:bg-primary/90 shadow-sm"
-            onClick={() => router.push("/inventory/new")}
+            className="w-full sm:w-auto bg-secondary hover:bg-secondary/90 shadow-sm"
+            onClick={() => router.push("/inventory/category")}
           >
-            <Plus className="mr-2 h-4 w-4" /> {t("common.addNew")}
+            <Box className="mr-2 h-4 w-4" /> {t("category.moduleName")}
           </Button>
-        )}
+          {hasCreateAccess && (
+            <Button
+              className="w-full sm:w-auto bg-primary hover:bg-primary/90 shadow-sm"
+              onClick={() => router.push("/inventory/new")}
+            >
+              <Plus className="mr-2 h-4 w-4" /> {t("common.addNew")}
+            </Button>
+          )}
+        </div>
       </div>
 
       <div className="p-4 bg-card rounded-2xl border-none shadow-sm space-y-4">
@@ -336,19 +320,29 @@ export default function InventoryPage() {
             </p>
           </div>
         ) : (
-          items.map((item: IInventory) => (
-            <InventoryMobileCard
-              key={item.id}
-              item={item}
-              onClick={() => router.push(`/inventory/${item.id}`)}
-              hasUpdateAccess={hasUpdateAccess}
-              hasDeleteAccess={hasDeleteAccess}
-              onDelete={(id) => {
-                setSelectedInventoryId(id);
-                setIsDeleteOpen(true);
-              }}
-            />
-          ))
+          <>
+            <div className="flex gap-2">
+              <Button
+                className="w-full sm:w-auto bg-secondary hover:bg-secondary/90 shadow-sm"
+                onClick={() => router.push("/inventory/category")}
+              >
+                <Box className="mr-2 h-4 w-4" /> {t("category.moduleName")}
+              </Button>
+            </div>
+            {items.map((item: IInventory) => (
+              <InventoryMobileCard
+                key={item.id}
+                item={item}
+                onClick={() => router.push(`/inventory/${item.id}`)}
+                hasUpdateAccess={hasUpdateAccess}
+                hasDeleteAccess={hasDeleteAccess}
+                onDelete={(id) => {
+                  setSelectedInventoryId(id);
+                  setIsDeleteOpen(true);
+                }}
+              />
+            ))}
+          </>
         )}
       </div>
 

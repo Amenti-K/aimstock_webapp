@@ -1,0 +1,33 @@
+{
+  "moduleName": "ምድቦች",
+  "description": "ክምችቶችዎን ወደ ምድቦች ያስተዳድሩ እና ያደራጁ።",
+  "emptyCategory": "ምንም ምድብ አልተገኘም። ምድቦን ለማከል ይጀምሩ።",
+  "emptyInventory": "በዚህ ምድብ ውስጥ ምንም ዕቃ አልተገኘም።",
+  "table": {
+    "name": "ስም",
+    "description": "መግለጫ",
+    "actions": "ድርጊቶች",
+    "itemCount": "ዕቃዎች"
+  },
+  "form": {
+    "add": "አዲስ ምድብ",
+    "edit": "ምድብ አዘምን",
+    "name": "ስም *",
+    "description": "መግለጫ (አማራጭ)",
+    "namePlaceholder": "ለምሳሌ: ኤሌክትሮኒክስ",
+    "descriptionPlaceholder": "የምድብ መግለጫ ያስገቡ...",
+    "title": "ምድብ (አማራጭ)",
+    "placeholder": "ምድብ ይምረጡ",
+    "searchPlaceholder": "ምድቦችን ፈልግ..."
+  },
+  "detail": {
+    "title": "የምድብ ዝርዝር",
+    "inventories": "በምድቡ ውስጥ ያሉ ክምችቶች",
+    "addInventory": "ክምችት ጨምር",
+    "addInventoryTitle": "ለዚህ ምድብ ክምችት ጨምር",
+    "addInventoryDescription": "ለዚህ ምድብ ሊሰጡ የሚፈልጉት ዕቃ ይምረጡ።",
+    "removeInventory": "አስወጣ",
+    "removeInventoryTitle": "ከምድብ አስወጣ",
+    "removeInventoryMessage": "ይህን ዕቃ ከምድቡ ለማስወጣት እርግጠኛ ነዎት?"
+  }
+}

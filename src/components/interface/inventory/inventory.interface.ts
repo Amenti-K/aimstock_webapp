@@ -189,6 +189,7 @@ export interface IInventoryAnalytics {
 export interface IInventoryCategory {
   id: string;
   name: string;
+  description?: string;
 }
 
 export interface INewInventoryCategory {

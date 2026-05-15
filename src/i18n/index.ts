@@ -22,6 +22,7 @@ import en_plan from "./en/plan.json";
 import en_loan from "./en/loan.json";
 import en_setupSteps from "./en/setupSteps.json";
 import en_audit from "./en/audit.json";
+import en_category from "./en/category.json";
 
 import am_common from "./am/common.json";
 import am_accounts from "./am/account.json";
@@ -43,6 +44,7 @@ import am_plan from "./am/plan.json";
 import am_loan from "./am/loan.json";
 import am_setupSteps from "./am/setupSteps.json";
 import am_audit from "./am/audit.json";
+import am_category from "./am/category.json";
 
 const resources = {
   en: {
@@ -67,6 +69,7 @@ const resources = {
       loan: en_loan,
       setup: en_setupSteps,
       audit: en_audit,
+      category: en_category,
     },
   },
   am: {
@@ -91,6 +94,7 @@ const resources = {
       loan: am_loan,
       setup: am_setupSteps,
       audit: am_audit,
+      category: am_category,
     },
   },
 };
