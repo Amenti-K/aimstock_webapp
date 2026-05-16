@@ -4,6 +4,7 @@ import {
   AnalyticsResponse,
   BarChartResponse,
   PieChartResponse,
+  ReportResponse,
 } from "@/components/interface/analytics/interface.analytics";
 import { IResponse } from "@/components/interface/common.interface";
 import { queryKeys } from "@/constants/queryKeys";
@@ -30,5 +31,16 @@ export const useProfit = (options?: { enabled?: boolean }) => {
   return useFetch<BarChartResponse>(endpoints.ANALYTICS + "/charts/profit", {
     queryKey: queryKeys.analytics.profit(),
     enabled: options?.enabled ?? true,
+  });
+};
+
+export const useReport = (
+  enabled: boolean,
+  filters: Record<string, any> = {},
+) => {
+  return useFetch<IResponse<ReportResponse>>(endpoints.ANALYTICS + "/report", {
+    queryKey: [...queryKeys.analytics.summary(), "report", filters],
+    params: { ...filters },
+    enabled,
   });
 };

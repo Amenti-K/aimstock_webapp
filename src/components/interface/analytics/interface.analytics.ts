@@ -53,3 +53,11 @@ export interface SingleBarChart {
 export interface BarChartResponse {
   chartData: SingleBarChart[];
 }
+
+export interface ReportResponse {
+  totalIncome: number;
+  totalCOGS: number;
+  totalExpenses: number;
+  grossProfit: number;
+  reportList: any[];
+}
