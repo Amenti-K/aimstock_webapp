@@ -11,7 +11,8 @@
   },
   "card": {
     "amount": "Amount",
-    "description": "Description"
+    "description": "Description",
+    "template": "Template"
   },
   "detail": {
     "title": "Expense Detail",
@@ -24,9 +25,14 @@
     "cash": "Cash"
   },
   "form": {
+    "addCommonExpense": "New Common Expense",
     "addExpense": "New Expense",
     "editExpense": "Edit Expense",
     "description": "Description (optional)",
+    "templateName": "Template Name",
+    "createNewTemplate": "Create New Template",
+    "manageTemplates": "Manage Templates",
+    "basedOnTemplate": "Based on template:",
     "bankPay": {
       "title": "Bank Payments",
       "index": "Payment {index}",

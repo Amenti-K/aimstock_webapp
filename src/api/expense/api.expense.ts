@@ -76,3 +76,55 @@ export const useDeleteExpense = () => {
     },
   );
 };
+
+export const useGetExpenseTemplatesInfinite = (
+  filterOptions?: Record<string, any>,
+  enabled?: boolean,
+) => {
+  const { search, ...filter } = filterOptions ?? { search: undefined };
+  const queryParams = {
+    ...(filter ? { ...filter } : {}),
+    ...(search ? { search } : {}),
+  };
+
+  return useInfiniteFetch<IResponse<Array<any>>>(endpoints.EXPENSETEMPLATE, {
+    queryKey: queryKeys.expenseTemplates.list(queryParams),
+    params: { ...queryParams, limit: 10 },
+    enabled: enabled ?? true,
+  });
+};
+
+export const useCreateExpenseTemplate = () => {
+  return useMutate<any>(endpoints.EXPENSETEMPLATE, "post", {
+    onError: onErrorNotification,
+    onSuccess: onSuccessNotification,
+    queryKey: queryKeys.expenseTemplates.root,
+  });
+};
+
+export const useFetchExpenseTemplateById = (id: string, enabled?: boolean) => {
+  return useFetch<IResponse<any>>(`${endpoints.EXPENSETEMPLATE}/${id}`, {
+    queryKey: queryKeys.expenseTemplates.detail(id),
+    enabled: enabled ?? !!id,
+  });
+};
+
+export const useUpdateExpenseTemplate = (id: string) => {
+  return useMutate<any>(`${endpoints.EXPENSETEMPLATE}/${id}`, "patch", {
+    onError: onErrorNotification,
+    onSuccess: onSuccessNotification,
+    queryKey: queryKeys.expenseTemplates.root,
+  });
+};
+
+export const useDeleteExpenseTemplate = () => {
+  return useMutate(
+    (data: any) => `${endpoints.EXPENSETEMPLATE}/${data.id}`,
+    "delete",
+    {
+      onError: onErrorNotification,
+      onSuccess: () => toast.success("Expense template deleted successfully!"),
+      queryKey: queryKeys.expenseTemplates.root,
+    },
+  );
+};

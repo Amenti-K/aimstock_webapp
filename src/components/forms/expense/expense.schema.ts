@@ -12,11 +12,14 @@ const expenseCashPaymentSchema = z.object({
 export const expenseSchema = z
   .object({
     description: z.string().optional(),
+    expenseTemplateId: z.string().optional(),
     paymentItems: z.array(expensePaymentSchema),
     cashItem: expenseCashPaymentSchema.optional(),
   })
   .refine((data) => {
-    const bankTotal = data.paymentItems.reduce((sum, item) => sum + (item.amount || 0), 0);
+    const bankTotal =
+      data.paymentItems?.reduce((sum, item) => sum + (item.amount || 0), 0) ||
+      0;
     const cashTotal = data.cashItem?.amount || 0;
     return bankTotal + cashTotal > 0;
   }, "Total expense amount must be greater than 0");

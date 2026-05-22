@@ -64,6 +64,15 @@ export const queryKeys = {
     detail: (id: string) => [...queryKeys.expenses.root, "detail", id] as const,
   },
 
+  expenseTemplates: {
+    root: ["expenseTemplates"] as const,
+    lists: () => [...queryKeys.expenseTemplates.root, "list"] as const,
+    list: (filters: any) =>
+      [...queryKeys.expenseTemplates.lists(), filters] as const,
+    detail: (id: string) =>
+      [...queryKeys.expenseTemplates.root, "detail", id] as const,
+  },
+
   inventories: {
     root: ["inventories"] as const,
     lists: () => [...queryKeys.inventories.root, "list"] as const,

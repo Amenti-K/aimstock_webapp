@@ -19,6 +19,7 @@ import {
   DollarSign,
   Activity,
   RefreshCcw,
+  Printer,
 } from "lucide-react";
 import {
   useGetAnalytics,
@@ -33,9 +34,11 @@ import { usePermissions } from "@/hooks/permission.hook";
 import { AccessDeniedView } from "@/components/guards/AccessDeniedView";
 import { cn } from "@/lib/utils";
 import { useTranslation } from "react-i18next";
+import { useRouter } from "next/navigation";
 
 export default function DashboardPage() {
   const { t } = useTranslation();
+  const router = useRouter();
 
   const timeFrameOptions = [
     { label: t("common.timeFrame.30days"), value: TimeFrame.LAST_30_DAYS },
@@ -72,6 +75,10 @@ export default function DashboardPage() {
     refetchSummary();
     refetchPie();
     // refetchProfit();
+  };
+
+  const handlePrint = () => {
+    router.push("/dashboard/print");
   };
 
   if (!hasViewAccess) {
@@ -141,9 +148,26 @@ export default function DashboardPage() {
         <h1 className="text-2xl font-bold tracking-tight">
           {t("analytics.dashboardOverview")}
         </h1>
-        <Button variant="ghost" size="icon" onClick={handleRefresh}>
-          <RefreshCcw className="h-4 w-4" />
-        </Button>
+
+        <div className="flex flex-row gap-2 w-fit">
+          <Button
+            className="flex flex-row gap-2 px-2 mx-2 w-fit cursor-pointer"
+            variant="ghost"
+            size="icon"
+            onClick={handlePrint}
+          >
+            <span>{t("analytics.reports.printReport")}</span>
+            <Printer className="h-4 w-4" />
+          </Button>
+          <Button
+            className="mx-2"
+            variant="ghost"
+            size="icon"
+            onClick={handleRefresh}
+          >
+            <RefreshCcw className="h-4 w-4" />
+          </Button>
+        </div>
       </div>
 
       <div className="grid gap-3 sm:gap-4 grid-cols-2">

@@ -1,9 +1,20 @@
 import { ILastAudit } from "../auditLog/interface.audit";
 
+export interface IExpenseTemplate {
+  id: string;
+  name: string;
+  amount?: number;
+  description?: string;
+  createdAt: Date;
+  updatedAt: Date;
+  _count?: { expenses: number };
+}
+
 export interface IExpense {
   id: string;
   amount: number;
   description?: string;
+  expenseTemplate?: { id: string; name: string };
   createdAt: Date;
   updatedAt: Date;
 }
@@ -19,7 +30,7 @@ export interface IExpenseDetail extends IExpense {
       bank: string;
     };
   }[];
-  expenseCashPayment: {
+  expenseCashPayment?: {
     amount: number;
   };
   lastAuditLog: ILastAudit;
@@ -36,8 +47,9 @@ export interface INewExpenseCashPayment {
 
 export interface INewExpense {
   description?: string;
+  expenseTemplateId?: string;
   paymentItems?: INewExpensePayment[];
-  cashItem: INewExpenseCashPayment;
+  cashItem?: INewExpenseCashPayment;
 }
 
 export interface IExpenseFormProps {

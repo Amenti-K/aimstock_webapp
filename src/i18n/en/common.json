@@ -69,6 +69,8 @@
     "days": "Days"
   },
   "for": "for",
+  "to": "to",
+  "from": "from",
   "date": "Date",
   "others": "Others",
   "share": "Share",

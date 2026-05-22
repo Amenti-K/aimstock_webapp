@@ -50,5 +50,37 @@
       "cashFlow": "የተጣራ የገንዘብ እንቅስቃሴ"
     }
   },
+  "reports": {
+    "title": "የፋይናንስ ሪፖርት",
+    "printReport": "ሪፖርት አትም",
+    "quickSelect": "ፈጣን ምርጫ",
+    "customDateRange": "ተስተካካይ የቀን ክልል",
+    "period": "ጊዜ",
+    "start": "የመጀመሪያ ቀን",
+    "end": "የመጨረሻ ቀን",
+    "generatedOn": "የተፈጠረበት ቀን",
+    "totalIncome": "ጠቅላላ ገቢ",
+    "cogs": "የተሸጡ እቃዎች ወጪ (COGS)",
+    "totalExpenses": "ጠቅላላ ወጪዎች",
+    "grossProfit": "ጠቅላላ ትርፍ",
+    "detailedTransactions": "ዝርዝር ግብይቶች",
+    "detailedDescription": "በተመረጠው ጊዜ ውስጥ የተከናወኑ ሁሉም ሽያጮች እና ወጪዎች ዝርዝር፣ በቀን የተደረደሩ።",
+    "columns": {
+      "date": "ቀን",
+      "type": "አይነት",
+      "details": "ዝርዝር",
+      "revenue": "ገቢ",
+      "cogsExpense": "COGS / ወጪ",
+      "profit": "ትርፍ"
+    },
+    "types": {
+      "sale": "ሽያጭ",
+      "expense": "ወጪ"
+    },
+    "itemsSold": "እቃ(ዎች) ተሽጠዋል",
+    "noTransactions": "ለተመረጠው ጊዜ ምንም ግብይቶች አልተገኙም።",
+    "notAvailable": "አልተገኘም",
+    "custom": "ተስተካካይ"
+  },
   "dashboardOverview": "የዳሽቦርድ አጠቃላይ እይታ"
 }

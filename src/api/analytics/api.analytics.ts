@@ -7,7 +7,7 @@ import {
   ReportResponse,
 } from "@/components/interface/analytics/interface.analytics";
 import { IResponse } from "@/components/interface/common.interface";
-import { queryKeys } from "@/constants/queryKeys";
+import { queryKeys } from "@/lib/queryKeys";
 
 export const useGetAnalytics = (options?: { enabled?: boolean }) => {
   return useFetch<AnalyticsResponse>(endpoints.ANALYTICS + "/summary", {

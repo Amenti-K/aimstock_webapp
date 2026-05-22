@@ -20,9 +20,11 @@ import TextAreaField from "@/components/forms/fields/TextAreaField";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ExpenseFormValues, expenseSchema } from "./expense.schema";
+import { formatCurrency } from "@/lib/formatter";
 
 interface Props {
   initialData?: Partial<ExpenseFormValues> | null;
+  templateName?: string | null;
   onSubmit: (values: ExpenseFormValues) => void;
   onCancel?: () => void;
   isPending?: boolean;
@@ -31,6 +33,7 @@ interface Props {
 
 export default function ExpenseForm({
   initialData,
+  templateName,
   onSubmit,
   onCancel,
   isPending,
@@ -41,6 +44,7 @@ export default function ExpenseForm({
     resolver: zodResolver(expenseSchema),
     defaultValues: {
       description: "",
+      expenseTemplateId: undefined,
       paymentItems: [],
       cashItem: { amount: 0 },
     },
@@ -57,6 +61,7 @@ export default function ExpenseForm({
     if (!initialData) return;
     reset({
       description: initialData.description ?? "",
+      expenseTemplateId: initialData.expenseTemplateId ?? undefined,
       paymentItems: initialData.paymentItems ?? [],
       cashItem: initialData.cashItem ?? { amount: 0 },
     });
@@ -66,7 +71,7 @@ export default function ExpenseForm({
     if (!Array.isArray(accounts?.data)) return [];
     return accounts.data.map((item: any) => ({
       value: item.id,
-      label: `${item.name} (${item.bank ?? "Bank"})`,
+      label: `${item.name} (${item.bank ?? "Bank"}) ${formatCurrency(item.balance)}`,
     }));
   }, [accounts]);
 
@@ -79,6 +84,14 @@ export default function ExpenseForm({
       onSubmit={handleSubmit(onSubmit)}
       className="max-w-3xl mx-auto space-y-8 pb-10"
     >
+      {templateName && (
+        <div className="bg-primary/10 text-primary px-4 py-2 rounded-lg text-sm font-bold w-fit flex items-center gap-2 mb-4">
+          <ReceiptText className="w-5 h-5 text-primary" />
+          {t("expense.form.basedOnTemplate", "Based on template:")}{" "}
+          {templateName}
+        </div>
+      )}
+
       {/* General Info Section */}
       <div className="rounded-xl border-none shadow-lg bg-card/60 backdrop-blur-sm overflow-hidden">
         <CardHeader className="bg-muted/50 py-6 pb-2">

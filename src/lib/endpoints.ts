@@ -17,6 +17,7 @@ const endpoints = {
   ADJUSTMENT: "/inventory-adjustment",
   EMPLOYEE: "/employee",
   EXPENSE: "/expense",
+  EXPENSETEMPLATE: "/expense-template",
   COMPANY: "/company",
   SUBSCRIPTION: "/subscription",
   PLAN: "/plans",

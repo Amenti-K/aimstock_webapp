@@ -50,5 +50,35 @@
       "cashFlow": "Net Cash Flow"
     }
   },
+  "reports": {
+    "title": "Financial Report",
+    "printReport": "Print Report",
+    "quickSelect": "Quick Select",
+    "customDateRange": "Custom Date Range",
+    "period": "Period",
+    "generatedOn": "Generated on",
+    "totalIncome": "Total Income",
+    "cogs": "Cost of Goods Sold (COGS)",
+    "totalExpenses": "Total Expenses",
+    "grossProfit": "Gross Profit",
+    "detailedTransactions": "Detailed Transactions",
+    "detailedDescription": "List of all sales and expenses for the selected period, sorted by date.",
+    "columns": {
+      "date": "Date",
+      "type": "Type",
+      "details": "Details",
+      "revenue": "Revenue",
+      "cogsExpense": "COGS / Expense",
+      "profit": "Profit"
+    },
+    "types": {
+      "sale": "Sale",
+      "expense": "Expense"
+    },
+    "itemsSold": "item(s) sold",
+    "noTransactions": "No transactions found for the selected period.",
+    "notAvailable": "N/A",
+    "custom": "Custom"
+  },
   "dashboardOverview": "Dashboard Overview"
 }

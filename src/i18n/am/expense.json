@@ -11,7 +11,8 @@
   },
   "card": {
     "amount": "መጠን",
-    "description": "መግለጫ"
+    "description": "መግለጫ",
+    "template": "ምድብ"
   },
   "detail": {
     "title": "የወጪ ዝርዝር",
@@ -24,9 +25,14 @@
     "cash": "ጥሬ ገንዘብ"
   },
   "form": {
+    "addCommonExpense": "አዲስ የተለመደ ወጪ",
     "addExpense": "አዲስ ወጪ",
     "editExpense": "ወጪ አርም",
     "description": "መግለጫ (አማራጭ)",
+    "templateName": "የምድብ ስም",
+    "createNewTemplate": "አዲስ ምድብ ፍጠር",
+    "manageTemplates": "ቅንብሮችን አስተዳድር",
+    "basedOnTemplate": "በቅንብሩ ላይ የተመሰረተ:",
     "bankPay": {
       "title": "የባንክ ክፍያዎች",
       "index": "ክፍያ {index}",
