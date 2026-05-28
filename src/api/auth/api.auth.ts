@@ -27,7 +27,7 @@ export const useSignIn = () => {
     // but the mobile relies on 'data' being the payload. Let's normalize it:
     toast({ title: "Success", description: "Logged in successfully" });
     const payload = data.data || data;
-    const userInfo: UserInfo = payload.user;
+    // const userInfo: UserInfo = payload.user;
 
     dispatch(
       loginUser({
@@ -47,6 +47,10 @@ export const useSignIn = () => {
         },
       }),
     );
+
+    setTimeout(() => {
+      router.replace("/"); // Let the useEffect above decide where to go
+    }, 300);
   };
 
   return useMutate<ILogin>(endpoints.SIGNIN, "post", {

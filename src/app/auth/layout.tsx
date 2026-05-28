@@ -12,12 +12,15 @@ import {
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 
+import InstallAppButton from "@/components/common/InstallAppButton";
+
 export default function AuthLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   const { t, language, changeLanguage } = useLanguage();
+
   return (
     <div className="flex min-h-screen bg-background overflow-x-hidden">
       {/* Left side Marketing Panel */}
@@ -32,7 +35,7 @@ export default function AuthLayout({
               alt="Logo"
               width={40}
               height={40}
-              className="rounded-lg transition-all duration-300 group-data-[collapsible=icon]:w-7 group-data-[collapsible=icon]:h-7"
+              className="rounded-lg"
             />
           </div>
           <span className="text-xl font-bold tracking-tight">AIM Stock</span>
@@ -47,7 +50,6 @@ export default function AuthLayout({
           </p>
         </div>
 
-        {/* Placeholder enterprise image */}
         <img
           src="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?q=80&w=2664&auto=format&fit=crop"
           alt="AIM Stock Warehouse"
@@ -57,7 +59,7 @@ export default function AuthLayout({
 
       {/* Right side Auth Form Container */}
       <div className="flex flex-1 flex-col">
-        {/* Auth Header (Mobile Logo & Language) */}
+        {/* Auth Header */}
         <div className="flex items-center justify-between px-6 py-6 lg:px-12 lg:py-8 lg:justify-end shrink-0">
           {/* Mobile Header Logo */}
           <div className="lg:hidden flex items-center gap-2 text-primary">
@@ -70,31 +72,45 @@ export default function AuthLayout({
                 className="rounded-lg"
               />
             </div>
-            <span className="text-2xl font-bold tracking-tight text-foreground">
+            <span className="text-2xl font-bold tracking-tight text-foreground whitespace-nowrap">
               AIM Stock
             </span>
           </div>
 
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="gap-2 text-muted-foreground hover:text-foreground"
-              >
-                <Languages className="h-4 w-4" />
-                {language === "am" ? "አማርኛ" : "English"}
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => changeLanguage("en")}>
-                English
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => changeLanguage("am")}>
-                አማርኛ
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          {/* Right Side Controls */}
+          <div className="flex flex-col-reverse sm:flex-row items-center gap-3">
+            <InstallAppButton />
+
+            {/* Language Selector */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="gap-2 text-muted-foreground hover:text-foreground"
+                >
+                  <Languages className="h-4 w-4" />
+                  <span className="uppercase font-semibold text-xs tracking-wider">
+                    {language === "am" ? "አማርኛ" : "English"}
+                  </span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem
+                  onClick={() => changeLanguage("en")}
+                  className="flex items-center gap-3 font-medium"
+                >
+                  English
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => changeLanguage("am")}
+                  className="flex items-center gap-3 font-medium"
+                >
+                  አማርኛ
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </div>
 
         {/* Form Content Area */}

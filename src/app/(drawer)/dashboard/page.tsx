@@ -20,6 +20,7 @@ import {
   Activity,
   RefreshCcw,
   Printer,
+  Loader2,
 } from "lucide-react";
 import {
   useGetAnalytics,
@@ -145,13 +146,13 @@ export default function DashboardPage() {
   return (
     <section className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold tracking-tight">
+        <h1 className="text-[20px] sm:text-[24px] font-bold tracking-tight">
           {t("analytics.dashboardOverview")}
         </h1>
 
         <div className="flex flex-row gap-2 w-fit">
           <Button
-            className="flex flex-row gap-2 px-2 mx-2 w-fit cursor-pointer"
+            className="flex flex-row gap-2 px-2 w-fit cursor-pointer border border-primary"
             variant="ghost"
             size="icon"
             onClick={handlePrint}
@@ -160,12 +161,16 @@ export default function DashboardPage() {
             <Printer className="h-4 w-4" />
           </Button>
           <Button
-            className="mx-2"
+            className="border border-primary"
             variant="ghost"
             size="icon"
             onClick={handleRefresh}
           >
-            <RefreshCcw className="h-4 w-4" />
+            {isSummaryLoading || isPieLoading ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <RefreshCcw className="h-4 w-4" />
+            )}
           </Button>
         </div>
       </div>
@@ -236,7 +241,7 @@ export default function DashboardPage() {
               key={card.title}
               className="bg-secondary/50 border-none transition-all hover:bg-secondary hover:shadow-md group"
             >
-              <CardHeader className="p-3 sm:p-5 pb-1.5 sm:pb-2">
+              <CardHeader className="p-3 sm:p-5">
                 <CardDescription className="flex items-center gap-1.5 text-[9px] sm:text-[10px] font-bold uppercase tracking-widest text-muted-foreground group-hover:text-primary transition-colors">
                   {card.icon}
                   {card.title}
@@ -246,7 +251,7 @@ export default function DashboardPage() {
                 </CardTitle>
               </CardHeader>
               {card.subtitle && (
-                <CardContent className="px-3 sm:px-5 pb-3 sm:pb-4 pt-0">
+                <CardContent className="px-3 sm:px-5 pt-0">
                   <p className="text-[10px] sm:text-[11px] text-muted-foreground font-medium truncate">
                     {card.subtitle}
                   </p>

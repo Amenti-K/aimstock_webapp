@@ -30,7 +30,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex flex-col space-y-8">
+    <div className="flex flex-col space-y-8 p-4">
       <div className="flex flex-col space-y-2 text-center lg:text-left">
         <h1 className="text-3xl font-bold tracking-tight text-foreground">
           {t("auth.login.welcomeBack")}

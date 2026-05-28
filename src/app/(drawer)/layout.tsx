@@ -23,6 +23,7 @@ import { LockButton } from "@/components/security/LockButton";
 import { useLanguage } from "@/hooks/language.hook";
 import { drawerNavItems } from "@/constants/drawer";
 import { NavLink } from "@/components/NavLink";
+import InstallAppButton from "@/components/common/InstallAppButton";
 
 function MobileBottomTabs() {
   const { t } = useLanguage();
@@ -218,7 +219,14 @@ export default function DrawerLayout({
               <Separator orientation="vertical" className="h-4" />
               <div className="flex justify-between items-center w-full">
                 <h1 className="text-sm font-medium capitalize">{pageName}</h1>
-                <LockButton />
+                <div className="flex items-center gap-2">
+                  <InstallAppButton
+                    variant="ghost"
+                    size="sm"
+                    className="text-xs text-muted-foreground hover:text-primary border-none"
+                  />
+                  <LockButton />
+                </div>
               </div>
             </header>
             <main className="flex-1 overflow-auto bg-muted/30 p-4 sm:p-5 space-y-4 pb-24 sm:pb-5">

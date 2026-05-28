@@ -8,16 +8,9 @@ import { Loader2 } from "lucide-react";
 
 import { useSignUp } from "@/api/auth/api.auth";
 import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Form } from "@/components/ui/form";
 import TextField from "@/components/forms/fields/TextField";
+import CheckboxField from "@/components/forms/fields/CheckboxField";
 import { SignUpInput, signUpSchema } from "@/components/schema/auth.schema";
 import { useLanguage } from "@/hooks/language.hook";
 
@@ -41,8 +34,28 @@ export default function RegisterPage() {
     signUp(data);
   };
 
+  const termsLabel = (
+    <p>
+      {t("auth.register.agreeTo")}{" "}
+      <Link
+        href="https://aimstock.aimtechgroups.com/terms"
+        className="font-medium text-primary hover:underline whitespace-nowrap"
+      >
+        {t("auth.register.terms")}
+      </Link>{" "}
+      {t("auth.register.and")}{" "}
+      <Link
+        href="https://aimstock.aimtechgroups.com/privacy"
+        className="font-medium text-primary hover:underline whitespace-nowrap"
+      >
+        {t("auth.register.privacy")}
+      </Link>{" "}
+      {t("auth.register.agreeSuffix")}
+    </p>
+  );
+
   return (
-    <div className="flex flex-col space-y-6 pr-2 pb-12">
+    <div className="flex flex-col space-y-6 p-4 pb-12">
       <div className="flex flex-col space-y-2 text-center lg:text-left mt-4 lg:mt-0">
         <h1 className="text-3xl font-bold tracking-tight text-foreground">
           {t("auth.register.createAccount")}
@@ -97,40 +110,11 @@ export default function RegisterPage() {
             disabled={isPending}
           />
 
-          <FormField
+          <CheckboxField
             control={form.control as any}
             name="acceptedTerms"
-            render={({ field }) => (
-              <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md py-4">
-                <FormControl>
-                  <Checkbox
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                    disabled={isPending}
-                  />
-                </FormControl>
-                <div className="space-y-1 leading-none">
-                  <FormLabel className="text-sm font-normal text-muted-foreground">
-                    {t("auth.register.agreeTo")}{" "}
-                    <Link
-                      href="https://aimstock.aimtechgroups.com/terms"
-                      className="font-medium text-primary hover:underline"
-                    >
-                      {t("auth.register.terms")}
-                    </Link>{" "}
-                    {t("auth.register.and")}{" "}
-                    <Link
-                      href="https://aimstock.aimtechgroups.com/privacy"
-                      className="font-medium text-primary hover:underline"
-                    >
-                      {t("auth.register.privacy")}
-                    </Link>
-                    {t("auth.register.agreeSuffix")}
-                  </FormLabel>
-                  <FormMessage />
-                </div>
-              </FormItem>
-            )}
+            labelContent={termsLabel}
+            disabled={isPending}
           />
 
           <Button
