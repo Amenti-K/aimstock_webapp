@@ -95,6 +95,10 @@ export const useSignUp = () => {
         },
       }),
     );
+
+    setTimeout(() => {
+      router.replace("/"); // Let the useEffect above decide where to go
+    }, 300);
   };
 
   return useMutate<IRegistration>(endpoints.SIGNUP, "post", {
