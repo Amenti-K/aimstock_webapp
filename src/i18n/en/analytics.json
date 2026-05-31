@@ -78,7 +78,15 @@
     "itemsSold": "item(s) sold",
     "noTransactions": "No transactions found for the selected period.",
     "notAvailable": "N/A",
-    "custom": "Custom"
+    "custom": "Custom",
+    "nullDate": "Please select both start and end dates for a custom range.",
+    "downloadPdf": "Download as PDF",
+    "downloadExcel": "Download as Excel",
+    "sharePdf": "Share as PDF",
+    "shareExcel": "Share as Excel",
+    "exportOptions": "Export Options",
+    "download": "Download",
+    "share": "Share"
   },
   "dashboardOverview": "Dashboard Overview"
 }

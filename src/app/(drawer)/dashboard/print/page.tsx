@@ -5,8 +5,13 @@ import { format } from "date-fns";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import jsPDF from "jspdf";
-import autoTable from "jspdf-autotable";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { handleGeneratePDF, handleGenerateExcel } from "@/lib/exportUtils";
 import {
   Card,
   CardContent,
@@ -33,6 +38,10 @@ import {
   CreditCard,
   Download,
   Loader2,
+  Share,
+  FileText,
+  Grid,
+  ChevronRight,
 } from "lucide-react";
 import { useReport } from "@/api/analytics/api.analytics";
 import { LoadingView, ErrorView } from "@/components/common/StateView";
@@ -62,6 +71,9 @@ export default function PrintReportPage() {
   const hasViewAccess = canView("ANALYTICS");
 
   const [isGenerating, setIsGenerating] = useState(false);
+  const [exportMenuVisible, setExportMenuVisible] = useState<
+    "download" | "share" | null
+  >(null);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -103,12 +115,13 @@ export default function PrintReportPage() {
     ...(endDate && { endDate: endDate }),
   };
 
+  const isCustomIncomplete = timeFrame === "CUSTOM" && (!startDate || !endDate);
   const {
     data: response,
     isLoading,
     isError,
     refetch,
-  } = useReport(true, filters);
+  } = useReport(!isCustomIncomplete, filters);
 
   const reportData = response?.data;
   const reportList = reportData?.reportList || [];
@@ -120,155 +133,31 @@ export default function PrintReportPage() {
     }
   }, [startDate, endDate, timeFrame, setValue]);
 
-  // Extract PDF generation logic to keep component clean and reusable
-  const generatePDF = () => {
+  const executeExportPDF = async (mode: "download" | "share") => {
+    setExportMenuVisible(null);
     setIsGenerating(true);
+    let periodText = timeFrame;
+    if (timeFrame === "CUSTOM" && startDate && endDate) {
+      periodText = `${format(new Date(startDate), "PPP")} - ${format(new Date(endDate), "PPP")}`;
+    } else {
+      const labels: Record<string, string> = {
+        LAST_30_DAYS: "Last 30 Days",
+        LAST_90_DAYS: "Last 3 Months",
+        LAST_180_DAYS: "Last 6 Months",
+        LAST_365_DAYS: "Last 1 Year",
+        CUSTOM: "Custom",
+      };
+      periodText = labels[timeFrame] || timeFrame;
+    }
+    await handleGeneratePDF(reportData, reportList, periodText, mode);
+    setIsGenerating(false);
+  };
 
-    // Use a small timeout to allow UI to show loading state before heavy JS processing
-    setTimeout(() => {
-      try {
-        // Always use English inside the PDF — jsPDF's built-in fonts don't support
-        // Amharic (Ethiopic) characters so we pin translation to "en" here only,
-        // without touching the app's current language setting.
-        const pt = i18n.getFixedT("en");
-
-        const doc = new jsPDF();
-        const pageWidth = doc.internal.pageSize.width;
-
-        // 1. Report Title & Header
-        doc.setFontSize(22);
-        doc.setTextColor(40, 40, 40);
-        const title = pt("analytics.reports.title", "Financial Report");
-        doc.text(title, 14, 22);
-
-        // 2. Period and Generation Info
-        doc.setFontSize(10);
-        doc.setTextColor(100, 100, 100);
-        // Build English period labels directly so they are always ASCII-safe
-        const englishTimeFrameLabels: Record<string, string> = {
-          LAST_30_DAYS: "Last 30 Days",
-          LAST_90_DAYS: "Last 3 Months",
-          LAST_180_DAYS: "Last 6 Months",
-          LAST_365_DAYS: "Last 1 Year",
-          CUSTOM: "Custom",
-        };
-        const periodText =
-          startDate && endDate
-            ? `${format(new Date(startDate), "PPP")} - ${format(new Date(endDate), "PPP")}`
-            : englishTimeFrameLabels[timeFrame] || timeFrame;
-
-        doc.text(
-          `${pt("analytics.reports.period", "Period")}: ${periodText}`,
-          14,
-          32,
-        );
-        doc.text(
-          `${pt("analytics.reports.generatedOn", "Generated on")}: ${format(new Date(), "PPP")}`,
-          pageWidth - 14,
-          32,
-          { align: "right" },
-        );
-
-        // Add a horizontal line
-        doc.setDrawColor(200, 200, 200);
-        doc.line(14, 36, pageWidth - 14, 36);
-
-        // 3. Quick Stats summary table
-        autoTable(doc, {
-          startY: 42,
-          theme: "plain",
-          styles: {
-            fontSize: 10,
-            cellPadding: 4,
-            halign: "center",
-          },
-          body: [
-            [
-              `${pt("analytics.reports.totalIncome", "Total Income")}\n${formatCurrency(reportData?.totalIncome || 0)}`,
-              `${pt("analytics.reports.cogs", "Cost of Goods Sold (COGS)")}\n${formatCurrency(reportData?.totalCOGS || 0)}`,
-              `${pt("analytics.reports.totalExpenses", "Total Expenses")}\n${formatCurrency(reportData?.totalExpenses || 0)}`,
-              `${pt("analytics.reports.grossProfit", "Gross Profit")}\n${formatCurrency(reportData?.grossProfit || 0)}`,
-            ],
-          ],
-          didParseCell: (data) => {
-            // Apply bolding to the amount values
-            data.cell.styles.fontStyle = "bold";
-            data.cell.styles.textColor = [40, 40, 40];
-          },
-        });
-
-        // 4. Detailed Transactions Table
-        const tableColumn = [
-          pt("analytics.reports.columns.date", "Date"),
-          pt("analytics.reports.columns.type", "Type"),
-          pt("analytics.reports.columns.details", "Details"),
-          pt("analytics.reports.columns.revenue", "Revenue"),
-          pt("analytics.reports.columns.cogsExpense", "COGS / Expense"),
-          pt("analytics.reports.columns.profit", "Profit"),
-        ];
-
-        const tableRows = reportList.map((item: any) => {
-          const isSale = item.type === "SALE";
-          const itemDate = new Date(item.createdAt);
-
-          return [
-            format(itemDate, "MMM dd, yyyy HH:mm"),
-            isSale
-              ? pt("analytics.reports.types.sale", "Sale")
-              : pt("analytics.reports.types.expense", "Expense"),
-            isSale
-              ? `${item.totalNumberOfItemsSold} ${pt("analytics.reports.itemsSold", "item(s) sold")}`
-              : item.reason || pt("analytics.reports.notAvailable", "N/A"),
-            isSale ? formatCurrency(item.totalSaleValue) : "-",
-            isSale
-              ? formatCurrency(item.totalCOGSValue)
-              : formatCurrency(item.amount),
-            isSale ? formatCurrency(item.totalProfitValue) : "-",
-          ];
-        });
-
-        // @ts-ignore
-        const finalY = doc.lastAutoTable.finalY || 45;
-
-        autoTable(doc, {
-          startY: finalY + 10,
-          head: [tableColumn],
-          body: tableRows,
-          theme: "striped",
-          headStyles: {
-            fillColor: [41, 128, 185],
-            textColor: 255,
-            fontStyle: "bold",
-          },
-          styles: {
-            fontSize: 9,
-            cellPadding: 4,
-          },
-          columnStyles: {
-            3: { halign: "right" },
-            4: { halign: "right", textColor: [100, 100, 100] },
-            5: { halign: "right", fontStyle: "bold" },
-          },
-          didParseCell: (data) => {
-            // Further style positive profit in table body
-            if (data.section === "body" && data.column.index === 5) {
-              const text = data.cell.text[0] || "";
-              if (text !== "-" && !text.includes("-")) {
-                data.cell.styles.textColor = [39, 174, 96]; // Emerald shade for positive profit
-              }
-            }
-          },
-        });
-
-        // 5. Generate & Save
-        const filename = `Financial_Report_${format(new Date(), "yyyy_MM_dd")}.pdf`;
-        doc.save(filename);
-      } catch (error) {
-        console.error("Error generating PDF:", error);
-      } finally {
-        setIsGenerating(false);
-      }
-    }, 100);
+  const executeExportExcel = async (mode: "download" | "share") => {
+    setExportMenuVisible(null);
+    setIsGenerating(true);
+    await handleGenerateExcel(reportData, reportList, mode);
+    setIsGenerating(false);
   };
 
   if (!hasViewAccess) {
@@ -343,19 +232,83 @@ export default function PrintReportPage() {
           </h1>
         </div>
 
-        <Button
-          onClick={generatePDF}
-          disabled={isGenerating || reportList.length === 0}
-          className="gap-2"
-        >
-          {isGenerating ? (
-            <Loader2 className="h-4 w-4 animate-spin" />
-          ) : (
-            <Download className="h-4 w-4" />
-          )}
-          {t("analytics.reports.downloadPdf", "Download PDF Report")}
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            onClick={() => setExportMenuVisible("download")}
+            disabled={isGenerating || reportList.length === 0}
+            className="gap-2"
+          >
+            {isGenerating ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <Download className="h-4 w-4" />
+            )}
+            {t("analytics.reports.download", "Download")}
+          </Button>
+
+          <Button
+            variant="secondary"
+            onClick={() => setExportMenuVisible("share")}
+            disabled={isGenerating || reportList.length === 0}
+            className="gap-2"
+          >
+            <Share className="h-4 w-4" />
+            {t("analytics.reports.share", "Share")}
+          </Button>
+        </div>
       </div>
+
+      <Dialog
+        open={exportMenuVisible !== null}
+        onOpenChange={(isOpen) => !isOpen && setExportMenuVisible(null)}
+      >
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>
+              {exportMenuVisible === "download"
+                ? t("analytics.reports.download", "Download")
+                : t("analytics.reports.share", "Share")}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="flex flex-col gap-2 py-4">
+            <button
+              onClick={() => executeExportPDF(exportMenuVisible!)}
+              className="flex items-center gap-4 p-4 rounded-xl border hover:bg-muted/50 transition-colors text-left"
+            >
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-rose-100 dark:bg-rose-950">
+                <FileText className="h-5 w-5 text-rose-600 dark:text-rose-400" />
+              </div>
+              <div className="flex-1 space-y-1">
+                <p className="text-sm font-medium leading-none">PDF</p>
+                <p className="text-sm text-muted-foreground">
+                  {exportMenuVisible === "download"
+                    ? t("analytics.reports.downloadPdf", "Download as PDF")
+                    : t("analytics.reports.sharePdf", "Share as PDF")}
+                </p>
+              </div>
+              <ChevronRight className="h-5 w-5 text-muted-foreground" />
+            </button>
+
+            <button
+              onClick={() => executeExportExcel(exportMenuVisible!)}
+              className="flex items-center gap-4 p-4 rounded-xl border hover:bg-muted/50 transition-colors text-left"
+            >
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-emerald-100 dark:bg-emerald-950">
+                <Grid className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+              </div>
+              <div className="flex-1 space-y-1">
+                <p className="text-sm font-medium leading-none">Excel</p>
+                <p className="text-sm text-muted-foreground">
+                  {exportMenuVisible === "download"
+                    ? t("analytics.reports.downloadExcel", "Download as Excel")
+                    : t("analytics.reports.shareExcel", "Share as Excel")}
+                </p>
+              </div>
+              <ChevronRight className="h-5 w-5 text-muted-foreground" />
+            </button>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* Filters */}
       <Form {...form}>
@@ -444,11 +397,18 @@ export default function PrintReportPage() {
               "Detailed Transactions",
             )}
           </CardTitle>
-          <CardDescription>
-            {t(
-              "analytics.reports.detailedDescription",
-              "List of all sales and expenses for the selected period, sorted by date.",
-            )}
+          <CardDescription
+            className={cn(isCustomIncomplete && "text-destructive font-medium")}
+          >
+            {isCustomIncomplete
+              ? t(
+                  "analytics.reports.nullDate",
+                  "Please select both start and end dates for a custom range.",
+                )
+              : t(
+                  "analytics.reports.detailedDescription",
+                  "List of all sales and expenses for the selected period, sorted by date.",
+                )}
           </CardDescription>
         </CardHeader>
         <CardContent className="p-0">

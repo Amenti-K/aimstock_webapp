@@ -80,7 +80,15 @@
     "itemsSold": "እቃ(ዎች) ተሽጠዋል",
     "noTransactions": "ለተመረጠው ጊዜ ምንም ግብይቶች አልተገኙም።",
     "notAvailable": "አልተገኘም",
-    "custom": "ተስተካካይ"
+    "custom": "ተስተካካይ",
+    "nullDate": "ለተስተካካይ ጊዜ እባክዎን የመጀመሪያ እና የመጨረሻ ቀኖችን ይምረጡ።",
+    "downloadPdf": "PDF አወርድ",
+    "downloadExcel": "Excel አወርድ",
+    "sharePdf": "PDF አጋራ",
+    "shareExcel": "Excel አጋራ",
+    "exportOptions": "አሃር ካይኖች",
+    "download": "አወርድ",
+    "share": "አጋራ"
   },
   "dashboardOverview": "የዳሽቦርድ አጠቃላይ እይታ"
 }
