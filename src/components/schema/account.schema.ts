@@ -3,10 +3,10 @@ import { EthiopianFinancialInstitution } from "@/components/interface/interface.
 
 export const accountSchema = z.object({
   id: z.string().optional(),
-  name: z.string().min(1, "Account name is required"),
+  name: z.string().trim().min(1, "Account name is required"),
   bank: z.enum(EthiopianFinancialInstitution),
-  branch: z.string().optional(),
-  number: z.string().optional(),
+  branch: z.string().trim().optional(),
+  number: z.string().trim().optional(),
   balance: z
     .number("Balance must be a number")
     .nonnegative("Balance cannot be negative"),

@@ -40,7 +40,10 @@ import { useTranslation } from "react-i18next";
 import { cn } from "@/lib/utils";
 import { IInventory } from "../../interface/inventory/inventory.interface";
 import DateField from "../fields/DateField";
-import { useFetchCategories, useCreateCategory } from "@/api/inventory/api.inventory";
+import {
+  useFetchCategories,
+  useCreateCategory,
+} from "@/api/inventory/api.inventory";
 import CategoryForm from "@/components/forms/category/categoryForm";
 
 type InventoryFormProps = {
@@ -84,8 +87,11 @@ export default function InventoryForm({
     control,
     name: "warehouseInventories",
   });
-  const { data: categoriesData, isLoading: loadingCategories, refetch: refetchCategories } =
-    useFetchCategories();
+  const {
+    data: categoriesData,
+    isLoading: loadingCategories,
+    refetch: refetchCategories,
+  } = useFetchCategories();
   const { data: warehousesData, isLoading: loadingWarehouses } =
     useFetchWarehouseSelector();
 
@@ -93,7 +99,8 @@ export default function InventoryForm({
   const canEditDistribution = !hasTransactions;
 
   const [showAddCategory, setShowAddCategory] = useState(false);
-  const { mutate: createCategory, isPending: creatingCategory } = useCreateCategory();
+  const { mutate: createCategory, isPending: creatingCategory } =
+    useCreateCategory();
 
   const handleCategoryCreated = (values: any) => {
     createCategory(values, {
@@ -164,6 +171,8 @@ export default function InventoryForm({
       ...values,
       sku: values.sku || undefined,
       brand: values.brand || undefined,
+      expiryDate: values.expiryDate || undefined,
+      inventoryCategoryId: values.inventoryCategoryId || undefined,
       boughtPrice: Number(values.boughtPrice),
       sellingPrice: Number(values.sellingPrice),
       initialQuantity: Number(values.initialQuantity),

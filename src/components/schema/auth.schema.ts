@@ -45,6 +45,7 @@ export const signUpSchema = z
 export const signInSchema = z.object({
   phoneNumber: z
     .string()
+    .trim()
     .regex(
       /^(09[0-9]{8}|07[0-9]{8}|\+2519[0-9]{8}|\+2517[0-9]{8})$/,
       "Phone number must be a valid Ethiopian number (e.g. 0912345678 or +251912345678 0712345678 or +251712345678)",
@@ -53,6 +54,7 @@ export const signInSchema = z.object({
 
   password: z
     .string()
+    .trim()
     .min(6, "Password must be at least 6 characters long")
     // .regex(/[a-z]/, "Password must contain at least one lowercase letter")
     // .regex(/[A-Z]/, "Password must contain at least one uppercase letter")

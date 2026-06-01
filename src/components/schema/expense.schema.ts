@@ -11,7 +11,7 @@ const expenseCashPaymentSchema = z.object({
 
 export const expenseSchema = z
   .object({
-    description: z.string().optional(),
+    description: z.string().trim().optional(),
     paymentItems: z.array(expensePaymentSchema),
     cashItem: expenseCashPaymentSchema.optional(),
   })

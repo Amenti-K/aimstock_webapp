@@ -26,7 +26,7 @@ export const cashPaymentSchema = z.object({
 
 export const createPurchaseSchema = z.object({
   partnerId: z.string().optional().nullable(),
-  description: z.string().optional().nullable(),
+  description: z.string().trim().optional().nullable(),
 
   purchaseItems: z
     .array(purchaseItemSchema)

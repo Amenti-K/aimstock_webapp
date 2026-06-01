@@ -161,10 +161,7 @@ export default function Step3PartnerPage() {
                 type="button"
                 variant="ghost"
                 className="rounded-full px-6"
-                onClick={() => {
-                  dispatch(setCompanyStep(4));
-                  router.push("/setup/finished");
-                }}
+                onClick={handleSkip}
               >
                 {t("common.skip")}
               </Button>

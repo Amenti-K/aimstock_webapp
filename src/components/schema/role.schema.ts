@@ -7,6 +7,7 @@ export const PermissionEnum = z.enum([
   "DELETE",
   "UPDATE",
 ]);
+
 export const ModuleEnum = z.enum([
   "AUTH",
   "ACCOUNT",

@@ -21,8 +21,8 @@ export const loanInitialSchema = z
     }),
     paymentItems: z.array(paymentItemSchema),
     loanCashPayment: loanCashPaymentSchema.optional(),
-    note: z.string().optional(),
-    dueDate: z.string().optional(),
+    note: z.string().trim().optional(),
+    dueDate: z.string().trim().optional(),
   })
   .refine(
     (data) => {
@@ -52,8 +52,8 @@ export const loanTransactionSchema = z
     }),
     paymentItems: z.array(paymentItemSchema),
     loanCashPayment: loanCashPaymentSchema.optional(),
-    note: z.string().optional(),
-    dueDate: z.string().optional(),
+    note: z.string().trim().optional(),
+    dueDate: z.string().trim().optional(),
   })
   .refine(
     (data) => {

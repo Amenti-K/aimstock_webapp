@@ -26,14 +26,12 @@ export const cashPaymentSchema = z.object({
 
 export const saleSchema = z.object({
   partnerId: z.string().optional().nullable(),
-  description: z.string().optional().nullable(),
+  description: z.string().trim().optional().nullable(),
 
   saleItems: z
     .array(saleItemSchema)
     .min(1, { message: "Items must contain at least one item" }),
-  // paymentItems: z
-  //     .array(paymentItemSchema)
-  //     .min(1, { message: "payments must contain at least one payment" }),
+
   salePayments: z.array(paymentItemSchema).optional(),
 
   saleCashPayment: cashPaymentSchema.optional(),

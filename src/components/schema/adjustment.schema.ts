@@ -21,7 +21,7 @@ export const adjustmentSchema = z
       .uuid({ message: "Source warehouse is required" })
       .min(1, { message: "Source warehouse is required" }),
     type: z.enum(IAdjustmentType),
-    note: z.string().optional(),
+    note: z.string().trim().optional(),
     items: z
       .array(adjustmentItemSchema)
       .min(1, { message: "Please add at least one item" })

@@ -2,7 +2,7 @@ import { z } from "zod";
 
 // Base schema properties
 const baseEmployeeSchema = {
-  name: z.string().min(2, "Name is required"),
+  name: z.string().trim().min(2, "Name is required"),
   phoneNumber: z
     .string()
     .regex(

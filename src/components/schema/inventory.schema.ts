@@ -18,7 +18,7 @@ export const inventorySchema = z
   .object({
     sku: z.string("sku must be a string").optional(),
 
-    name: z.string("name is required").min(1, "name cannot be empty"),
+    name: z.string("name is required").trim().min(1, "name cannot be empty"),
 
     boughtPrice: z
       .number("boughtPrice is required")
@@ -28,9 +28,9 @@ export const inventorySchema = z
       .number("sellingPrice is required")
       .min(0, "sellingPrice must be >= 0"),
 
-    brand: z.string("brand must be a string").optional(),
+    brand: z.string("brand must be a string").trim().optional(),
 
-    unit: z.string("unit is required").min(1, "unit cannot be empty"),
+    unit: z.string("unit is required").trim().min(1, "unit cannot be empty"),
 
     initialQuantity: z
       .number("initialQuantity is required")
@@ -69,7 +69,7 @@ export const inventoryUpdateSchema = z
   .object({
     sku: z.string("sku must be a string").optional(),
 
-    name: z.string("name is required").min(1, "name cannot be empty"),
+    name: z.string("name is required").trim().min(1, "name cannot be empty"),
 
     boughtPrice: z
       .number("boughtPrice is required")
@@ -79,9 +79,9 @@ export const inventoryUpdateSchema = z
       .number("sellingPrice is required")
       .min(0, "sellingPrice must be >= 0"),
 
-    brand: z.string("brand must be a string").optional(),
+    brand: z.string("brand must be a string").trim().optional(),
 
-    unit: z.string("unit is required").min(1, "unit cannot be empty"),
+    unit: z.string("unit is required").trim().min(1, "unit cannot be empty"),
 
     initialQuantity: z
       .number("initialQuantity is required")
@@ -126,7 +126,7 @@ export const inventoriesArraySchema = z.object({
 export const QuickInventorySchema = z.object({
   sku: z.string("sku must be a string").optional(),
 
-  name: z.string("name is required").min(1, "name cannot be empty"),
+  name: z.string("name is required").trim().min(1, "name cannot be empty"),
 
   boughtPrice: z
     .number("boughtPrice is required")
@@ -136,9 +136,9 @@ export const QuickInventorySchema = z.object({
     .number("sellingPrice is required")
     .min(0, "sellingPrice must be >= 0"),
 
-  brand: z.string("brand must be a string").optional(),
+  brand: z.string("brand must be a string").trim().optional(),
 
-  unit: z.string("unit is required").min(1, "unit cannot be empty"),
+  unit: z.string("unit is required").trim().min(1, "unit cannot be empty"),
 
   expiryDate: z.string("expiryDate must be a date string").optional(),
 

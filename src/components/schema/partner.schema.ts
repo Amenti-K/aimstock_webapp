@@ -3,6 +3,7 @@ import z from "zod";
 export const partnerSchema = z.object({
   name: z
     .string()
+    .trim()
     .min(2, {
       message: "Name is too short",
     })
@@ -14,7 +15,7 @@ export const partnerSchema = z.object({
     //   "Phone number must be a valid Ethiopian number (e.g. 0912345678 or +251912345678 0712345678 or +251712345678)",
     // )
     .optional(),
-  address: z.string().optional(),
+  address: z.string().trim().optional(),
   // isActive: z.boolean(),
 });
 
