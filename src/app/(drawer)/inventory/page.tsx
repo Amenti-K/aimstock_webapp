@@ -30,6 +30,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { useTranslation } from "react-i18next";
 import {
   AlertDialog,
@@ -67,16 +68,10 @@ type FilterForm = z.infer<typeof filterSchema>;
 export default function InventoryPage() {
   const router = useRouter();
   const { t } = useTranslation();
-  const { canView, canCreate, canUpdate, canDelete } = usePermissions();
+  const { canView, canCreate } = usePermissions();
   const hasViewAccess = canView("INVENTORY");
   const hasCreateAccess = canCreate("INVENTORY");
-  const hasUpdateAccess = canUpdate("INVENTORY");
-  const hasDeleteAccess = canDelete("INVENTORY");
   const [searchText, setSearchText] = useState("");
-  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
-  const [selectedInventoryId, setSelectedInventoryId] = useState<string | null>(
-    null,
-  );
 
   const { control, watch, reset, setValue } = useForm<FilterForm>({
     resolver: zodResolver(filterSchema),
@@ -95,7 +90,6 @@ export default function InventoryPage() {
   } = watch();
 
   const { data: categoriesData } = useFetchCategories();
-  const deleteInventory = useDeleteInventory();
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -140,19 +134,6 @@ export default function InventoryPage() {
     return data?.pages?.flatMap((page) => (page as any).data) ?? [];
   }, [data]);
 
-  const handleDelete = () => {
-    if (!selectedInventoryId) return;
-    deleteInventory.mutate(
-      { id: selectedInventoryId },
-      {
-        onSuccess: () => {
-          setIsDeleteOpen(false);
-          setSelectedInventoryId(null);
-        },
-      },
-    );
-  };
-
   if (!hasViewAccess) {
     return <AccessDeniedView moduleName={t("inventory.moduleName")} />;
   }
@@ -175,17 +156,21 @@ export default function InventoryPage() {
         </div>
         <div className="flex gap-2">
           <Button
+            asChild
             className="w-full sm:w-auto bg-secondary hover:bg-secondary/90 shadow-sm"
-            onClick={() => router.push("/inventory/category")}
           >
-            <Box className="mr-2 h-4 w-4" /> {t("category.moduleName")}
+            <Link href="/inventory/category">
+              <Box className="mr-2 h-4 w-4" /> {t("category.moduleName")}
+            </Link>
           </Button>
           {hasCreateAccess && (
             <Button
+              asChild
               className="w-full sm:w-auto bg-primary hover:bg-primary/90 shadow-sm"
-              onClick={() => router.push("/inventory/new")}
             >
-              <Plus className="mr-2 h-4 w-4" /> {t("common.addNew")}
+              <Link href="/inventory/new">
+                <Plus className="mr-2 h-4 w-4" /> {t("common.addNew")}
+              </Link>
             </Button>
           )}
         </div>
@@ -323,10 +308,12 @@ export default function InventoryPage() {
           <>
             <div className="flex gap-2">
               <Button
+                asChild
                 className="w-full sm:w-auto bg-secondary hover:bg-secondary/90 shadow-sm"
-                onClick={() => router.push("/inventory/category")}
               >
-                <Box className="mr-2 h-4 w-4" /> {t("category.moduleName")}
+                <Link href="/inventory/category">
+                  <Box className="mr-2 h-4 w-4" /> {t("category.moduleName")}
+                </Link>
               </Button>
             </div>
             {items.map((item: IInventory) => (
@@ -334,12 +321,6 @@ export default function InventoryPage() {
                 key={item.id}
                 item={item}
                 onClick={() => router.push(`/inventory/${item.id}`)}
-                hasUpdateAccess={hasUpdateAccess}
-                hasDeleteAccess={hasDeleteAccess}
-                onDelete={(id) => {
-                  setSelectedInventoryId(id);
-                  setIsDeleteOpen(true);
-                }}
               />
             ))}
           </>
@@ -547,40 +528,14 @@ export default function InventoryPage() {
         </div>
       )}
 
-      <AlertDialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
-        <AlertDialogContent className="rounded-2xl">
-          <AlertDialogHeader>
-            <AlertDialogTitle>
-              {t("common.confirmDelete.title", {
-                entity: t("inventory.moduleName"),
-              })}
-            </AlertDialogTitle>
-            <AlertDialogDescription>
-              {t("common.confirmDelete.message", {
-                entity: t("inventory.moduleName"),
-              })}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel className="rounded-full">
-              {t("common.cancel")}
-            </AlertDialogCancel>
-            <AlertDialogAction
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90 rounded-full"
-              onClick={handleDelete}
-            >
-              {t("common.delete")}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-
       {hasCreateAccess && (
         <Button
-          className="md:hidden fixed bottom-24 right-6 z-50 h-14 w-14 rounded-full bg-primary hover:bg-primary/90 shadow-lg p-0 flex items-center justify-center"
-          onClick={() => router.push("/inventory/new")}
+          asChild
+          className="md:hidden fixed bottom-24 right-6 z-50 h-14 w-14 rounded-full bg-primary hover:bg-primary/90 shadow-lg p-0 flex items-center justify-center cursor-pointer"
         >
-          <Plus className="h-6 w-6 text-primary-foreground" />
+          <Link href="/inventory/new">
+            <Plus className="h-6 w-6 text-primary-foreground" />
+          </Link>
         </Button>
       )}
     </div>
@@ -590,15 +545,9 @@ export default function InventoryPage() {
 function InventoryMobileCard({
   item,
   onClick,
-  hasUpdateAccess,
-  hasDeleteAccess,
-  onDelete,
 }: {
   item: IInventory;
   onClick: () => void;
-  hasUpdateAccess: boolean;
-  hasDeleteAccess: boolean;
-  onDelete: (id: string) => void;
 }) {
   const router = useRouter();
   const { t } = useTranslation();

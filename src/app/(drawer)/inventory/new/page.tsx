@@ -10,6 +10,10 @@ import { usePermissions } from "@/hooks/permission.hook";
 import { AccessDeniedView } from "@/components/guards/AccessDeniedView";
 import type { inventoryFormValues } from "@/components/schema/inventory.schema";
 import { useTranslation } from "react-i18next";
+import MultipleInventoryForm from "@/components/forms/inventory/MultipleInventoryForm";
+import SwitchField from "@/components/forms/fields/SwitchField";
+import { Form } from "@/components/ui/form";
+import { useForm } from "react-hook-form";
 
 export default function NewInventoryPage() {
   const { t } = useTranslation();
@@ -17,6 +21,9 @@ export default function NewInventoryPage() {
   const { canCreate } = usePermissions();
   const hasCreateAccess = canCreate("INVENTORY");
   const createInventory = useCreateInventory();
+
+  const modeForm = useForm({ defaultValues: { isMultiple: false } });
+  const isMultiple = modeForm.watch("isMultiple");
 
   if (!hasCreateAccess) {
     return <AccessDeniedView moduleName={t("inventory.moduleName")} />;
@@ -47,16 +54,33 @@ export default function NewInventoryPage() {
             </p>
           </div>
         </div>
+        <div className="w-auto md:min-w-48 shrink-0 mt-4 md:mt-0 p-4 bg-primary/5 rounded-2xl border border-primary/10">
+          <Form {...modeForm}>
+            <form>
+              <SwitchField
+                name="isMultiple"
+                control={modeForm.control as any}
+                label={t("inventory.form.multipleMode", {
+                  defaultValue: "Multiple Input Mode",
+                })}
+              />
+            </form>
+          </Form>
+        </div>
       </div>
 
-      <InventoryForm
-        isLoading={createInventory.isPending}
-        onSubmit={(payload: inventoryFormValues) =>
-          createInventory.mutate(payload, {
-            onSuccess: () => router.push("/inventory"),
-          })
-        }
-      />
+      {isMultiple ? (
+        <MultipleInventoryForm onCancel={() => router.back()} />
+      ) : (
+        <InventoryForm
+          isLoading={createInventory.isPending}
+          onSubmit={(payload: inventoryFormValues) =>
+            createInventory.mutate(payload, {
+              onSuccess: () => router.push("/inventory"),
+            })
+          }
+        />
+      )}
     </div>
   );
 }

@@ -228,16 +228,16 @@ export default function InventoryForm({
           <CardContent className="grid grid-cols-1 gap-6 p-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <TextField
-                name="sku"
-                control={control as any}
-                label={t("inventory.form.sku")}
-                placeholder="CRN-0001"
-              />
-              <TextField
                 name="name"
                 control={control as any}
                 label={t("inventory.form.name")}
                 placeholder={t("inventory.card.name")}
+              />
+              <TextField
+                name="sku"
+                control={control as any}
+                label={t("inventory.form.sku")}
+                placeholder="CRN-0001"
               />
             </div>
 
