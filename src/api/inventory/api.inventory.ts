@@ -10,6 +10,7 @@ import {
   INewInventory,
   INewInventoryCategory,
   ISelectorWarehouseInventoryResponse,
+  IInventorySelectorResponse,
 } from "@/components/interface/inventory/inventory.interface";
 import { useFetch, useMutate, useInfiniteFetch } from "@/hooks/query.hook";
 import endpoints from "@/lib/endpoints";
@@ -70,7 +71,7 @@ export const useGetInventoriesInfinite = (
     endpoints.INVENTORY,
     {
       queryKey: queryKeys.inventories.list(queryParams),
-      params: { ...queryParams, limit: 10 },
+      params: { limit: 10, ...queryParams },
       enabled: enabled ?? true,
     },
   );
@@ -80,6 +81,13 @@ export const useFetchInventory = (id: string, enabled?: boolean) => {
   return useFetch<IResponse<IInventoryDetail>>(`${endpoints.INVENTORY}/${id}`, {
     queryKey: queryKeys.inventories.detail(id),
     enabled: enabled ?? !!id,
+  });
+};
+
+export const useFetchInventorySelector = (forSale?: boolean) => {
+  return useFetch<IInventorySelectorResponse>(`${endpoints.INVENTORY}/select`, {
+    queryKey: [...queryKeys.inventories.root, "select", forSale],
+    params: { forSale: !!forSale },
   });
 };
 

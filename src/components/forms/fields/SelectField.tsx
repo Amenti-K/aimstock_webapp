@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { PlusCircle } from "lucide-react";
+import { useLanguage } from "@/hooks/language.hook";
 
 interface Option {
   label: string;
@@ -30,7 +31,8 @@ interface Props {
   canAdd?: boolean;
   /** Label for the add item; defaults to "Add New" */
   addLabel?: string;
-  /** Called when the user clicks the add item */
+  /** Alternative name for the entity to show in empty/loading states; falls back to label */
+  entityName?: string;
   onAddClick?: () => void;
 }
 
@@ -40,12 +42,25 @@ const SelectField = ({
   control,
   placeholder,
   disabled = false,
-  options,
+  options = [],
   onValueChange,
   canAdd = false,
   addLabel = "Add New",
+  entityName,
   onAddClick,
 }: Props) => {
+  const { t } = useLanguage();
+  const displayEntity = (
+    entityName ||
+    label ||
+    t("common.options")
+  ).toLowerCase();
+
+  placeholder =
+    options.length <= 0
+      ? t("common.emptyOption", { entity: displayEntity })
+      : placeholder || t("common.select");
+
   return (
     <Controller
       control={control}
@@ -72,15 +87,30 @@ const SelectField = ({
             value={value !== undefined && value !== null ? String(value) : ""}
             disabled={disabled}
           >
-            <SelectTrigger className={`w-full ${error ? "border-red-500" : ""}`}>
+            <SelectTrigger
+              className={`w-full ${error ? "border-red-500" : ""}`}
+            >
               <SelectValue placeholder={placeholder} />
             </SelectTrigger>
             <SelectContent className="bg-background">
-              {options.map((option) => (
-                <SelectItem key={String(option.value)} value={String(option.value)}>
-                  {option.label}
+              {options.length <= 0 ? (
+                <SelectItem
+                  value="no-data"
+                  disabled
+                  className="text-muted-foreground italic"
+                >
+                  {t("common.emptyOption", { entity: displayEntity })}
                 </SelectItem>
-              ))}
+              ) : (
+                options.map((option) => (
+                  <SelectItem
+                    key={String(option.value)}
+                    value={String(option.value)}
+                  >
+                    {option.label}
+                  </SelectItem>
+                ))
+              )}
 
               {canAdd && (
                 <>

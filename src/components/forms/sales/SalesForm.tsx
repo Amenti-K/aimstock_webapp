@@ -27,8 +27,11 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import PartnerForm from "@/components/forms/partner/PartnerForm";
-import { useFetchPartnerSelector, useCreatePartner } from "@/api/partner/api.partner";
-import { useGetInventoriesInfinite } from "@/api/inventory/api.inventory";
+import {
+  useFetchPartnerSelector,
+  useCreatePartner,
+} from "@/api/partner/api.partner";
+import { useFetchInventorySelector } from "@/api/inventory/api.inventory";
 import { useFetchAccountSelector } from "@/api/account/api.account";
 import { formatCurrency } from "@/lib/formatter";
 import { useLanguage } from "@/hooks/language.hook";
@@ -65,12 +68,16 @@ interface SalesFormProps {
 }
 
 /** Build form values from initialData (used for both defaultValues and reset) */
-function buildFormValues(initialData: ISaleView | null | undefined): SalesFormValues {
+function buildFormValues(
+  initialData: ISaleView | null | undefined,
+): SalesFormValues {
   if (!initialData) {
     return {
       partnerId: "",
       description: "",
-      saleItems: [{ inventoryId: "", warehouseId: "", quantity: 1, unitPrice: 0 }],
+      saleItems: [
+        { inventoryId: "", warehouseId: "", quantity: 1, unitPrice: 0 },
+      ],
       salePayments: [],
       saleCashPayment: { amount: 0 },
     };
@@ -82,13 +89,12 @@ function buildFormValues(initialData: ISaleView | null | undefined): SalesFormVa
         ? String(initialData.partner.id)
         : "",
     description: initialData.description || "",
-    saleItems:
-      initialData.saleItems?.map((item: any) => ({
-        inventoryId: item.inventory?.id || item.inventoryId || "",
-        warehouseId: item.warehouse?.id || item.warehouseId || "",
-        quantity: Number(item.quantity) || 1,
-        unitPrice: Number(item.unitPrice) || 0,
-      })) ?? [{ inventoryId: "", warehouseId: "", quantity: 1, unitPrice: 0 }],
+    saleItems: initialData.saleItems?.map((item: any) => ({
+      inventoryId: item.inventory?.id || item.inventoryId || "",
+      warehouseId: item.warehouse?.id || item.warehouseId || "",
+      quantity: Number(item.quantity) || 1,
+      unitPrice: Number(item.unitPrice) || 0,
+    })) ?? [{ inventoryId: "", warehouseId: "", quantity: 1, unitPrice: 0 }],
     salePayments:
       initialData.salePayments?.map((payment: any) => ({
         accountId: payment.account?.id || payment.accountId || "",
@@ -143,14 +149,15 @@ export default function SalesForm({
     refetch: refetchPartners,
   } = useFetchPartnerSelector();
 
-  const { mutate: createPartner, isPending: creatingPartner } = useCreatePartner();
+  const { mutate: createPartner, isPending: creatingPartner } =
+    useCreatePartner();
 
-  const { data: inventoriesData } = useGetInventoriesInfinite({}, true);
+  const { data: inventoriesData } = useFetchInventorySelector(true);
   const { data: accountsData } = useFetchAccountSelector();
   const { data: warehouses } = useFetchWarehouseSelector();
 
   const allInventories = useMemo(
-    () => inventoriesData?.pages?.flatMap((page: any) => page.data ?? []) ?? [],
+    () => inventoriesData?.data ?? [],
     [inventoriesData],
   );
 
@@ -175,14 +182,19 @@ export default function SalesForm({
     [allInventories],
   );
 
-  const accountOptions = useMemo(
-    () =>
-      (accountsData?.data ?? []).map((account: any) => ({
-        label: `${account.name} (${formatCurrency(account.balance)})`,
-        value: account.id,
-      })),
-    [accountsData],
-  );
+  const accountOptions = useMemo(() => {
+    // Determine if data is nested in .data property or is the array itself
+    const list = Array.isArray(accountsData)
+      ? accountsData
+      : Array.isArray(accountsData?.data)
+        ? accountsData.data
+        : [];
+
+    return list.map((account: any) => ({
+      label: `${account.name} (${formatCurrency(account.balance ?? 0)})`,
+      value: String(account.id),
+    }));
+  }, [accountsData]);
 
   const warehouseOptions = useMemo(() => {
     if (!Array.isArray(warehouses?.data)) return [];
@@ -270,7 +282,6 @@ export default function SalesForm({
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
             {/* ── Left Column: Form Details ─────────────────────────────── */}
             <div className="lg:col-span-2 space-y-6">
-
               {/* Header Section */}
               <Card className="shadow-sm border-primary/10">
                 <CardHeader className="border-b">
@@ -332,11 +343,21 @@ export default function SalesForm({
                   <div className="min-w-[750px] space-y-3">
                     {/* Header Row */}
                     <div className="grid grid-cols-15 gap-3 px-2 text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
-                      <div className="col-span-4">{t("sales.form.items.item")}</div>
-                      <div className="col-span-4">{t("sales.form.items.warehouse")}</div>
-                      <div className="col-span-2">{t("sales.form.items.qty")}</div>
-                      <div className="col-span-2">{t("sales.form.items.unitPrice")}</div>
-                      <div className="col-span-2">{t("sales.form.items.subTotal")}</div>
+                      <div className="col-span-4">
+                        {t("sales.form.items.item")}
+                      </div>
+                      <div className="col-span-4">
+                        {t("sales.form.items.warehouse")}
+                      </div>
+                      <div className="col-span-2">
+                        {t("sales.form.items.qty")}
+                      </div>
+                      <div className="col-span-2">
+                        {t("sales.form.items.unitPrice")}
+                      </div>
+                      <div className="col-span-2">
+                        {t("sales.form.items.subTotal")}
+                      </div>
                       <div className="col-span-1 text-center" />
                     </div>
 
@@ -344,6 +365,18 @@ export default function SalesForm({
                       const itemTotal =
                         Number(watchedItems?.[index]?.quantity || 0) *
                         Number(watchedItems?.[index]?.unitPrice || 0);
+
+                      const selectedInventoryId =
+                        watchedItems?.[index]?.inventoryId;
+                      const rowInventory = allInventories.find(
+                        (inv: any) => inv.id === selectedInventoryId,
+                      );
+                      const rowWarehouseOptions = rowInventory
+                        ? rowInventory.warehouseInventories.map((wi: any) => ({
+                            value: wi.warehouseId,
+                            label: wi.warehouse?.name || "Unknown",
+                          }))
+                        : warehouseOptions;
 
                       return (
                         <div
@@ -366,6 +399,17 @@ export default function SalesForm({
                                     `saleItems.${index}.unitPrice`,
                                     Number(item.sellingPrice) || 0,
                                   );
+                                  if (item.warehouseInventories?.length === 1) {
+                                    setValue(
+                                      `saleItems.${index}.warehouseId`,
+                                      item.warehouseInventories[0].warehouseId,
+                                    );
+                                  } else {
+                                    setValue(
+                                      `saleItems.${index}.warehouseId`,
+                                      "",
+                                    );
+                                  }
                                 }
                               }}
                             />
@@ -376,8 +420,10 @@ export default function SalesForm({
                             <SelectField
                               name={`saleItems.${index}.warehouseId`}
                               control={control as any}
-                              placeholder={t("sales.form.items.selectWarehouse")}
-                              options={warehouseOptions}
+                              placeholder={t(
+                                "sales.form.items.selectWarehouse",
+                              )}
+                              options={rowWarehouseOptions}
                             />
                           </div>
 
@@ -517,7 +563,7 @@ export default function SalesForm({
             </div>
 
             {/* ── Right Column: Summary & Submit (Sticky) ───────────────── */}
-            <div className="lg:sticky lg:top-8 space-y-6">
+            <div className="lg:fixed lg:top-24 lg:right-8 space-y-6">
               <Card className="shadow-lg border-t-4 border-t-emerald-600 overflow-hidden">
                 <CardHeader className="pb-4 border-b">
                   <CardTitle className="text-base flex items-center gap-2 text-emerald-700">

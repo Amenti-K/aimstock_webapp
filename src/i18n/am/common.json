@@ -97,6 +97,8 @@
   "loading": "በመጫን ላይ...",
   "loadingMore": "ተጨማሪ በመጫን ላይ...",
   "emptyView": "ምንም ውሂብ አልተገኘም",
+  "emptyOption": "ምንም {{entity}} የለም",
+  "options": "አማራጮች",
   "retry": "እንደገና ሞክር",
   "back": "ወደኋላ",
   "disable": "አሰናክል",

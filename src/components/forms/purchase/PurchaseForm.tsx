@@ -194,14 +194,19 @@ export default function PurchaseForm({
     [allInventories],
   );
 
-  const accountOptions = useMemo(
-    () =>
-      (accountsData?.data ?? []).map((account: any) => ({
-        label: `${account.name} (${formatCurrency(account.balance)})`,
-        value: account.id,
-      })),
-    [accountsData],
-  );
+  const accountOptions = useMemo(() => {
+    // Determine if data is nested in .data property or is the array itself
+    const list = Array.isArray(accountsData)
+      ? accountsData
+      : Array.isArray(accountsData?.data)
+        ? accountsData.data
+        : [];
+
+    return list.map((account: any) => ({
+      label: `${account.name} (${formatCurrency(account.balance ?? 0)})`,
+      value: String(account.id),
+    }));
+  }, [accountsData]);
 
   const warehouseOptions = useMemo(() => {
     if (!Array.isArray(warehouses?.data)) return [];
@@ -580,7 +585,7 @@ export default function PurchaseForm({
             </div>
 
             {/* ── Right Column: Summary & Submit (Sticky) ───────────────── */}
-            <div className="lg:sticky lg:top-8 space-y-6">
+            <div className="lg:fixed lg:top-24 lg:right-8 space-y-6">
               <Card className="shadow-lg border-t-4 border-t-primary overflow-hidden">
                 <CardHeader className="pb-4 border-b">
                   <CardTitle className="text-base flex items-center gap-2">

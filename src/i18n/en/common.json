@@ -97,6 +97,8 @@
   "loading": "Loading...",
   "loadingMore": "Loading more...",
   "emptyView": "No data found",
+  "emptyOption": "No {{entity}} available",
+  "options": "options",
   "retry": "Retry",
   "back": "Back",
   "disable": "Disable",
