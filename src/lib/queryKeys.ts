@@ -178,4 +178,12 @@ export const queryKeys = {
     inventories: (warehouseId: string) =>
       ["warehouse-inventories", "selector", "warehouse", warehouseId] as const,
   },
+
+  notifications: {
+    root: ["notifications"] as const,
+    list: (filters?: any) =>
+      [...queryKeys.notifications.root, "list", filters ?? {}] as const,
+    unreadCount: () =>
+      [...queryKeys.notifications.root, "unread-count"] as const,
+  },
 };
