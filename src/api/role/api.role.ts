@@ -18,8 +18,8 @@ const onSuccessNotification = (data: any) => {
 };
 
 export const useGetRolesInfinite = (
+  enabled: boolean,
   filterOptions?: Record<string, any>,
-  enabled?: boolean,
 ) => {
   const { search, ...filter } = filterOptions ?? { search: undefined };
   const queryParams = {
@@ -50,7 +50,7 @@ export const useUpdateRole = (id: string) => {
   });
 };
 
-export const useFetchRoleById = (id: string, enabled?: boolean) => {
+export const useFetchRoleById = (id: string, enabled: boolean) => {
   return useFetch<IRole>(`${endpoints.ROLE}/${id}`, {
     queryKey: queryKeys.roles.detail(id),
     enabled: enabled ?? !!id,

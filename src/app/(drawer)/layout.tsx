@@ -24,6 +24,7 @@ import { useLanguage } from "@/hooks/language.hook";
 import { drawerNavItems } from "@/constants/drawer";
 import { NavLink } from "@/components/NavLink";
 import InstallAppButton from "@/components/common/InstallAppButton";
+import { NotificationProvider } from "@/context/NotificationContext";
 
 function MobileBottomTabs() {
   const { t } = useLanguage();
@@ -209,117 +210,123 @@ export default function DrawerLayout({
 
   return (
     <AuthLockProvider>
-      <SessionLockWrapper>
-        <SidebarProvider>
-          <NetworkBanner />
-          <UserDrawerSidebar />
-          <SidebarInset className="relative flex flex-col min-h-screen">
-            <header className="flex h-14 items-center gap-2 border-b bg-background px-4 sticky top-0 z-10 sm:pt-0 pt-[env(safe-area-inset-top)]">
-              <SidebarTrigger className="-ml-1" />
-              <Separator orientation="vertical" className="h-4" />
-              <div className="flex justify-between items-center w-full">
-                <h1 className="text-sm font-medium capitalize">{pageName}</h1>
-                <div className="flex items-center gap-2">
-                  <InstallAppButton
-                    variant="ghost"
-                    size="sm"
-                    className="text-xs text-muted-foreground hover:text-primary border-none"
-                  />
-                  <LockButton />
+      <NotificationProvider>
+        <SessionLockWrapper>
+          <SidebarProvider>
+            <NetworkBanner />
+            <UserDrawerSidebar />
+            <SidebarInset className="relative flex flex-col min-h-screen">
+              <header className="flex h-14 items-center gap-2 border-b bg-background px-4 sticky top-0 z-10 sm:pt-0 pt-[env(safe-area-inset-top)]">
+                <SidebarTrigger className="-ml-1" />
+                <Separator orientation="vertical" className="h-4" />
+                <div className="flex justify-between items-center w-full">
+                  <h1 className="text-sm font-medium capitalize">{pageName}</h1>
+                  <div className="flex items-center gap-2">
+                    <InstallAppButton
+                      variant="ghost"
+                      size="sm"
+                      className="text-xs text-muted-foreground hover:text-primary border-none"
+                    />
+                    <LockButton />
+                  </div>
                 </div>
-              </div>
-            </header>
-            <main className="flex-1 overflow-auto bg-muted/30 p-4 sm:p-5 space-y-4 pb-24 sm:pb-5">
-              {/* Past Due Alert */}
-              {isPastDue && (!isMobile || !isPastDueDismissed) && (
-                <Alert
-                  variant="destructive"
-                  className={cn(
-                    "bg-destructive/10 border-destructive/20 shadow-sm transition-all animate-in fade-in slide-in-from-top-2",
-                    isMobile && "relative pr-10",
-                  )}
-                >
-                  <AlertTriangle className="h-4 w-4" />
-                  <div className="flex flex-row w-full sm:items-center justify-between gap-3">
-                    <div>
-                      <AlertTitle>
-                        {t("subscription.banner.actionRequired")}
-                      </AlertTitle>
-                      <AlertDescription className="text-xs sm:text-sm">
-                        {t("subscription.banner.message.pastDue", { daysLeft })}
-                      </AlertDescription>
+              </header>
+              <main className="flex-1 overflow-auto bg-muted/30 p-4 sm:p-5 space-y-4 pb-24 sm:pb-5">
+                {/* Past Due Alert */}
+                {isPastDue && (!isMobile || !isPastDueDismissed) && (
+                  <Alert
+                    variant="destructive"
+                    className={cn(
+                      "bg-destructive/10 border-destructive/20 shadow-sm transition-all animate-in fade-in slide-in-from-top-2",
+                      isMobile && "relative pr-10",
+                    )}
+                  >
+                    <AlertTriangle className="h-4 w-4" />
+                    <div className="flex flex-row w-full sm:items-center justify-between gap-3">
+                      <div>
+                        <AlertTitle>
+                          {t("subscription.banner.actionRequired")}
+                        </AlertTitle>
+                        <AlertDescription className="text-xs sm:text-sm">
+                          {t("subscription.banner.message.pastDue", {
+                            daysLeft,
+                          })}
+                        </AlertDescription>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Button
+                          variant="destructive"
+                          size="sm"
+                          className="h-8 text-xs px-3 font-semibold"
+                          onClick={() =>
+                            router.push("/setting/subscription/plans")
+                          }
+                        >
+                          {t("subscription.banner.actionLabel.pastDue")}
+                        </Button>
+                      </div>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <Button
-                        variant="destructive"
-                        size="sm"
-                        className="h-8 text-xs px-3 font-semibold"
-                        onClick={() =>
-                          router.push("/setting/subscription/plans")
-                        }
+                    {isMobile && (
+                      <button
+                        onClick={() => setIsPastDueDismissed(true)}
+                        className="absolute top-2 right-2 p-1 text-destructive hover:bg-destructive/20 rounded-full transition-colors"
                       >
-                        {t("subscription.banner.actionLabel.pastDue")}
-                      </Button>
-                    </div>
-                  </div>
-                  {isMobile && (
-                    <button
-                      onClick={() => setIsPastDueDismissed(true)}
-                      className="absolute top-2 right-2 p-1 text-destructive hover:bg-destructive/20 rounded-full transition-colors"
-                    >
-                      <X className="h-4 w-4" />
-                    </button>
-                  )}
-                </Alert>
-              )}
+                        <X className="h-4 w-4" />
+                      </button>
+                    )}
+                  </Alert>
+                )}
 
-              {/* Trial Alert */}
-              {isTrialing && (!isMobile || !isTrialDismissed) && (
-                <Alert
-                  className={cn(
-                    "bg-primary/5 border-primary/20 shadow-sm transition-all animate-in fade-in slide-in-from-top-2",
-                    isMobile && "relative pr-10",
-                  )}
-                >
-                  <Info className="h-4 w-4 text-primary" />
-                  <div className="flex flex-row w-full sm:items-center justify-between gap-3">
-                    <div>
-                      <AlertTitle>{t("subscription.banner.notice")}</AlertTitle>
-                      <AlertDescription className="text-xs sm:text-sm">
-                        {t("subscription.banner.message.trialing", {
-                          daysLeft,
-                        })}
-                      </AlertDescription>
+                {/* Trial Alert */}
+                {isTrialing && (!isMobile || !isTrialDismissed) && (
+                  <Alert
+                    className={cn(
+                      "bg-primary/5 border-primary/20 shadow-sm transition-all animate-in fade-in slide-in-from-top-2",
+                      isMobile && "relative pr-10",
+                    )}
+                  >
+                    <Info className="h-4 w-4 text-primary" />
+                    <div className="flex flex-row w-full sm:items-center justify-between gap-3">
+                      <div>
+                        <AlertTitle>
+                          {t("subscription.banner.notice")}
+                        </AlertTitle>
+                        <AlertDescription className="text-xs sm:text-sm">
+                          {t("subscription.banner.message.trialing", {
+                            daysLeft,
+                          })}
+                        </AlertDescription>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Button
+                          size="sm"
+                          className="h-8 text-xs px-3 font-semibold"
+                          onClick={() =>
+                            router.push("/setting/subscription/plans")
+                          }
+                        >
+                          {t("subscription.banner.actionLabel.trialing")}
+                        </Button>
+                      </div>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <Button
-                        size="sm"
-                        className="h-8 text-xs px-3 font-semibold"
-                        onClick={() =>
-                          router.push("/setting/subscription/plans")
-                        }
+                    {isMobile && (
+                      <button
+                        onClick={() => setIsTrialDismissed(true)}
+                        className="absolute top-2 right-2 p-1 text-muted-foreground hover:bg-muted rounded-full transition-colors"
                       >
-                        {t("subscription.banner.actionLabel.trialing")}
-                      </Button>
-                    </div>
-                  </div>
-                  {isMobile && (
-                    <button
-                      onClick={() => setIsTrialDismissed(true)}
-                      className="absolute top-2 right-2 p-1 text-muted-foreground hover:bg-muted rounded-full transition-colors"
-                    >
-                      <X className="h-4 w-4" />
-                    </button>
-                  )}
-                </Alert>
-              )}
+                        <X className="h-4 w-4" />
+                      </button>
+                    )}
+                  </Alert>
+                )}
 
-              {children}
-            </main>
-            {hideTabs && <MobileBottomTabs />}
-          </SidebarInset>
-        </SidebarProvider>
-      </SessionLockWrapper>
+                {children}
+              </main>
+              {hideTabs && <MobileBottomTabs />}
+            </SidebarInset>
+          </SidebarProvider>
+        </SessionLockWrapper>
+      </NotificationProvider>
     </AuthLockProvider>
   );
 }

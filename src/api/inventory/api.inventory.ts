@@ -58,8 +58,8 @@ export const useCreateQuickInventory = () => {
 };
 
 export const useGetInventoriesInfinite = (
+  enabled: boolean,
   filterOptions?: Record<string, any>,
-  enabled?: boolean,
 ) => {
   const { search, ...filter } = filterOptions ?? { search: undefined };
   const queryParams = {
@@ -77,7 +77,7 @@ export const useGetInventoriesInfinite = (
   );
 };
 
-export const useFetchInventory = (id: string, enabled?: boolean) => {
+export const useFetchInventory = (id: string, enabled: boolean) => {
   return useFetch<IResponse<IInventoryDetail>>(`${endpoints.INVENTORY}/${id}`, {
     queryKey: queryKeys.inventories.detail(id),
     enabled: enabled ?? !!id,
@@ -93,7 +93,7 @@ export const useFetchInventorySelector = (forSale?: boolean) => {
 
 export const useFetchWarehouseInventorySelector = (
   warehouseId: string,
-  enabled?: boolean,
+  enabled: boolean,
 ) => {
   return useFetch<ISelectorWarehouseInventoryResponse>(
     `${endpoints.INVENTORY}/select/${warehouseId}`,
@@ -106,7 +106,7 @@ export const useFetchWarehouseInventorySelector = (
 
 export const useFetchInventoryAnalytics = (
   id: string,
-  enabled?: boolean,
+  enabled: boolean,
   filters: Record<string, any> = {},
 ) => {
   return useFetch<IResponse<IInventoryAnalytics>>(
@@ -151,7 +151,7 @@ export const useFetchCategories = () => {
   });
 };
 
-export const useFetchCategoryById = (id: string, enabled?: boolean) => {
+export const useFetchCategoryById = (id: string, enabled: boolean) => {
   return useFetch<IResponse<IInventoryCategory>>(
     `${endpoints.CATEGORIES}/${id}`,
     {

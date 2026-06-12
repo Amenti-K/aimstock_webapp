@@ -15,10 +15,8 @@ import {
   HandCoins,
   ArrowUpRight,
   TrendingUp,
-  History,
   MoreVertical,
   ChevronRight,
-  Info,
 } from "lucide-react";
 import {
   useDeletePartner,
@@ -57,7 +55,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { formatCurrency, formatDate } from "@/lib/formatter";
 import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
 import LastAudit from "@/components/audit/LastAudit";
 
 export default function PartnerDetailPage() {

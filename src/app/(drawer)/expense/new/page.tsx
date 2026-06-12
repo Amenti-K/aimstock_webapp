@@ -22,7 +22,6 @@ function NewExpenseContent() {
   const templateId = searchParams.get("templateId");
   const templateName = searchParams.get("templateName");
   const description = searchParams.get("description");
-  const amountStr = searchParams.get("amount");
 
   const initialData = useMemo(() => {
     const data: Partial<ExpenseFormValues> = {
@@ -32,7 +31,7 @@ function NewExpenseContent() {
       cashItem: { amount: 0 },
     };
     return data;
-  }, [description, templateId, amountStr]);
+  }, [description, templateId]);
 
   if (!canCreate("EXPENSE"))
     return <AccessDeniedView moduleName={t("expense.moduleName")} />;

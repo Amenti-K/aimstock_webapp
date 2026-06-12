@@ -68,7 +68,7 @@ export default function RolePage() {
     hasNextPage,
     fetchNextPage,
     isFetchingNextPage,
-  } = useGetRolesInfinite({}, hasViewAccess);
+  } = useGetRolesInfinite(hasViewAccess);
 
   const selectedRoleQuery = useFetchRoleById(
     selectedRoleId ?? "",

@@ -3,16 +3,8 @@
 import React, { useEffect, useMemo } from "react";
 import { useForm, useWatch, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  PlusCircle,
-  Trash2,
-  Calendar,
-  FileText,
-  Wallet,
-  Landmark,
-} from "lucide-react";
+import { PlusCircle, Trash2, Landmark } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Form } from "@/components/ui/form";
 import { useFetchAccountSelector } from "@/api/account/api.account";
 import {
   loanTransactionSchema,
@@ -28,13 +20,12 @@ import { formatCurrency } from "@/lib/formatter";
 import { Badge } from "@/components/ui/badge";
 import SelectField from "@/components/forms/fields/SelectField";
 import NumericField from "@/components/forms/fields/NumericField";
-import TextField from "@/components/forms/fields/TextField";
 import TextAreaField from "@/components/forms/fields/TextAreaField";
 import SubmitButton from "@/components/forms/fields/SubmitButton";
 import DateField from "../fields/DateField";
 
 interface Props {
-  initialValues?: Partial<LoanTransactionData> | null;
+  initialValues?: Partial<ILoanTranx> | null;
   txId?: string;
   partnerId?: string;
   onSuccess?: () => void;

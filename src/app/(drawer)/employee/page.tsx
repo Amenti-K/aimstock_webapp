@@ -2,7 +2,6 @@
 
 import React from "react";
 import {
-  IEmployee,
   useCreateEmployee,
   useDeactivateEmployee,
   useGetEmployeesInfinite,
@@ -14,14 +13,7 @@ import { LoadingView, ErrorView } from "@/components/common/StateView";
 import { AccessDeniedView } from "@/components/guards/AccessDeniedView";
 import { usePermissions } from "@/hooks/permission.hook";
 import { Button } from "@/components/ui/button";
-import {
-  Plus,
-  MoreHorizontal,
-  User,
-  Pencil,
-  KeyRound,
-  UserX,
-} from "lucide-react";
+import { Plus, MoreHorizontal, Pencil, KeyRound, UserX } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -62,6 +54,7 @@ import {
   UpdateEmployeeFormValues,
 } from "@/components/forms/employee/employee.schema";
 import { useLanguage } from "@/hooks/language.hook";
+import { IEmployee } from "@/components/interface/employee/employee.interface";
 
 export default function EmployeePage() {
   const { t } = useLanguage();
@@ -93,7 +86,7 @@ export default function EmployeePage() {
     hasNextPage,
     fetchNextPage,
     isFetchingNextPage,
-  } = useGetEmployeesInfinite({ search }, hasViewAccess);
+  } = useGetEmployeesInfinite(hasViewAccess, { search });
 
   const employees = React.useMemo(() => {
     return data?.pages?.flatMap((page) => page.data as IEmployee[]) ?? [];

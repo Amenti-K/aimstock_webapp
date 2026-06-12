@@ -6,7 +6,6 @@ import { loginUser } from "@/redux/slices/userAuthSlice";
 import { useDispatch } from "react-redux";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
-import { UserInfo } from "@/components/interface/user/user.interface";
 
 // Sign In
 export const useSignIn = () => {

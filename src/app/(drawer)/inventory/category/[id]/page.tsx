@@ -279,7 +279,7 @@ export default function CategoryDetailPage() {
     hasNextPage,
     fetchNextPage,
     isFetchingNextPage,
-  } = useGetInventoriesInfinite({ categoryIds: [id] }, hasViewAccess && !!id);
+  } = useGetInventoriesInfinite(hasViewAccess && !!id, { categoryIds: [id] });
 
   const inventories: IInventory[] = useMemo(
     () => catInvData?.pages?.flatMap((p) => (p as any).data) ?? [],
@@ -293,10 +293,10 @@ export default function CategoryDetailPage() {
     hasNextPage: hasNextAvailable,
     fetchNextPage: fetchNextAvailable,
     isFetchingNextPage: isFetchingNextAvailable,
-  } = useGetInventoriesInfinite(
-    { noCategory: true, search: addSearch },
-    hasViewAccess && isAddOpen,
-  );
+  } = useGetInventoriesInfinite(hasViewAccess && isAddOpen, {
+    noCategory: true,
+    search: addSearch,
+  });
   const availableInventories: IInventory[] = useMemo(
     () => allData?.pages?.flatMap((p) => (p as any).data) ?? [],
     [allData],

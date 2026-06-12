@@ -56,14 +56,14 @@ export default function DashboardPage() {
     isLoading: isSummaryLoading,
     isError: isSummaryError,
     refetch: refetchSummary,
-  } = useGetAnalytics();
+  } = useGetAnalytics(hasViewAccess);
 
   const {
     data: pieData,
     isLoading: isPieLoading,
     isError: isPieError,
     refetch: refetchPie,
-  } = usePieChart(true, { timeFrame });
+  } = usePieChart(hasViewAccess, { timeFrame });
 
   // const {
   //   data: profitData,

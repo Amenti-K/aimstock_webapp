@@ -8,13 +8,6 @@ export enum StockStatus {
   LOW = "low",
   OUT = "out",
 }
-export enum ExpiryStatus {
-  NONE = "none",
-  EXPIRED = "expired",
-  IN_1_MONTH = "in_1_month",
-  IN_3_MONTH = "in_3_month",
-  IN_6_MONTH = "in_6_month",
-}
 
 export enum TimeFrame {
   LAST_30_DAYS = "LAST_30_DAYS",
@@ -27,7 +20,6 @@ export interface IInventoryFilters {
   search?: string;
   stockStatus?: StockStatus;
   categoryIds?: string[];
-  expiryStatus?: ExpiryStatus;
 }
 
 export interface INewInventory {
@@ -65,7 +57,6 @@ export interface IInventory {
   sellingPrice: number;
   brand?: string;
   unit?: string;
-  expiryDate?: string;
   inventoryCategory?: {
     id: string;
     name: string;

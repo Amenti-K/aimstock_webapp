@@ -2,7 +2,6 @@
 
 import React from "react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
 import { User, Building, Phone } from "lucide-react";
 import { CompanyInfo, UserInfo } from "../interface/user/user.interface";
 

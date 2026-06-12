@@ -1,10 +1,11 @@
 import { EmployeeFormValues } from "@/components/schema/employee.schema";
+import { IRole } from "../role/role.interface";
 
 export interface IEmployee {
   id: string;
   name: string;
   phoneNumber: string;
-  role?: string;
+  role?: IRole;
   joinedAt: Date;
 }
 

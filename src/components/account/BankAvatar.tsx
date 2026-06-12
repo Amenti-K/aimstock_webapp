@@ -4,7 +4,6 @@ import {
   EthiopianFinancialInstitution,
   AccountType,
 } from "../interface/interface.account";
-import { Wallet } from "lucide-react";
 
 interface BankAvatarProps {
   name?: EthiopianFinancialInstitution;

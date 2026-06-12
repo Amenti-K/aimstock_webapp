@@ -36,8 +36,6 @@ export const inventorySchema = z
       .number("initialQuantity is required")
       .min(0, "initialQuantity must be >= 0"),
 
-    expiryDate: z.string("expiryDate must be a date string").optional(),
-
     inventoryCategoryId: z.string("inventoryCategoryId is required").optional(),
 
     warehouseInventories: z
@@ -86,8 +84,6 @@ export const inventoryUpdateSchema = z
     initialQuantity: z
       .number("initialQuantity is required")
       .min(0, "initialQuantity must be >= 0"),
-
-    expiryDate: z.string("expiryDate must be a date string").optional(),
 
     inventoryCategoryId: z.string("inventoryCategoryId is required").optional(),
 
@@ -139,8 +135,6 @@ export const QuickInventorySchema = z.object({
   brand: z.string("brand must be a string").trim().optional(),
 
   unit: z.string("unit is required").trim().min(1, "unit cannot be empty"),
-
-  expiryDate: z.string("expiryDate must be a date string").optional(),
 
   inventoryCategoryId: z.string("inventoryCategoryId is required").optional(),
 });

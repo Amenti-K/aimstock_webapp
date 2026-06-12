@@ -33,6 +33,8 @@ const endpoints = {
   MAIL: "/mail",
   MAILCONTACT: "/mail/contact",
   AUDITLOG: "/audit-log",
+
+  NOTIFICATION: "/notifications",
 };
 
 export default endpoints;

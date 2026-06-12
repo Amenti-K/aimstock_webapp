@@ -15,7 +15,6 @@ interface Props {
   disabled?: boolean;
   type?: React.HTMLInputTypeAttribute;
   secureTextEntry?: boolean;
-  multiLine?: boolean;
 }
 
 const TextField = ({
@@ -26,7 +25,6 @@ const TextField = ({
   disabled = false,
   type = "text",
   secureTextEntry = false,
-  multiLine = false,
 }: Props) => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 

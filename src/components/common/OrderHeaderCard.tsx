@@ -2,7 +2,7 @@
 
 import React from "react";
 import { formatCurrency, formatDate } from "@/lib/formatter";
-import { Calendar, Clock, Phone, User } from "lucide-react";
+import { Calendar, Phone, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 import LastAudit from "../audit/LastAudit";
 import { ILastAudit } from "../interface/auditLog/interface.audit";
@@ -34,7 +34,6 @@ export function OrderHeaderCard({
 }: OrderHeaderCardProps) {
   const { t } = useLanguage();
   const isPurchase = type === "purchase";
-  const balance = totalAmount - paidAmount;
 
   return (
     <div className="flex flex-col gap-5 sm:gap-6">

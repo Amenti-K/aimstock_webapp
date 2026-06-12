@@ -81,7 +81,8 @@ export default function AccountDetailPage() {
   const { company } = useAppSelector((state) => state.userAuth);
 
   const isMobile = useIsMobile();
-  const { canUpdate, canDelete } = usePermissions();
+  const { canView, canUpdate, canDelete } = usePermissions();
+  const hasViewAccess = canView("ACCOUNT");
   const hasUpdateAccess = canUpdate("ACCOUNT");
   const hasDeleteAccess = canDelete("ACCOUNT");
 
@@ -94,7 +95,7 @@ export default function AccountDetailPage() {
     isLoading,
     isError,
     refetch,
-  } = useGetAccount(id as string);
+  } = useGetAccount(id as string, hasViewAccess);
   const { data: accountsData } = useFetchAccountSelector();
   const transferFunds = useTransferFunds();
   const deleteAccount = useDeleteAccount();

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useFieldArray, useForm, useWatch } from "react-hook-form";
 import { Form } from "@/components/ui/form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -120,6 +120,16 @@ export default function SalesForm({
     defaultValues: buildFormValues(initialData),
   });
   const { control, handleSubmit, setError, reset, watch, setValue } = form;
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  const handleScroll = (x: number) => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollTo({
+        left: x,
+        behavior: "smooth",
+      });
+    }
+  };
 
   // Re-sync whenever initialData reference changes (e.g., after async fetch)
   useEffect(() => {
@@ -339,21 +349,24 @@ export default function SalesForm({
                     {t("sales.form.items.addItem")}
                   </Button>
                 </CardHeader>
-                <CardContent className="overflow-x-auto">
+                <CardContent
+                  ref={scrollContainerRef}
+                  className="overflow-x-auto scroll-smooth"
+                >
                   <div className="min-w-[750px] space-y-3">
                     {/* Header Row */}
                     <div className="grid grid-cols-15 gap-3 px-2 text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
                       <div className="col-span-4">
                         {t("sales.form.items.item")}
                       </div>
-                      <div className="col-span-4">
-                        {t("sales.form.items.warehouse")}
-                      </div>
                       <div className="col-span-2">
                         {t("sales.form.items.qty")}
                       </div>
                       <div className="col-span-2">
                         {t("sales.form.items.unitPrice")}
+                      </div>
+                      <div className="col-span-4">
+                        {t("sales.form.items.warehouse")}
                       </div>
                       <div className="col-span-2">
                         {t("sales.form.items.subTotal")}
@@ -410,20 +423,9 @@ export default function SalesForm({
                                       "",
                                     );
                                   }
+                                  handleScroll(100);
                                 }
                               }}
-                            />
-                          </div>
-
-                          {/* Warehouse */}
-                          <div className="col-span-4 min-w-[180px]">
-                            <SelectField
-                              name={`saleItems.${index}.warehouseId`}
-                              control={control as any}
-                              placeholder={t(
-                                "sales.form.items.selectWarehouse",
-                              )}
-                              options={rowWarehouseOptions}
                             />
                           </div>
 
@@ -442,6 +444,19 @@ export default function SalesForm({
                               name={`saleItems.${index}.unitPrice`}
                               control={control as any}
                               placeholder="0"
+                            />
+                          </div>
+
+                          {/* Warehouse */}
+                          <div className="col-span-4 min-w-[180px]">
+                            <SelectField
+                              name={`saleItems.${index}.warehouseId`}
+                              control={control as any}
+                              placeholder={t(
+                                "sales.form.items.selectWarehouse",
+                              )}
+                              options={rowWarehouseOptions}
+                              onValueChange={() => handleScroll(10)}
                             />
                           </div>
 

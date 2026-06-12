@@ -1,10 +1,8 @@
 import {
-  QueryKey,
   useInfiniteQuery,
   useMutation,
   useQuery,
   useQueryClient,
-  UseQueryOptions,
 } from "@tanstack/react-query";
 import { AxiosRequestConfig, AxiosResponse } from "axios";
 import AxiosInstance from "@/lib/axiosInstance";

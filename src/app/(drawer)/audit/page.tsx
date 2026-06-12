@@ -59,17 +59,14 @@ export default function AuditPage() {
     hasNextPage,
     fetchNextPage,
     isFetchingNextPage,
-  } = useGetAuditLogsInfinite(
-    {
-      auditAction:
-        selectedAction && selectedAction !== "ALL" ? selectedAction : undefined,
-      entityType:
-        selectedEntityType && selectedEntityType !== "ALL"
-          ? selectedEntityType
-          : undefined,
-    },
-    hasViewAccess,
-  );
+  } = useGetAuditLogsInfinite(hasViewAccess, {
+    auditAction:
+      selectedAction && selectedAction !== "ALL" ? selectedAction : undefined,
+    entityType:
+      selectedEntityType && selectedEntityType !== "ALL"
+        ? selectedEntityType
+        : undefined,
+  });
 
   const actionOptions = React.useMemo(
     () => [
@@ -107,6 +104,7 @@ export default function AuditPage() {
   if (!hasViewAccess) {
     return <AccessDeniedView moduleName={t("audit.moduleName")} />;
   }
+  if (isError) return <ErrorView refetch={refetch} />;
 
   return (
     <div className="space-y-6 relative">
@@ -121,7 +119,9 @@ export default function AuditPage() {
       {/* Header - Hidden on mobile */}
       {/* Header - Hidden on mobile */}
       <div className="hidden md:block">
-        <h1 className="text-2xl font-bold tracking-tight">{t("audit.moduleName")}</h1>
+        <h1 className="text-2xl font-bold tracking-tight">
+          {t("audit.moduleName")}
+        </h1>
         <p className="text-sm text-muted-foreground">
           {t("audit.moduleDescription")}
         </p>
@@ -167,7 +167,9 @@ export default function AuditPage() {
                   key={log.id}
                   className="cursor-pointer hover:bg-muted/50"
                   onClick={() => {
-                    router.push(`/audit/${log.entityId}?entityType=${log.entityType}`);
+                    router.push(
+                      `/audit/${log.entityId}?entityType=${log.entityType}`,
+                    );
                   }}
                 >
                   <TableCell className="font-medium whitespace-nowrap text-xs">
@@ -214,7 +216,9 @@ export default function AuditPage() {
               key={log.id}
               className="flex items-start justify-between rounded-xl border bg-card p-4 shadow-sm cursor-pointer active:opacity-70"
               onClick={() => {
-                router.push(`/audit/${log.entityId}?entityType=${log.entityType}`);
+                router.push(
+                  `/audit/${log.entityId}?entityType=${log.entityType}`,
+                );
               }}
             >
               <div className="flex items-start gap-3">

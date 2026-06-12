@@ -2,16 +2,20 @@ import { useMutate, useFetch, useInfiniteFetch } from "@/hooks/query.hook";
 import endpoints from "@/lib/endpoints";
 import { queryKeys } from "@/lib/queryKeys";
 import { toast } from "sonner";
-import { 
-  IPurchaseResponse, 
-  IPurchaseDailyResponse, 
-  INewPurchase, 
+import {
+  IPurchaseResponse,
+  IPurchaseDailyResponse,
+  INewPurchase,
   IPurchaseView,
-  IPurchase
+  IPurchase,
 } from "@/components/interface/purchase/purchase.interface";
 
 const onErrorNotification = (error: any) => {
-  toast.error(error.response?.data?.message || error.response?.data?.msg || "An error occurred");
+  toast.error(
+    error.response?.data?.message ||
+      error.response?.data?.msg ||
+      "An error occurred",
+  );
 };
 
 const onSuccessNotification = (data: any) => {
@@ -21,8 +25,8 @@ const onSuccessNotification = (data: any) => {
 export const useFetchPurchases = (
   page: number,
   size: number,
+  enabled: boolean,
   filterOptions?: Record<string, any>,
-  enabled?: boolean
 ) => {
   const { search, ...filter } = filterOptions ?? { search: undefined };
   const queryParams = {
@@ -41,7 +45,7 @@ export const useFetchPurchases = (
 
 export const useInfinitePurchases = (
   enabled: boolean,
-  filters: Record<string, any> = {}
+  filters: Record<string, any> = {},
 ) => {
   return useInfiniteFetch<IPurchaseResponse>(endpoints.PURCHASE, {
     queryKey: queryKeys.purchases.list(filters),
@@ -58,22 +62,22 @@ export const useCreatePurchase = () => {
   });
 };
 
-export const useFetchDailyPurchaseReport = (
-  date: Date,
-  enabled?: boolean
-) => {
-  const formattedDate = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+export const useFetchDailyPurchaseReport = (date: Date, enabled: boolean) => {
+  const formattedDate = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
   const queryParams = {
     date: formattedDate,
   };
-  return useFetch<IPurchaseDailyResponse>(endpoints.PURCHASE + `/daily-report`, {
-    queryKey: queryKeys.purchases.list(queryParams),
-    params: queryParams,
-    enabled: enabled ?? true,
-  });
+  return useFetch<IPurchaseDailyResponse>(
+    endpoints.PURCHASE + `/daily-report`,
+    {
+      queryKey: queryKeys.purchases.list(queryParams),
+      params: queryParams,
+      enabled: enabled ?? true,
+    },
+  );
 };
 
-export const useFetchPurchase = (id: string, enabled?: boolean) => {
+export const useFetchPurchase = (id: string, enabled: boolean) => {
   return useFetch<{ data: IPurchaseView }>(`${endpoints.PURCHASE}/${id}`, {
     queryKey: queryKeys.purchases.detail(id),
     enabled: enabled ?? !!id,
@@ -96,6 +100,6 @@ export const useDeletePurchase = () => {
       onError: onErrorNotification,
       onSuccess: () => toast.success("Purchase Deleted successfully!"),
       queryKey: queryKeys.purchases.root,
-    }
+    },
   );
 };

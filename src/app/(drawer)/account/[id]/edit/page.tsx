@@ -6,7 +6,6 @@ import { useGetAccount, useUpdateAccount } from "@/api/account/api.account";
 import { useLanguage } from "@/hooks/language.hook";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Landmark } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import AccountForm from "@/components/forms/account/AccountForm";
 import { LoadingView, ErrorView } from "@/components/common/StateView";
 import { motion } from "motion/react";
@@ -21,7 +20,7 @@ export default function EditAccountPage() {
     isLoading,
     isError,
     refetch,
-  } = useGetAccount(id as string);
+  } = useGetAccount(id as string, true);
   const updateAccount = useUpdateAccount();
 
   if (isLoading) return <LoadingView />;

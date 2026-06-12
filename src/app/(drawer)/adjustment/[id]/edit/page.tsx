@@ -13,21 +13,22 @@ import { AccessDeniedView } from "@/components/guards/AccessDeniedView";
 import { usePermissions } from "@/hooks/permission.hook";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/hooks/language.hook";
-import { IAdjustment } from "@/components/interface/adjustment/adjustment.interface";
 
 export default function EditAdjustmentPage() {
   const router = useRouter();
   const { t } = useLanguage();
   const { id } = useParams();
   const adjustmentId = id as string;
-  const { canUpdate } = usePermissions();
+  const { canView, canUpdate } = usePermissions();
+  const hasViewAccess = canView("INVENTORYADJUSTMENT");
+  const hasUpdateAccess = canUpdate("INVENTORYADJUSTMENT");
 
-  if (!canUpdate("INVENTORYADJUSTMENT"))
+  if (!hasUpdateAccess)
     return <AccessDeniedView moduleName={t("adjustment.moduleName")} />;
 
   const { data, isLoading, isError, refetch } = useFetchAdjustmentById(
     adjustmentId,
-    true,
+    hasViewAccess,
   );
 
   const updateAdjustment = useUpdateAdjustment(adjustmentId);

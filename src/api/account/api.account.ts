@@ -26,23 +26,23 @@ const onSuccessNotification = (data: any) => {
   toast.success(data?.message || data?.msg || "Success!");
 };
 
-export const useGetSummary = (enabled?: boolean) => {
+export const useGetSummary = (enabled: boolean) => {
   return useFetch<IAccountSummary>(`${endpoints.ACCOUNT}/summary`, {
     queryKey: queryKeys.accounts.summary(),
-    enabled: enabled ?? true,
+    enabled,
   });
 };
 
-export const useGetAccount = (id: string, enabled?: boolean) => {
+export const useGetAccount = (id: string, enabled: boolean) => {
   return useFetch<IResponse<IAccount>>(`${endpoints.ACCOUNT}/${id}`, {
     queryKey: queryKeys.accounts.detail(id),
-    enabled: enabled ?? !!id,
+    enabled,
   });
 };
 
 export const useGetAccountsInfinite = (
+  enabled: boolean,
   filterOptions?: Record<string, any>,
-  enabled?: boolean,
 ) => {
   const { search, ...filter } = filterOptions ?? { search: undefined };
   const queryParams = {
@@ -53,7 +53,7 @@ export const useGetAccountsInfinite = (
   return useInfiniteFetch<IResponse<Array<IAccountDetail>>>(endpoints.ACCOUNT, {
     queryKey: queryKeys.accounts.list(queryParams),
     params: { ...queryParams, limit: 10 },
-    enabled: enabled ?? true,
+    enabled,
   });
 };
 

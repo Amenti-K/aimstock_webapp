@@ -9,10 +9,10 @@ import {
 import { IResponse } from "@/components/interface/common.interface";
 import { queryKeys } from "@/lib/queryKeys";
 
-export const useGetAnalytics = (options?: { enabled?: boolean }) => {
+export const useGetAnalytics = (enabled: boolean) => {
   return useFetch<AnalyticsResponse>(endpoints.ANALYTICS + "/summary", {
     queryKey: queryKeys.analytics.summary(),
-    enabled: options?.enabled ?? true,
+    enabled,
   });
 };
 
@@ -27,10 +27,10 @@ export const usePieChart = (
   });
 };
 
-export const useProfit = (options?: { enabled?: boolean }) => {
+export const useProfit = (enabled: boolean) => {
   return useFetch<BarChartResponse>(endpoints.ANALYTICS + "/charts/profit", {
     queryKey: queryKeys.analytics.profit(),
-    enabled: options?.enabled ?? true,
+    enabled,
   });
 };
 

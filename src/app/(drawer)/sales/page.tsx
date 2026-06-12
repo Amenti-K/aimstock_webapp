@@ -1,11 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useMemo } from "react";
-import {
-  useDeleteSale,
-  useInfiniteSales,
-  useFetchDailySaleReport,
-} from "@/api/sale/api.sale";
+import { useInfiniteSales, useFetchDailySaleReport } from "@/api/sale/api.sale";
 import { LoadingView, ErrorView } from "@/components/common/StateView";
 import { AccessDeniedView } from "@/components/guards/AccessDeniedView";
 import { usePermissions } from "@/hooks/permission.hook";
@@ -22,8 +18,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { formatCurrency, formatDate } from "@/lib/formatter";
-import { Calendar, User, Package, ChevronRight, Receipt } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import { Calendar, Package, ChevronRight, Receipt } from "lucide-react";
 import { InfiniteScrollTrigger } from "@/components/common/InfiniteScrollTrigger";
 import { useLanguage } from "@/hooks/language.hook";
 

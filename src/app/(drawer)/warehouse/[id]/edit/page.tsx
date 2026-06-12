@@ -2,7 +2,6 @@
 
 import { ArrowLeft } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
-import { useTranslation } from "react-i18next";
 import {
   useFetchWarehouseById,
   useUpdateWarehouse,

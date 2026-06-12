@@ -15,7 +15,6 @@ interface Props {
   disabled?: boolean;
   type?: React.HTMLInputTypeAttribute;
   secureTextEntry?: boolean;
-  multiLine?: boolean;
 }
 
 const NumericField = ({
@@ -26,7 +25,6 @@ const NumericField = ({
   disabled = false,
   type = "number",
   secureTextEntry = false,
-  multiLine = false,
 }: Props) => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 

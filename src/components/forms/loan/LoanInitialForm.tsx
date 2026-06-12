@@ -3,18 +3,12 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useForm, useWatch, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CalendarIcon, PlusCircle, Trash2, UserPlus } from "lucide-react";
+import { PlusCircle, Trash2, UserPlus } from "lucide-react";
 
 import TextField from "@/components/forms/fields/TextField";
 import NumericField from "@/components/forms/fields/NumericField";
 import SelectField from "@/components/forms/fields/SelectField";
 import SubmitButton from "@/components/forms/fields/SubmitButton";
-import { Calendar } from "@/components/ui/calendar";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 import {
   Dialog,
   DialogContent,
@@ -36,10 +30,10 @@ import {
 } from "@/api/partner/api.partner";
 import { PartnerFormValues } from "@/components/forms/partner/partner.schema";
 import { Button } from "@/components/ui/button";
-import { formatCurrency, formatDate } from "@/lib/formatter";
+import { formatCurrency } from "@/lib/formatter";
 import { useLanguage } from "@/hooks/language.hook";
-import { cn } from "@/lib/utils";
 import DateField from "../fields/DateField";
+import TextAreaField from "../fields/TextAreaField";
 
 const LoanInitialSummary = ({ control }: { control: any }) => {
   const { t } = useLanguage();
@@ -126,7 +120,13 @@ export default function LoanInitialForm({
     },
   });
 
-  const { control, handleSubmit, reset, setValue, formState: { isSubmitting } } = form;
+  const {
+    control,
+    handleSubmit,
+    reset,
+    setValue,
+    formState: { isSubmitting },
+  } = form;
 
   const {
     fields: paymentFields,
@@ -210,186 +210,187 @@ export default function LoanInitialForm({
 
   return (
     <>
-    <form
-      onSubmit={handleSubmit(handleSave)}
-      className="space-y-6 w-full max-w-full overflow-x-hidden"
-    >
-      <div className="grid grid-cols-1 gap-6">
-        <SelectField
-          name="partnerId"
-          control={control as any}
-          label={t("loan.form.partner")}
-          options={partnerOptions}
-          placeholder={
-            loadingPartners ? t("loan.pendingLoan") : t("loan.form.selectPar")
-          }
-          canAdd
-          addLabel={t("partners.form.addNewPar")}
-          onAddClick={() => setShowAddPartner(true)}
-        />
+      <form
+        onSubmit={handleSubmit(handleSave)}
+        className="space-y-6 w-full max-w-full overflow-x-hidden"
+      >
+        <div className="grid grid-cols-1 gap-6">
+          <SelectField
+            name="partnerId"
+            control={control as any}
+            label={t("loan.form.partner")}
+            options={partnerOptions}
+            placeholder={
+              loadingPartners ? t("loan.pendingLoan") : t("loan.form.selectPar")
+            }
+            canAdd
+            addLabel={t("partners.form.addNewPar")}
+            onAddClick={() => setShowAddPartner(true)}
+          />
 
-        <div className="pt-2">
-          <h3 className="text-lg font-semibold text-primary mb-4">
-            {t("loan.form.initialLoanTranx")}
-          </h3>
+          <div className="pt-2">
+            <h3 className="text-lg font-semibold text-primary mb-4">
+              {t("loan.form.initialLoanTranx")}
+            </h3>
 
-          <div className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <SelectField
-                name="txType"
-                control={control as any}
-                options={[
-                  {
-                    label: t("loan.form.loanGiven"),
-                    value: LoanTxType.LOAN_GIVEN,
-                  },
-                  {
-                    label: t("loan.form.loanTaken"),
-                    value: LoanTxType.LOAN_TAKEN,
-                  },
-                ]}
-                placeholder={t("loan.form.selectTranxType")}
-                label={t("loan.form.tranxType")}
-              />
-              <DateField
-                name="dueDate"
-                control={control as any}
-                label={t("loan.form.dueDate")}
-                placeholder={t("common.reportAcco.selectDate")}
-              />
-            </div>
-
-            {/* Bank Payments Section */}
-            <div className="mt-6 border border-border p-4 rounded-xl bg-card shadow-sm">
-              <div className="flex flex-row items-center justify-between mb-4 gap-2">
-                <h4 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
-                  {t("loan.form.bankPay.bankPayments")}
-                </h4>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => appendPayment({ accountId: "", amount: 0 })}
-                  className="gap-2 rounded-full h-8"
-                >
-                  <PlusCircle className="h-4 w-4" />
-                  {t("loan.form.bankPay.addBankPayment")}
-                </Button>
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <SelectField
+                  name="txType"
+                  control={control as any}
+                  options={[
+                    {
+                      label: t("loan.form.loanGiven"),
+                      value: LoanTxType.LOAN_GIVEN,
+                    },
+                    {
+                      label: t("loan.form.loanTaken"),
+                      value: LoanTxType.LOAN_TAKEN,
+                    },
+                  ]}
+                  placeholder={t("loan.form.selectTranxType")}
+                  label={t("loan.form.tranxType")}
+                />
+                <DateField
+                  name="dueDate"
+                  control={control as any}
+                  label={t("loan.form.dueDate")}
+                  placeholder={t("common.reportAcco.selectDate")}
+                />
               </div>
 
-              <div className="space-y-3">
-                {paymentFields?.map((field, index) => (
-                  <div
-                    key={field.id}
-                    className="flex items-center gap-2 p-2 rounded-2xl bg-muted/20 border border-muted-foreground/5 shadow-sm"
+              {/* Bank Payments Section */}
+              <div className="mt-6 border border-border p-4 rounded-xl bg-card shadow-sm">
+                <div className="flex flex-row items-center justify-between mb-4 gap-2">
+                  <h4 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+                    {t("loan.form.bankPay.bankPayments")}
+                  </h4>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => appendPayment({ accountId: "", amount: 0 })}
+                    className="gap-2 rounded-full h-8"
                   >
-                    <div className="flex flex-1 items-start gap-2">
-                      <div className="w-[60%] shrink-0">
-                        <SelectField
-                          name={`paymentItems.${index}.accountId`}
-                          control={control as any}
-                          placeholder={
-                            loadingAccounts
-                              ? t("common.loading")
-                              : t("purchase.form.bankPay.selectAcc")
-                          }
-                          options={accountOptions}
-                        />
-                      </div>
-                      <div className="w-[40%] shrink-0">
-                        <NumericField
-                          name={`paymentItems.${index}.amount`}
-                          control={control as any}
-                          placeholder={t("loan.form.amount")}
-                        />
-                      </div>
-                    </div>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon"
-                      className="h-9 w-9 shrink-0 text-destructive hover:bg-destructive/10"
-                      onClick={() => removePayment(index)}
+                    <PlusCircle className="h-4 w-4" />
+                    {t("loan.form.bankPay.addBankPayment")}
+                  </Button>
+                </div>
+
+                <div className="space-y-3">
+                  {paymentFields?.map((field, index) => (
+                    <div
+                      key={field.id}
+                      className="flex items-center gap-2 p-2 rounded-2xl bg-muted/20 border border-muted-foreground/5 shadow-sm"
                     >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
-                ))}
+                      <div className="flex flex-1 items-start gap-2">
+                        <div className="w-[60%] shrink-0">
+                          <SelectField
+                            name={`paymentItems.${index}.accountId`}
+                            control={control as any}
+                            placeholder={
+                              loadingAccounts
+                                ? t("common.loading")
+                                : t("purchase.form.bankPay.selectAcc")
+                            }
+                            options={accountOptions}
+                          />
+                        </div>
+                        <div className="w-[40%] shrink-0">
+                          <NumericField
+                            name={`paymentItems.${index}.amount`}
+                            control={control as any}
+                            placeholder={t("loan.form.amount")}
+                          />
+                        </div>
+                      </div>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        className="h-9 w-9 shrink-0 text-destructive hover:bg-destructive/10"
+                        onClick={() => removePayment(index)}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ))}
 
-                {paymentFields.length === 0 && (
-                  <div className="text-center py-6 border-2 border-dashed border-muted rounded-xl text-muted-foreground text-sm">
-                    {t("common.formHints.noBankPayments")}
-                  </div>
-                )}
+                  {paymentFields.length === 0 && (
+                    <div className="text-center py-6 border-2 border-dashed border-muted rounded-xl text-muted-foreground text-sm">
+                      {t("common.formHints.noBankPayments")}
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
 
-            {/* Cash Payment Section */}
-            <div className="mt-4 p-4 bg-primary/5 rounded-xl border border-primary/10">
-              <h4 className="text-sm font-semibold mb-3">
-                {t("loan.form.cashPay.cashPayments")}
-              </h4>
-              <NumericField
-                name="loanCashPayment.amount"
+              {/* Cash Payment Section */}
+              <div className="mt-4 p-4 bg-primary/5 rounded-xl border border-primary/10">
+                <h4 className="text-sm font-semibold mb-3">
+                  {t("loan.form.cashPay.cashPayments")}
+                </h4>
+                <NumericField
+                  name="loanCashPayment.amount"
+                  control={control as any}
+                  placeholder="0.00"
+                  label={t("loan.form.amount")}
+                />
+              </div>
+
+              <TextAreaField
+                name="note"
                 control={control as any}
-                placeholder="0.00"
-                label={t("loan.form.amount")}
+                label={t("loan.form.note")}
+                placeholder={t("loan.form.note")}
               />
             </div>
-
-            <TextField
-              name="note"
-              control={control as any}
-              label={t("loan.form.note")}
-              placeholder={t("loan.form.note")}
-              multiLine
-            />
           </div>
         </div>
-      </div>
 
-      <LoanInitialSummary control={control as any} />
+        <LoanInitialSummary control={control as any} />
 
-      <div className="flex flex-col sm:flex-row gap-4 pt-4">
-        <div className="flex-1">
-          <SubmitButton
-            title={
-              mode === "add" ? t("loan.form.addLoan") : t("common.saveChanges")
-            }
-            loading={createLoanTranx.isPending}
-            className="w-full h-12 rounded-xl font-bold"
-          />
+        <div className="flex flex-col sm:flex-row gap-4 pt-4">
+          <div className="flex-1">
+            <SubmitButton
+              title={
+                mode === "add"
+                  ? t("loan.form.addLoan")
+                  : t("common.saveChanges")
+              }
+              loading={createLoanTranx.isPending}
+              className="w-full h-12 rounded-xl font-bold"
+            />
+          </div>
+          {onCancel && (
+            <Button
+              type="button"
+              variant="outline"
+              className="flex-1 h-12 rounded-xl font-semibold"
+              disabled={createLoanTranx.isPending}
+              onClick={onCancel}
+            >
+              {t("common.cancel")}
+            </Button>
+          )}
         </div>
-        {onCancel && (
-          <Button
-            type="button"
-            variant="outline"
-            className="flex-1 h-12 rounded-xl font-semibold"
-            disabled={createLoanTranx.isPending}
-            onClick={onCancel}
-          >
-            {t("common.cancel")}
-          </Button>
-        )}
-      </div>
-    </form>
+      </form>
 
-    {/* Quick-Add Partner Dialog */}
-    <Dialog open={showAddPartner} onOpenChange={setShowAddPartner}>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <UserPlus className="h-5 w-5 text-primary" />
-            {t("partners.form.addNewPar")}
-          </DialogTitle>
-        </DialogHeader>
-        <PartnerForm
-          onSubmit={handlePartnerCreated}
-          onCancel={() => setShowAddPartner(false)}
-          isPending={creatingPartner}
-        />
-      </DialogContent>
-    </Dialog>
+      {/* Quick-Add Partner Dialog */}
+      <Dialog open={showAddPartner} onOpenChange={setShowAddPartner}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <UserPlus className="h-5 w-5 text-primary" />
+              {t("partners.form.addNewPar")}
+            </DialogTitle>
+          </DialogHeader>
+          <PartnerForm
+            onSubmit={handlePartnerCreated}
+            onCancel={() => setShowAddPartner(false)}
+            isPending={creatingPartner}
+          />
+        </DialogContent>
+      </Dialog>
     </>
   );
 }

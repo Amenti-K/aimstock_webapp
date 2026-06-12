@@ -7,7 +7,6 @@ import {
   ArrowLeft,
   Pencil,
   Trash2,
-  Warehouse,
   MapPin,
   Phone,
   Boxes,

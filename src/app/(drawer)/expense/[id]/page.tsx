@@ -22,7 +22,7 @@ import { ErrorView, LoadingView } from "@/components/common/StateView";
 import { AccessDeniedView } from "@/components/guards/AccessDeniedView";
 import { usePermissions } from "@/hooks/permission.hook";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { CardContent } from "@/components/ui/card";
 import { formatCurrency, formatDate } from "@/lib/formatter";
 import {
   AlertDialog,

@@ -20,7 +20,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
 import {
   Table,
   TableBody,
@@ -52,7 +51,6 @@ import { cn } from "@/lib/utils";
 import { useTranslation } from "react-i18next";
 import { useRouter } from "next/navigation";
 import { Form } from "@/components/ui/form";
-import i18n from "@/i18n";
 import DateField from "@/components/forms/fields/DateField";
 
 const formSchema = z.object({

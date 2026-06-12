@@ -25,14 +25,7 @@ import NumericField from "@/components/forms/fields/NumericField";
 import TextField from "@/components/forms/fields/TextField";
 import TextAreaField from "@/components/forms/fields/TextAreaField";
 import SubmitButton from "@/components/forms/fields/SubmitButton";
-import {
-  Landmark,
-  PlusCircle,
-  Trash2,
-  Wallet,
-  FileText,
-  Info,
-} from "lucide-react";
+import { Landmark, PlusCircle, Trash2, Wallet, FileText } from "lucide-react";
 import { formatCurrency } from "@/lib/formatter";
 import { Badge } from "@/components/ui/badge";
 

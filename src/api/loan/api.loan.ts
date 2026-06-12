@@ -37,7 +37,7 @@ export const useInfiniteLoanPartners = (
 
 export const useGetLoanTransactionsInfinite = (
   partnerId: string,
-  enabled?: boolean,
+  enabled: boolean,
 ) => {
   return useInfiniteFetch<IPaginatedResponse<Array<ILoanTranx>>>(
     endpoints.LOANPARTNERTRANX + `/${partnerId}`,
@@ -57,7 +57,7 @@ export const useCreateLoanTranx = () => {
   });
 };
 
-export const useFetchPartnersTranx = (id: string, enabled?: boolean) => {
+export const useFetchPartnersTranx = (id: string, enabled: boolean) => {
   return useFetch<IResponse<ILoanTranx>>(endpoints.LOANTRANSACTION + `/${id}`, {
     queryKey: queryKeys.loans.detail(id),
     enabled: enabled ?? !!id,

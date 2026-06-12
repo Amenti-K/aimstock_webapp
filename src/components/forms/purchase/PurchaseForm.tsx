@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useFieldArray, useForm, useWatch } from "react-hook-form";
 import { Form } from "@/components/ui/form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -44,6 +44,7 @@ import { PartnerFormValues } from "@/components/forms/partner/partner.schema";
 import InventoryForm from "@/components/forms/inventory/InventoryForm";
 import { useCreateInventory } from "@/api/inventory/api.inventory";
 import { inventoryFormValues } from "@/components/schema/inventory.schema";
+import { usePermissions } from "@/hooks/permission.hook";
 
 type PurchaseFormValues = {
   partnerId: string;
@@ -114,13 +115,23 @@ export default function PurchaseForm({
   isLoading = false,
 }: PurchaseFormProps) {
   const { t } = useLanguage();
+  const { canCreate } = usePermissions();
+  const canCreateInventory = canCreate("INVENTORY");
 
-  // ── Form init: seed defaultValues from initialData directly to avoid the
-  //    race condition where reset() fires before the Select component mounts.
   const form = useForm<PurchaseFormValues>({
     defaultValues: buildFormValues(initialData),
   });
   const { control, handleSubmit, setError, reset, setValue } = form;
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  const handleScroll = (x: number) => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollTo({
+        left: x,
+        behavior: "smooth",
+      });
+    }
+  };
 
   // Re-sync whenever initialData reference changes (e.g., after async fetch)
   useEffect(() => {
@@ -158,7 +169,7 @@ export default function PurchaseForm({
     data: inventoriesData,
     isLoading: inventoriesLoading,
     refetch: refetchInventories,
-  } = useGetInventoriesInfinite({}, true);
+  } = useGetInventoriesInfinite(canCreateInventory);
 
   const { mutate: createInventory, isPending: creatingInventory } =
     useCreateInventory();
@@ -371,21 +382,24 @@ export default function PurchaseForm({
                     </Button>
                   </div>
                 </CardHeader>
-                <CardContent className="overflow-x-auto">
+                <CardContent
+                  ref={scrollContainerRef}
+                  className="overflow-x-auto scroll-smooth"
+                >
                   <div className="min-w-[750px] space-y-3">
                     {/* Header Row */}
                     <div className="grid grid-cols-15 gap-3 px-2 text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
                       <div className="col-span-4">
                         {t("purchase.form.items.item")}
                       </div>
-                      <div className="col-span-4">
-                        {t("purchase.form.items.warehouse")}
-                      </div>
                       <div className="col-span-2">
                         {t("purchase.form.items.qty")}
                       </div>
                       <div className="col-span-2">
                         {t("purchase.form.items.unitPrice")}
+                      </div>
+                      <div className="col-span-4">
+                        {t("purchase.form.items.warehouse")}
                       </div>
                       <div className="col-span-2">
                         {t("purchase.form.items.subTotal")}
@@ -425,22 +439,9 @@ export default function PurchaseForm({
                                     `purchaseItems.${index}.unitPrice`,
                                     Number(item.boughtPrice) || 0,
                                   );
+                                  handleScroll(20);
                                 }
                               }}
-                            />
-                          </div>
-
-                          {/* Warehouse */}
-                          <div className="col-span-4 min-w-[180px]">
-                            <SelectField
-                              name={`purchaseItems.${index}.warehouseId`}
-                              control={control as any}
-                              placeholder={
-                                warehousesLoading
-                                  ? t("common.loading")
-                                  : t("purchase.form.items.selectWarehouse")
-                              }
-                              options={warehouseOptions}
                             />
                           </div>
 
@@ -459,6 +460,21 @@ export default function PurchaseForm({
                               name={`purchaseItems.${index}.unitPrice`}
                               control={control as any}
                               placeholder="0"
+                            />
+                          </div>
+
+                          {/* Warehouse */}
+                          <div className="col-span-4 min-w-[180px]">
+                            <SelectField
+                              name={`purchaseItems.${index}.warehouseId`}
+                              control={control as any}
+                              placeholder={
+                                warehousesLoading
+                                  ? t("common.loading")
+                                  : t("purchase.form.items.selectWarehouse")
+                              }
+                              options={warehouseOptions}
+                              onValueChange={() => handleScroll(20)}
                             />
                           </div>
 

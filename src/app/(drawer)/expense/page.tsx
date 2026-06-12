@@ -183,12 +183,10 @@ export default function ExpensePage() {
     hasNextPage,
     fetchNextPage,
     isFetchingNextPage,
-  } = useGetExpensesInfinite({}, hasViewAccess);
+  } = useGetExpensesInfinite(hasViewAccess);
 
-  const { data: templatesData } = useGetExpenseTemplatesInfinite(
-    {},
-    hasCreateAccess,
-  );
+  const { data: templatesData } =
+    useGetExpenseTemplatesInfinite(hasCreateAccess);
 
   const expenses = useMemo(() => {
     return data?.pages?.flatMap((page) => (page as any).data) ?? [];
