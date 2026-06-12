@@ -15,7 +15,9 @@ export default function NewPartnerPage() {
   const router = useRouter();
   const { canCreate } = usePermissions();
   const createPartner = useCreatePartner();
-  if (!canCreate("PARTNERS"))
+  const hasCreateAccess = canCreate("PARTNERS");
+
+  if (!hasCreateAccess)
     return <AccessDeniedView moduleName={t("partners.moduleName")} />;
 
   return (

@@ -36,7 +36,7 @@ export default function AdjustmentPage() {
     hasNextPage,
     fetchNextPage,
     isFetchingNextPage,
-  } = useGetAdjustmentsInfinite({}, hasViewAccess);
+  } = useGetAdjustmentsInfinite(hasViewAccess);
 
   const adjustments = React.useMemo(() => {
     return data?.pages?.flatMap((page) => (page as any).data) ?? [];
@@ -88,13 +88,14 @@ export default function AdjustmentPage() {
         </div>
 
         {hasCreateAccess && (
-          <div className="group relative flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-5 rounded-2xl border bg-card shadow-sm hover:shadow-md transition-all cursor-pointer overflow-hidden"
+          <div
+            className="group relative flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-5 rounded-2xl border bg-card shadow-sm hover:shadow-md transition-all cursor-pointer overflow-hidden"
             onClick={() => router.push("/adjustment/new")}
           >
             <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
               <PackageSearch className="h-24 w-24 -rotate-12" />
             </div>
-            
+
             <div className="flex gap-4 items-center relative z-10">
               <div className="h-12 w-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
                 <Plus className="h-6 w-6" />
@@ -108,7 +109,7 @@ export default function AdjustmentPage() {
                 </p>
               </div>
             </div>
-            
+
             <Button className="w-full sm:w-auto rounded-xl relative z-10 px-6 shadow-lg shadow-primary/20">
               {t("adjustment.card.actions.start")}
             </Button>
@@ -130,7 +131,9 @@ export default function AdjustmentPage() {
             <div className="p-4 rounded-full bg-muted mb-4">
               <PackageSearch className="h-8 w-8 text-muted-foreground opacity-20" />
             </div>
-            <p className="text-muted-foreground">{t("adjustment.emptyAdjustment")}</p>
+            <p className="text-muted-foreground">
+              {t("adjustment.emptyAdjustment")}
+            </p>
           </div>
         ) : (
           <>
@@ -142,7 +145,9 @@ export default function AdjustmentPage() {
                     <TableHead>{t("common.date")}</TableHead>
                     <TableHead>{t("adjustment.card.item")}</TableHead>
                     <TableHead>{t("adjustment.detail.type")}</TableHead>
-                    <TableHead className="text-right">{t("adjustment.detail.qty")}</TableHead>
+                    <TableHead className="text-right">
+                      {t("adjustment.detail.qty")}
+                    </TableHead>
                     <TableHead className="w-[50px]"></TableHead>
                   </TableRow>
                 </TableHeader>
@@ -159,7 +164,9 @@ export default function AdjustmentPage() {
                       <TableCell>
                         <div className="flex flex-col">
                           <span className="font-semibold">
-                            {adj.warehouse?.name || adj.inventory?.name || "Unknown"}
+                            {adj.warehouse?.name ||
+                              adj.inventory?.name ||
+                              "Unknown"}
                           </span>
                           {adj.itemsCount > 1 && (
                             <span className="text-xs text-muted-foreground">
@@ -195,14 +202,16 @@ export default function AdjustmentPage() {
                     </div>
                     <div className="flex flex-col gap-0.5 min-w-0">
                       <span className="font-bold text-foreground truncate">
-                        {adj.warehouse?.name || adj.inventory?.name || "Unknown"}
+                        {adj.warehouse?.name ||
+                          adj.inventory?.name ||
+                          "Unknown"}
                       </span>
                       <span className="text-xs text-muted-foreground">
                         {formatDate(adj.createdAt)}
                       </span>
                     </div>
                   </div>
-                  
+
                   <div className="flex flex-col items-end gap-1.5 shrink-0">
                     {getTypeBadge(adj.type)}
                     <span className="text-sm font-black tabular-nums">

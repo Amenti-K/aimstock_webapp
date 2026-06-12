@@ -8,11 +8,14 @@ import LoanTransactionForm from "@/components/forms/loan/LoanTransactionForm";
 import { useLanguage } from "@/hooks/language.hook";
 import { useFetchPartnerById } from "@/api/partner/api.partner";
 import { LoadingView, ErrorView } from "@/components/common/StateView";
+import { usePermissions } from "@/hooks/permission.hook";
 
 export default function NewLoanTransactionPage() {
   const params = useParams();
   const router = useRouter();
   const { t } = useLanguage();
+  const { canView } = usePermissions();
+  const hasViewAccess = canView("LOANS");
 
   const partnerId = params.id as string;
 
@@ -21,7 +24,7 @@ export default function NewLoanTransactionPage() {
     isLoading,
     isError,
     refetch,
-  } = useFetchPartnerById(partnerId);
+  } = useFetchPartnerById(partnerId, hasViewAccess);
 
   if (isLoading) return <LoadingView />;
   if (isError) return <ErrorView refetch={refetch} />;

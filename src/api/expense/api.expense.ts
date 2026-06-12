@@ -22,8 +22,8 @@ const onSuccessNotification = (data: any) => {
 };
 
 export const useGetExpensesInfinite = (
+  enabled: boolean,
   filterOptions?: Record<string, any>,
-  enabled?: boolean,
 ) => {
   const { search, ...filter } = filterOptions ?? { search: undefined };
   const queryParams = {
@@ -46,7 +46,7 @@ export const useCreateExpense = () => {
   });
 };
 
-export const useFetchExpenseById = (id: string, enabled?: boolean) => {
+export const useFetchExpenseById = (id: string, enabled: boolean) => {
   return useFetch<IResponse<IExpenseDetail>>(`${endpoints.EXPENSE}/${id}`, {
     queryKey: queryKeys.expenses.detail(id),
     enabled: enabled ?? !!id,
@@ -78,8 +78,8 @@ export const useDeleteExpense = () => {
 };
 
 export const useGetExpenseTemplatesInfinite = (
+  enabled: boolean,
   filterOptions?: Record<string, any>,
-  enabled?: boolean,
 ) => {
   const { search, ...filter } = filterOptions ?? { search: undefined };
   const queryParams = {
@@ -102,7 +102,7 @@ export const useCreateExpenseTemplate = () => {
   });
 };
 
-export const useFetchExpenseTemplateById = (id: string, enabled?: boolean) => {
+export const useFetchExpenseTemplateById = (id: string, enabled: boolean) => {
   return useFetch<IResponse<any>>(`${endpoints.EXPENSETEMPLATE}/${id}`, {
     queryKey: queryKeys.expenseTemplates.detail(id),
     enabled: enabled ?? !!id,

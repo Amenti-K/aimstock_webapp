@@ -29,8 +29,8 @@ const onSuccessNotification = (data: any) => {
 export const useFetchSales = (
   page: number,
   size: number,
+  enabled: boolean,
   filterOptions?: Record<string, any>,
-  enabled?: boolean,
 ) => {
   const { search, ...filter } = filterOptions ?? { search: undefined };
   const queryParams = {
@@ -66,7 +66,7 @@ export const useCreateSale = () => {
   });
 };
 
-export const useFetchDailySaleReport = (date: Date, enabled?: boolean) => {
+export const useFetchDailySaleReport = (date: Date, enabled: boolean) => {
   const formattedDate = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
   const queryParams = {
     date: formattedDate,
@@ -78,7 +78,7 @@ export const useFetchDailySaleReport = (date: Date, enabled?: boolean) => {
   });
 };
 
-export const useFetchSale = (id: string, enabled?: boolean) => {
+export const useFetchSale = (id: string, enabled: boolean) => {
   return useFetch<IResponse<ISaleView>>(`${endpoints.SALE}/${id}`, {
     queryKey: queryKeys.sales.detail(id),
     enabled: enabled ?? !!id,

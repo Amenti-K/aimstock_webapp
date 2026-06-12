@@ -51,7 +51,7 @@ export const useUpdatePartner = (id: string) => {
   });
 };
 
-export const useFetchPartnerById = (id: string, enabled?: boolean) => {
+export const useFetchPartnerById = (id: string, enabled: boolean) => {
   return useFetch<IResponse<IPartnerDetail>>(endpoints.PARTNER + "/" + id, {
     queryKey: queryKeys.partners.detail(id),
     enabled: enabled ?? !!id,
@@ -73,8 +73,8 @@ export const useDeletePartner = () => {
 };
 
 export const useGetPartnersInfinite = (
+  enabled: boolean,
   filterOptions?: Record<string, any>,
-  enabled?: boolean,
 ) => {
   const { search, ...filter } = filterOptions ?? { search: undefined };
   const queryParams = {

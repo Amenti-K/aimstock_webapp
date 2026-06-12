@@ -44,6 +44,7 @@ import { PartnerFormValues } from "@/components/forms/partner/partner.schema";
 import InventoryForm from "@/components/forms/inventory/InventoryForm";
 import { useCreateInventory } from "@/api/inventory/api.inventory";
 import { inventoryFormValues } from "@/components/schema/inventory.schema";
+import { usePermissions } from "@/hooks/permission.hook";
 
 type PurchaseFormValues = {
   partnerId: string;
@@ -114,9 +115,9 @@ export default function PurchaseForm({
   isLoading = false,
 }: PurchaseFormProps) {
   const { t } = useLanguage();
+  const { canCreate } = usePermissions();
+  const canCreateInventory = canCreate("INVENTORY");
 
-  // ── Form init: seed defaultValues from initialData directly to avoid the
-  //    race condition where reset() fires before the Select component mounts.
   const form = useForm<PurchaseFormValues>({
     defaultValues: buildFormValues(initialData),
   });
@@ -168,7 +169,7 @@ export default function PurchaseForm({
     data: inventoriesData,
     isLoading: inventoriesLoading,
     refetch: refetchInventories,
-  } = useGetInventoriesInfinite({}, true);
+  } = useGetInventoriesInfinite(canCreateInventory);
 
   const { mutate: createInventory, isPending: creatingInventory } =
     useCreateInventory();

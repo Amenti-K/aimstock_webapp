@@ -1,14 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  PlusCircle,
-  Trash2,
-  Info,
-  Package,
-  Warehouse,
-  MapPin,
-} from "lucide-react";
+import { PlusCircle, Trash2, Info, Package } from "lucide-react";
 import { useMemo } from "react";
 import { useFieldArray, useForm, useWatch } from "react-hook-form";
 import { useFetchWarehouseInventorySelector } from "@/api/inventory/api.inventory";

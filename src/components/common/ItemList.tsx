@@ -4,12 +4,9 @@ import React from "react";
 import { formatCurrency } from "@/lib/formatter";
 import {
   Package,
-  Warehouse,
   ChevronDown,
   ChevronUp,
   Package2,
-  Pin,
-  Map,
   MapPin,
 } from "lucide-react";
 import {
@@ -40,7 +37,11 @@ export function ItemList({ items, type }: ItemListProps) {
         <div className="flex flex-col gap-1">
           <h3 className="text-lg font-bold tracking-tight flex items-center gap-2">
             <Package className="h-5 w-5 text-primary" />
-            {t(type === "purchase" ? "purchase.detail.accordion.items" : "sales.detail.accordion.items")}
+            {t(
+              type === "purchase"
+                ? "purchase.detail.accordion.items"
+                : "sales.detail.accordion.items",
+            )}
           </h3>
           <p className="text-xs text-muted-foreground">
             {t("common.trade.inventorySummary", {

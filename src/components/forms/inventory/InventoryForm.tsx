@@ -3,15 +3,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  Trash2,
-  Plus,
-  Info,
-  Warehouse,
-  Package,
-  BadgeDollarSign,
-  PlusIcon,
-} from "lucide-react";
+import { Trash2, Plus, Info, Warehouse, Package, PlusIcon } from "lucide-react";
 import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import {
@@ -37,7 +29,6 @@ import {
 } from "@/components/schema/inventory.schema";
 import { useFetchWarehouseSelector } from "@/api/warehouse/api.warehouse";
 import { useTranslation } from "react-i18next";
-import { cn } from "@/lib/utils";
 import { IInventory } from "../../interface/inventory/inventory.interface";
 import DateField from "../fields/DateField";
 import {
@@ -62,7 +53,6 @@ const defaultValues: inventoryFormValues = {
   boughtPrice: 0,
   sellingPrice: 0,
   unit: "",
-  expiryDate: "",
   inventoryCategoryId: "",
   initialQuantity: 0,
   warehouseInventories: [{ warehouseId: "", quantity: 0, reorderQuantity: 0 }],
@@ -123,7 +113,6 @@ export default function InventoryForm({
       boughtPrice: Number(initialData.boughtPrice) || 0,
       sellingPrice: Number(initialData.sellingPrice) || 0,
       unit: initialData.unit || "",
-      expiryDate: initialData.expiryDate || "",
       inventoryCategoryId: initialData.inventoryCategory?.id || "",
       initialQuantity: Number(initialData.initialQuantity) || 0,
       warehouseInventories:
@@ -171,7 +160,6 @@ export default function InventoryForm({
       ...values,
       sku: values.sku || undefined,
       brand: values.brand || undefined,
-      expiryDate: values.expiryDate || undefined,
       inventoryCategoryId: values.inventoryCategoryId || undefined,
       boughtPrice: Number(values.boughtPrice),
       sellingPrice: Number(values.sellingPrice),
@@ -272,13 +260,6 @@ export default function InventoryForm({
             </div>
 
             <div className="grid grid-cols-2 gap-4">
-              <DateField
-                name="expiryDate"
-                control={control as any}
-                label={t("inventory.form.expiryDate")}
-                placeholder="YYYY-MM-DD"
-              />
-
               <SelectField
                 name="inventoryCategoryId"
                 control={control as any}
@@ -289,18 +270,16 @@ export default function InventoryForm({
                 addLabel={t("category.form.add")}
                 onAddClick={() => setShowAddCategory(true)}
               />
-            </div>
 
-            {canEditDistribution && (
-              <div className="grid grid-cols-2 gap-4">
+              {canEditDistribution && (
                 <NumericField
                   name="initialQuantity"
                   control={control as any}
                   label={t("inventory.form.initialQty")}
                   placeholder="0"
                 />
-              </div>
-            )}
+              )}
+            </div>
           </CardContent>
         </div>
 

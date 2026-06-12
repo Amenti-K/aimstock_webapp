@@ -24,8 +24,8 @@ const onSuccessNotification = (data: any) => {
 };
 
 export const useGetAdjustmentsInfinite = (
+  enabled: boolean,
   filterOptions?: Record<string, any>,
-  enabled?: boolean,
 ) => {
   const { search, ...filter } = filterOptions ?? { search: undefined };
   const queryParams = {
@@ -51,7 +51,7 @@ export const useCreateAdjustment = () => {
   });
 };
 
-export const useFetchAdjustmentById = (id: string, enabled?: boolean) => {
+export const useFetchAdjustmentById = (id: string, enabled: boolean) => {
   return useFetch<IResponse<IAdjustment>>(`${endpoints.ADJUSTMENT}/${id}`, {
     queryKey: queryKeys.adjustments.detail(id),
     enabled: enabled ?? !!id,

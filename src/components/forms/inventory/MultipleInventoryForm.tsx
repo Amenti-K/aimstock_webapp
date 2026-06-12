@@ -26,12 +26,7 @@ import {
 import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardTitle,
-  CardDescription,
-} from "@/components/ui/card";
+import { CardContent, CardTitle, CardDescription } from "@/components/ui/card";
 import { Form } from "@/components/ui/form";
 import {
   Dialog,
@@ -102,7 +97,6 @@ export default function MultipleInventoryForm({
           boughtPrice: 0,
           sellingPrice: 0,
           initialQuantity: 0,
-          expiryDate: "",
           inventoryCategoryId: "",
           warehouseInventories: [
             { warehouseId: "", quantity: 0, reorderQuantity: 0 },
@@ -126,7 +120,6 @@ export default function MultipleInventoryForm({
       boughtPrice: 0,
       sellingPrice: 0,
       initialQuantity: 0,
-      expiryDate: "",
       inventoryCategoryId: "",
       warehouseInventories: [
         { warehouseId: "", quantity: 0, reorderQuantity: 0 },
@@ -159,7 +152,6 @@ export default function MultipleInventoryForm({
           ...inv,
           sku: inv.sku || undefined,
           brand: inv.brand || undefined,
-          expiryDate: inv.expiryDate || undefined,
           inventoryCategoryId: inv.inventoryCategoryId || undefined,
           boughtPrice: Number(inv.boughtPrice),
           sellingPrice: Number(inv.sellingPrice),
@@ -270,12 +262,6 @@ export default function MultipleInventoryForm({
                       setActiveCategoryIndex(index);
                       setShowAddCategory(true);
                     }}
-                  />
-                  <DateField
-                    name={`inventories.${index}.expiryDate`}
-                    control={form.control as any}
-                    label={t("inventory.form.expiryDate")}
-                    placeholder="YYYY-MM-DD"
                   />
                   <NumericField
                     name={`inventories.${index}.initialQuantity`}

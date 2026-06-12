@@ -43,10 +43,8 @@ export default function AccountPage() {
 
   const [showTotalBalance, setShowTotalBalance] = useState(false);
 
-  const { data, isLoading, isError, refetch } = useGetAccountsInfinite(
-    {},
-    hasViewAccess,
-  );
+  const { data, isLoading, isError, refetch } =
+    useGetAccountsInfinite(hasViewAccess);
 
   const { data: summaryData } = useGetSummary(hasViewAccess);
 

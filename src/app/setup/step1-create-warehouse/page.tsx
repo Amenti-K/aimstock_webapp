@@ -26,9 +26,8 @@ export default function Step1WarehousePage() {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const { t } = useLanguage();
-  const { company } = useAppSelector((state) => state.userAuth);
 
-  const maxWarehouses = 2; // Can be based on subscription plan later
+  const maxWarehouses = 2;
 
   const { mutateAsync: createManyWarehouses, isPending } =
     useCreateManyWarehouses();

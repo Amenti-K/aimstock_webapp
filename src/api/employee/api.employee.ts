@@ -1,24 +1,11 @@
+import {
+  IEmployee,
+  INewEmployee,
+} from "@/components/interface/employee/employee.interface";
 import { useMutate, useFetch, useInfiniteFetch } from "@/hooks/query.hook";
 import endpoints from "@/lib/endpoints";
 import { queryKeys } from "@/lib/queryKeys";
 import { toast } from "sonner";
-
-export interface IEmployee {
-  id: string;
-  name: string;
-  phoneNumber: string;
-  roleId: string;
-  role?: any;
-  isActive: boolean;
-  createdAt: string;
-}
-
-export interface INewEmployee {
-  name: string;
-  phoneNumber: string;
-  roleId: string;
-  password?: string;
-}
 
 const onErrorNotification = (error: any) => {
   toast.error(
@@ -33,8 +20,8 @@ const onSuccessNotification = (data: any) => {
 };
 
 export const useGetEmployeesInfinite = (
+  enabled: boolean,
   filterOptions?: Record<string, any>,
-  enabled?: boolean,
 ) => {
   const { search, ...filter } = filterOptions ?? { search: undefined };
   const queryParams = {
@@ -57,7 +44,7 @@ export const useCreateEmployee = () => {
   });
 };
 
-export const useFetchEmployeeById = (id: string, enabled?: boolean) => {
+export const useFetchEmployeeById = (id: string, enabled: boolean) => {
   return useFetch<IEmployee>(`${endpoints.EMPLOYEE}/${id}`, {
     queryKey: queryKeys.employees.detail(id),
     enabled: enabled ?? !!id,

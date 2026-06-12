@@ -28,8 +28,8 @@ const onSuccessNotification = (data: any) => {
 };
 
 export const useGetWarehousesInfinite = (
+  enabled: boolean,
   filterOptions?: Record<string, any>,
-  enabled?: boolean,
 ) => {
   const { search, ...filter } = filterOptions ?? { search: undefined };
   const queryParams = {
@@ -68,7 +68,7 @@ export const useUpdateWarehouse = (id: string) => {
   });
 };
 
-export const useFetchWarehouseById = (id: string, enabled?: boolean) => {
+export const useFetchWarehouseById = (id: string, enabled: boolean) => {
   return useFetch<IResponse<IWarehouseDetail>>(`${endpoints.WAREHOUSE}/${id}`, {
     queryKey: queryKeys.warehouses.detail(id),
     enabled: enabled ?? !!id,

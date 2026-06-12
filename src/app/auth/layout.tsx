@@ -50,9 +50,11 @@ export default function AuthLayout({
           </p>
         </div>
 
-        <img
+        <Image
           src="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?q=80&w=2664&auto=format&fit=crop"
           alt="AIM Stock Warehouse"
+          width={1000}
+          height={1000}
           className="absolute inset-0 object-cover w-full h-full"
         />
       </div>

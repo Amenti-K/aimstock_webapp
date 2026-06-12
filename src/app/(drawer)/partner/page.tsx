@@ -41,7 +41,7 @@ export default function PartnerPage() {
     hasNextPage,
     fetchNextPage,
     isFetchingNextPage,
-  } = useGetPartnersInfinite({}, hasViewAccess);
+  } = useGetPartnersInfinite(hasViewAccess);
 
   const partners = useMemo(() => {
     return data?.pages?.flatMap((page) => (page as any).data) ?? [];

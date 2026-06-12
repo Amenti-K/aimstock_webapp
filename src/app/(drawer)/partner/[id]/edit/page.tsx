@@ -20,12 +20,14 @@ export default function EditPartnerPage() {
   const { id } = useParams();
   const partnerId = id as string;
   const { canUpdate } = usePermissions();
-  if (!canUpdate("PARTNERS"))
+  const hasUpdateAccess = canUpdate("PARTNERS");
+
+  if (!hasUpdateAccess)
     return <AccessDeniedView moduleName={t("partners.moduleName")} />;
 
   const { data, isLoading, isError, refetch } = useFetchPartnerById(
     partnerId,
-    true,
+    hasUpdateAccess,
   );
   const updatePartner = useUpdatePartner(partnerId);
   if (isLoading) return <LoadingView />;

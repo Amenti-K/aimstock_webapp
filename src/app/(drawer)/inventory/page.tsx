@@ -1,10 +1,7 @@
 "use client";
 
 import React, { useEffect, useMemo, useState } from "react";
-import {
-  useDeleteInventory,
-  useGetInventoriesInfinite,
-} from "@/api/inventory/api.inventory";
+import { useGetInventoriesInfinite } from "@/api/inventory/api.inventory";
 import { AccessDeniedView } from "@/components/guards/AccessDeniedView";
 import { usePermissions } from "@/hooks/permission.hook";
 import { Button } from "@/components/ui/button";
@@ -33,19 +30,8 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import {
   IInventory,
   StockStatus,
-  ExpiryStatus,
 } from "@/components/interface/inventory/inventory.interface";
 import { formatCurrency, formatDate } from "@/lib/formatter";
 import { cn } from "@/lib/utils";
@@ -59,7 +45,6 @@ import { z } from "zod";
 const filterSchema = z.object({
   search: z.string().optional(),
   stockStatus: z.nativeEnum(StockStatus).optional(),
-  expiryStatus: z.nativeEnum(ExpiryStatus).optional(),
   categoryIds: z.array(z.string()).optional(),
 });
 
@@ -78,16 +63,12 @@ export default function InventoryPage() {
     defaultValues: {
       search: "",
       stockStatus: StockStatus.ALL,
-      expiryStatus: ExpiryStatus.NONE,
       categoryIds: [],
     },
   });
 
-  const {
-    stockStatus: selectedStockStatus,
-    expiryStatus: selectedExpiryStatus,
-    categoryIds: selectedCategoryIds,
-  } = watch();
+  const { stockStatus: selectedStockStatus, categoryIds: selectedCategoryIds } =
+    watch();
 
   const { data: categoriesData } = useFetchCategories();
 
@@ -104,20 +85,11 @@ export default function InventoryPage() {
     () => ({
       ...(searchQuery ? { search: searchQuery } : {}),
       stockStatus: selectedStockStatus,
-      expiryStatus:
-        selectedExpiryStatus === ExpiryStatus.NONE
-          ? undefined
-          : selectedExpiryStatus,
       categoryIds: selectedCategoryIds?.length
         ? selectedCategoryIds
         : undefined,
     }),
-    [
-      searchQuery,
-      selectedStockStatus,
-      selectedExpiryStatus,
-      selectedCategoryIds,
-    ],
+    [searchQuery, selectedStockStatus, selectedCategoryIds],
   );
 
   const {
@@ -128,7 +100,7 @@ export default function InventoryPage() {
     hasNextPage,
     fetchNextPage,
     isFetchingNextPage,
-  } = useGetInventoriesInfinite(filters, hasViewAccess);
+  } = useGetInventoriesInfinite(hasViewAccess, filters);
 
   const items = useMemo(() => {
     return data?.pages?.flatMap((page) => (page as any).data) ?? [];
@@ -189,8 +161,7 @@ export default function InventoryPage() {
                 onChange={(e) => setSearchText(e.target.value)}
               />
             </div>
-            {(selectedExpiryStatus !== ExpiryStatus.NONE ||
-              (selectedCategoryIds?.length ?? 0) > 0 ||
+            {((selectedCategoryIds?.length ?? 0) > 0 ||
               selectedStockStatus !== StockStatus.ALL) && (
               <div className="">
                 <Button
@@ -200,7 +171,6 @@ export default function InventoryPage() {
                     reset({
                       search: searchQuery,
                       stockStatus: StockStatus.ALL,
-                      expiryStatus: ExpiryStatus.NONE,
                       categoryIds: [],
                     });
                   }}
@@ -228,40 +198,7 @@ export default function InventoryPage() {
               />
             </div>
 
-            <div className="w-[100px] flex-1">
-              <SelectField
-                name="expiryStatus"
-                control={control as any}
-                label={t("inventory.card.expiryStatus")}
-                options={[
-                  { label: t("inventory.tabs.none"), value: ExpiryStatus.NONE },
-                  {
-                    label: t("inventory.tabs.expired"),
-                    value: ExpiryStatus.EXPIRED,
-                  },
-                  {
-                    label: t("inventory.tabs.in1Month", {
-                      defaultValue: "In 1 Month",
-                    }),
-                    value: ExpiryStatus.IN_1_MONTH,
-                  },
-                  {
-                    label: t("inventory.tabs.in3Month", {
-                      defaultValue: "In 3 Months",
-                    }),
-                    value: ExpiryStatus.IN_3_MONTH,
-                  },
-                  {
-                    label: t("inventory.tabs.in6Month", {
-                      defaultValue: "In 6 Months",
-                    }),
-                    value: ExpiryStatus.IN_6_MONTH,
-                  },
-                ]}
-              />
-            </div>
-
-            <div className="w-[110px] flex-1">
+            <div className="w-[150px] flex-1">
               <MultiSelectField
                 name="categoryIds"
                 control={control as any}
@@ -481,12 +418,6 @@ export default function InventoryPage() {
                           >
                             {t("inventory.card.lowStock")}
                           </Badge>
-                          {item.expiryDate && (
-                            <div className="flex items-center gap-1.5 text-[10px] text-destructive/70 font-semibold">
-                              <Calendar className="h-3 w-3" />
-                              <span>{formatDate(item.expiryDate)}</span>
-                            </div>
-                          )}
                         </div>
                       ) : (
                         <div className="flex flex-col gap-1.5">
@@ -496,12 +427,6 @@ export default function InventoryPage() {
                           >
                             {t("inventory.card.inStock")}
                           </Badge>
-                          {item.expiryDate && (
-                            <div className="flex items-center gap-1.5 text-[10px] text-destructive/70 font-semibold">
-                              <Calendar className="h-3 w-3" />
-                              <span>{formatDate(item.expiryDate)}</span>
-                            </div>
-                          )}
                         </div>
                       )}
                     </TableCell>
@@ -652,21 +577,6 @@ function InventoryMobileCard({
             {t("inventory.card.currentStock")}
           </span>
         </div>
-
-        {item.expiryDate && (
-          <div className="flex flex-col items-center gap-1.5 ">
-            <span className="text-xs text-muted-foreground">
-              {" "}
-              {t("inventory.card.expiryDate")}
-            </span>
-            <div className="flex items-center gap-1.5 text-destructive/70">
-              <Calendar className="h-3 w-3" />
-              <span className="text-[10px] font-bold uppercase tracking-wider">
-                {formatDate(item.expiryDate)}
-              </span>
-            </div>
-          </div>
-        )}
 
         {outOfStock ? (
           <Badge

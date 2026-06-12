@@ -19,14 +19,16 @@ export default function EditExpensePage() {
   const router = useRouter();
   const { id } = useParams();
   const expenseId = id as string;
-  const { canUpdate } = usePermissions();
+  const { canView, canUpdate } = usePermissions();
+  const hasViewAccess = canView("EXPENSE");
+  const hasUpdateAccess = canUpdate("EXPENSE");
 
-  if (!canUpdate("EXPENSE"))
+  if (!hasViewAccess)
     return <AccessDeniedView moduleName={t("expense.moduleName")} />;
 
   const { data, isLoading, isError, refetch } = useFetchExpenseById(
     expenseId,
-    true,
+    hasViewAccess,
   );
   const updateExpense = useUpdateExpense(expenseId);
 

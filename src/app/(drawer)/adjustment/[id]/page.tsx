@@ -21,7 +21,7 @@ import { ErrorView, LoadingView } from "@/components/common/StateView";
 import { AccessDeniedView } from "@/components/guards/AccessDeniedView";
 import { usePermissions } from "@/hooks/permission.hook";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { CardContent, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
   Table,
@@ -238,7 +238,7 @@ export default function AdjustmentDetailPage() {
                     {t("adjustment.form.notes")}
                   </p>
                   <p className="text-sm bg-muted/30 p-3 rounded-xl border italic text-muted-foreground">
-                    "{adjustment.note}"
+                    &quot;{adjustment.note}&quot;
                   </p>
                 </div>
               )}

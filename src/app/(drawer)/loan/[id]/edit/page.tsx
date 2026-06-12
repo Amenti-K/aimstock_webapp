@@ -9,24 +9,30 @@ import { useLanguage } from "@/hooks/language.hook";
 import { useFetchPartnersTranx } from "@/api/loan/api.loan";
 import { useFetchPartnerById } from "@/api/partner/api.partner";
 import { LoadingView, ErrorView } from "@/components/common/StateView";
+import { usePermissions } from "@/hooks/permission.hook";
 
 export default function EditLoanTransactionPage() {
   const params = useParams();
   const router = useRouter();
   const searchParams = useSearchParams();
   const { t } = useLanguage();
+  const { canView, canUpdate } = usePermissions();
+  const hasViewAccess = canView("LOANS");
+  const hasUpdateAccess = canUpdate("LOANS");
 
   const partnerId = params.id as string;
   const txId = searchParams.get("txId");
 
-  const { data: partnerData, isLoading: loadingPartner } =
-    useFetchPartnerById(partnerId);
+  const { data: partnerData, isLoading: loadingPartner } = useFetchPartnerById(
+    partnerId,
+    hasViewAccess,
+  );
   const {
     data: txData,
     isLoading: loadingTx,
     isError,
     refetch,
-  } = useFetchPartnersTranx(txId!, !!txId);
+  } = useFetchPartnersTranx(txId!, hasUpdateAccess);
 
   if (loadingPartner || loadingTx) return <LoadingView />;
   if (isError) return <ErrorView refetch={refetch} />;

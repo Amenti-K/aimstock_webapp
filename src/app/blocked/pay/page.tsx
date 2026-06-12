@@ -8,16 +8,10 @@ import { Button } from "@/components/ui/button";
 import { CreditCard, LogOut, TimerOff } from "lucide-react";
 import { useLanguage } from "@/hooks/language.hook";
 
-/**
- * blocked/pay — shown when a user's subscription has expired or been cancelled.
- * The "Renew" button routes to setting/subscription/plans (inside drawer),
- * NOT to blocked/plans which is for first-time users.
- */
 export default function BlockedPayPage() {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const { t } = useLanguage();
-  const { company } = useAppSelector((state) => state.userAuth);
 
   const handleLogout = () => {
     dispatch(logoutUser());

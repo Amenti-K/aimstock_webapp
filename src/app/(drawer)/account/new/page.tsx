@@ -6,7 +6,6 @@ import { useCreateAccount } from "@/api/account/api.account";
 import { useLanguage } from "@/hooks/language.hook";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Landmark } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import AccountForm from "@/components/forms/account/AccountForm";
 import { motion } from "motion/react";
 

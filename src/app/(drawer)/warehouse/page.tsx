@@ -10,7 +10,6 @@ import { usePermissions } from "@/hooks/permission.hook";
 import { Button } from "@/components/ui/button";
 import {
   Plus,
-  Search,
   Warehouse,
   MapPin,
   Phone,
@@ -43,7 +42,7 @@ export default function WarehousePage() {
     hasNextPage,
     fetchNextPage,
     isFetchingNextPage,
-  } = useGetWarehousesInfinite({}, hasViewAccess);
+  } = useGetWarehousesInfinite(hasViewAccess);
 
   const warehouses = useMemo(
     () => data?.pages?.flatMap((page) => (page as any).data) ?? [],
