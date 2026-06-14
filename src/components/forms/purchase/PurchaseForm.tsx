@@ -23,6 +23,7 @@ import SubmitButton from "@/components/forms/fields/SubmitButton";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -31,7 +32,10 @@ import {
   useFetchPartnerSelector,
   useCreatePartner,
 } from "@/api/partner/api.partner";
-import { useGetInventoriesInfinite } from "@/api/inventory/api.inventory";
+import {
+  useFetchInventorySelector,
+  useGetInventoriesInfinite,
+} from "@/api/inventory/api.inventory";
 import { useFetchAccountSelector } from "@/api/account/api.account";
 import { formatCurrency } from "@/lib/formatter";
 import { useLanguage } from "@/hooks/language.hook";
@@ -43,8 +47,12 @@ import { useFetchWarehouseSelector } from "@/api/warehouse/api.warehouse";
 import { PartnerFormValues } from "@/components/forms/partner/partner.schema";
 import InventoryForm from "@/components/forms/inventory/InventoryForm";
 import { useCreateInventory } from "@/api/inventory/api.inventory";
-import { inventoryFormValues } from "@/components/schema/inventory.schema";
+import {
+  inventoryFormValues,
+  QuickInventoryFormValues,
+} from "@/components/schema/inventory.schema";
 import { usePermissions } from "@/hooks/permission.hook";
+import InventoryQuickForm from "../inventory/InventoryQuickForm";
 
 type PurchaseFormValues = {
   partnerId: string;
@@ -79,7 +87,7 @@ function buildFormValues(
       partnerId: "",
       description: "",
       purchaseItems: [
-        { inventoryId: "", warehouseId: "", quantity: 1, unitPrice: 0 },
+        { inventoryId: "", warehouseId: "", quantity: 0, unitPrice: 0 },
       ],
       purchasePayments: [],
       purchaseCashPayment: { amount: 0 },
@@ -95,9 +103,9 @@ function buildFormValues(
     purchaseItems: initialData.purchaseItems?.map((item: any) => ({
       inventoryId: item.inventory?.id || item.inventoryId || "",
       warehouseId: item.warehouse?.id || item.warehouseId || "",
-      quantity: Number(item.quantity) || 1,
+      quantity: Number(item.quantity) || 0,
       unitPrice: Number(item.unitPrice) || 0,
-    })) ?? [{ inventoryId: "", warehouseId: "", quantity: 1, unitPrice: 0 }],
+    })) ?? [{ inventoryId: "", warehouseId: "", quantity: 0, unitPrice: 0 }],
     purchasePayments:
       initialData.purchasePayments?.map((payment: any) => ({
         accountId: payment.account?.id || payment.accountId || "",
@@ -169,18 +177,17 @@ export default function PurchaseForm({
     data: inventoriesData,
     isLoading: inventoriesLoading,
     refetch: refetchInventories,
-  } = useGetInventoriesInfinite(canCreateInventory);
+  } = useFetchInventorySelector(canCreateInventory);
 
   const { mutate: createInventory, isPending: creatingInventory } =
     useCreateInventory();
-
   const { data: accountsData, isLoading: accountsLoading } =
     useFetchAccountSelector();
   const { data: warehouses, isLoading: warehousesLoading } =
     useFetchWarehouseSelector();
 
   const allInventories = useMemo(
-    () => inventoriesData?.pages?.flatMap((page: any) => page.data ?? []) ?? [],
+    () => inventoriesData?.data ?? [],
     [inventoriesData],
   );
 
@@ -214,7 +221,7 @@ export default function PurchaseForm({
         : [];
 
     return list.map((account: any) => ({
-      label: `${account.name} (${formatCurrency(account.balance ?? 0)})`,
+      label: `${account.name} (${account.bank}) (${formatCurrency(account.balance ?? 0)})`,
       value: String(account.id),
     }));
   }, [accountsData]);
@@ -364,7 +371,7 @@ export default function PurchaseForm({
                         appendItem({
                           inventoryId: "",
                           warehouseId: "",
-                          quantity: 1,
+                          quantity: 0,
                           unitPrice: 0,
                         })
                       }
@@ -439,7 +446,18 @@ export default function PurchaseForm({
                                     `purchaseItems.${index}.unitPrice`,
                                     Number(item.boughtPrice) || 0,
                                   );
-                                  handleScroll(20);
+                                  if (item.warehouseInventories?.length === 1) {
+                                    setValue(
+                                      `purchaseItems.${index}.warehouseId`,
+                                      item.warehouseInventories[0].warehouseId,
+                                    );
+                                  } else {
+                                    setValue(
+                                      `purchaseItems.${index}.warehouseId`,
+                                      "",
+                                    );
+                                  }
+                                  handleScroll(150);
                                 }
                               }}
                             />
@@ -474,7 +492,7 @@ export default function PurchaseForm({
                                   : t("purchase.form.items.selectWarehouse")
                               }
                               options={warehouseOptions}
-                              onValueChange={() => handleScroll(20)}
+                              onValueChange={() => handleScroll(600)}
                             />
                           </div>
 
@@ -700,14 +718,14 @@ export default function PurchaseForm({
         <DialogContent className="sm:max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>{t("inventory.form.add")}</DialogTitle>
+            <DialogDescription>
+              {t("inventory.form.inventoryInfoDesc")}
+            </DialogDescription>
           </DialogHeader>
-          <InventoryForm
+          <InventoryQuickForm
             onSubmit={handleInventoryCreated}
             onCancel={() => setShowAddInventory(false)}
             isLoading={creatingInventory}
-            isEdit={true}
-            showHint={false}
-            initialData={{ hasTransactions: true } as any}
           />
         </DialogContent>
       </Dialog>

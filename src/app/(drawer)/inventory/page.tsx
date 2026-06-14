@@ -41,6 +41,7 @@ import MultiSelectField from "@/components/forms/fields/MultiSelectField";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { InfiniteScrollTrigger } from "@/components/common/InfiniteScrollTrigger";
 
 const filterSchema = z.object({
   search: z.string().optional(),
@@ -438,20 +439,11 @@ export default function InventoryPage() {
         </Table>
       </div>
 
-      {hasNextPage && (
-        <div className="flex justify-center p-4">
-          <Button
-            variant="ghost"
-            onClick={() => fetchNextPage()}
-            disabled={isFetchingNextPage}
-            className="text-primary font-medium hover:bg-primary/5 rounded-full"
-          >
-            {isFetchingNextPage
-              ? t("inventory.table.loadingMore")
-              : t("inventory.table.showMore")}
-          </Button>
-        </div>
-      )}
+      <InfiniteScrollTrigger
+        hasNextPage={!!hasNextPage}
+        isLoading={isFetchingNextPage}
+        onIntersect={fetchNextPage}
+      />
 
       {hasCreateAccess && (
         <Button

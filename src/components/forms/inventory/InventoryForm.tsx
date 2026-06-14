@@ -30,7 +30,6 @@ import {
 import { useFetchWarehouseSelector } from "@/api/warehouse/api.warehouse";
 import { useTranslation } from "react-i18next";
 import { IInventory } from "../../interface/inventory/inventory.interface";
-import DateField from "../fields/DateField";
 import {
   useFetchCategories,
   useCreateCategory,

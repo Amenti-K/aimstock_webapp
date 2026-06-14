@@ -161,18 +161,6 @@ export const useFetchCategoryById = (id: string, enabled: boolean) => {
   );
 };
 
-export const useAssignInventoryCategory = (inventoryId: string) => {
-  return useMutate<{ inventoryCategoryId: string | null }>(
-    `${endpoints.INVENTORY}/${inventoryId}`,
-    "patch",
-    {
-      onError: onErrorNotification,
-      onSuccess: onSuccessNotification,
-      queryKey: queryKeys.inventories.root,
-    },
-  );
-};
-
 export const useCreateCategory = () => {
   return useMutate<INewInventoryCategory>(endpoints.CATEGORIES, "post", {
     onError: onErrorNotification,
@@ -188,7 +176,7 @@ export const useUpdateCategory = (id: string) => {
     {
       onError: onErrorNotification,
       onSuccess: onSuccessNotification,
-      queryKey: queryKeys.categories.root,
+      queryKey: [queryKeys.categories.root, queryKeys.inventories.root],
     },
   );
 };
@@ -200,7 +188,7 @@ export const useDeleteCategory = (id: string) => {
     {
       onError: onErrorNotification,
       onSuccess: onSuccessNotification,
-      queryKey: queryKeys.categories.root,
+      queryKey: [queryKeys.categories.root, queryKeys.inventories.root],
     },
   );
 };
@@ -208,6 +196,19 @@ export const useDeleteCategory = (id: string) => {
 export const useAssignInventoriesToCategory = (categoryId: string) => {
   return useMutate<{ inventoryIds: string[] }>(
     `${endpoints.CATEGORIES}/${categoryId}/assign-inventories`,
+    "patch",
+    {
+      onError: onErrorNotification,
+      onSuccess: onSuccessNotification,
+      queryKey: [queryKeys.inventories.root, queryKeys.categories.root],
+    },
+  );
+};
+
+export const useUnassignInventoryCategory = () => {
+  return useMutate<{ categoryId: string; inventoryId: string }>(
+    (data) =>
+      `${endpoints.CATEGORIES}/${data.categoryId}/unassign-inventory/${data.inventoryId}`,
     "patch",
     {
       onError: onErrorNotification,

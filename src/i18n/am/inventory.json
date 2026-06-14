@@ -110,7 +110,7 @@
     "boughtPrice": "የተገዛበት ዋጋ *",
     "sellingPrice": "የሚሸጥበት ዋጋ *",
     "initialQty": "የመጀመሪያ ብዛት *",
-    "unit": "መለኪያ(psc,kg,ltr,etc) *",
+    "unit": "መለኪያ(psc,kg,etc) *",
     "mfgDate": "የምርት ቀን (አማራጭ)",
     "expiryDate": "የማብቂያ ቀን (አማራጭ)",
 

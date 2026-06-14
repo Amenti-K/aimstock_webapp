@@ -80,9 +80,9 @@ AxiosInstance.interceptors.response.use(
       }
     }
 
-    if (error.response?.status === 403) {
-      store.dispatch(logoutUser());
-    }
+    // if (error.response?.status === 403) {
+    //   store.dispatch(logoutUser());
+    // }
 
     return Promise.reject(error);
   },
