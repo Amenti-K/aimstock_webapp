@@ -76,7 +76,7 @@ function buildFormValues(
       partnerId: "",
       description: "",
       saleItems: [
-        { inventoryId: "", warehouseId: "", quantity: 1, unitPrice: 0 },
+        { inventoryId: "", warehouseId: "", quantity: 0, unitPrice: 0 },
       ],
       salePayments: [],
       saleCashPayment: { amount: 0 },
@@ -92,9 +92,9 @@ function buildFormValues(
     saleItems: initialData.saleItems?.map((item: any) => ({
       inventoryId: item.inventory?.id || item.inventoryId || "",
       warehouseId: item.warehouse?.id || item.warehouseId || "",
-      quantity: Number(item.quantity) || 1,
+      quantity: Number(item.quantity) || 0,
       unitPrice: Number(item.unitPrice) || 0,
-    })) ?? [{ inventoryId: "", warehouseId: "", quantity: 1, unitPrice: 0 }],
+    })) ?? [{ inventoryId: "", warehouseId: "", quantity: 0, unitPrice: 0 }],
     salePayments:
       initialData.salePayments?.map((payment: any) => ({
         accountId: payment.account?.id || payment.accountId || "",
@@ -162,9 +162,12 @@ export default function SalesForm({
   const { mutate: createPartner, isPending: creatingPartner } =
     useCreatePartner();
 
-  const { data: inventoriesData } = useFetchInventorySelector(true);
-  const { data: accountsData } = useFetchAccountSelector();
-  const { data: warehouses } = useFetchWarehouseSelector();
+  const { data: inventoriesData, isLoading: inventoryLoading } =
+    useFetchInventorySelector(true);
+  const { data: accountsData, isLoading: accountLoading } =
+    useFetchAccountSelector();
+  const { data: warehouses, isLoading: warehouseLoading } =
+    useFetchWarehouseSelector();
 
   const allInventories = useMemo(
     () => inventoriesData?.data ?? [],
@@ -201,7 +204,7 @@ export default function SalesForm({
         : [];
 
     return list.map((account: any) => ({
-      label: `${account.name} (${formatCurrency(account.balance ?? 0)})`,
+      label: `${account.name} (${account.bank})`,
       value: String(account.id),
     }));
   }, [accountsData]);
@@ -341,7 +344,7 @@ export default function SalesForm({
                       appendItem({
                         inventoryId: "",
                         warehouseId: "",
-                        quantity: 1,
+                        quantity: 0,
                         unitPrice: 0,
                       })
                     }
@@ -401,8 +404,14 @@ export default function SalesForm({
                             <SelectSearchField
                               name={`saleItems.${index}.inventoryId`}
                               control={control as any}
-                              placeholder={t("sales.form.items.selectItem")}
+                              placeholder={
+                                inventoryLoading
+                                  ? t("common.loading")
+                                  : t("sales.form.items.selectItem")
+                              }
                               options={inventoryOptions}
+                              searchPlaceholder={t("common.search")}
+                              emptyMessage={t("common.noResults")}
                               onValueChange={(val) => {
                                 const item = allInventories.find(
                                   (it: any) => it.id === val,
@@ -423,7 +432,7 @@ export default function SalesForm({
                                       "",
                                     );
                                   }
-                                  handleScroll(100);
+                                  handleScroll(150);
                                 }
                               }}
                             />
@@ -452,11 +461,13 @@ export default function SalesForm({
                             <SelectField
                               name={`saleItems.${index}.warehouseId`}
                               control={control as any}
-                              placeholder={t(
-                                "sales.form.items.selectWarehouse",
-                              )}
+                              placeholder={
+                                warehouseLoading
+                                  ? t("common.loading")
+                                  : t("sales.form.items.selectWarehouse")
+                              }
                               options={rowWarehouseOptions}
-                              onValueChange={() => handleScroll(10)}
+                              onValueChange={() => handleScroll(600)}
                             />
                           </div>
 
@@ -548,7 +559,11 @@ export default function SalesForm({
                               <SelectField
                                 name={`salePayments.${index}.accountId`}
                                 control={control as any}
-                                placeholder={t("sales.form.bankPay.selectAcc")}
+                                placeholder={
+                                  accountLoading
+                                    ? t("common.loading")
+                                    : t("sales.form.bankPay.selectAcc")
+                                }
                                 options={accountOptions}
                               />
                             </div>

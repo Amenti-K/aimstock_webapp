@@ -116,9 +116,15 @@ export interface IWarehouseInventorySelector {
 export interface IInventorySelector {
   id: string;
   name: string;
+  sku: string;
+  unit: string;
   boughtPrice: number;
   sellingPrice: number;
   warehouseInventories: IWarehouseInventorySelector[];
+  inventoryCategory?: {
+    id: string;
+    name: string;
+  };
 }
 
 export interface IInventorySelectorResponse {

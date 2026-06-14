@@ -10,13 +10,7 @@ import {
   Legend,
 } from "recharts";
 import { PieChartResponse } from "@/components/interface/analytics/interface.analytics";
-// import {
-//   Card,
-//   CardContent,
-//   CardDescription,
-//   CardHeader,
-//   CardTitle,
-// } from "@/components/ui/card";
+import { useLanguage } from "@/hooks/language.hook";
 
 interface PerformanceChartProps {
   data: PieChartResponse | null | undefined;
@@ -25,10 +19,12 @@ interface PerformanceChartProps {
 const COLORS = ["#2E7D32", "#4CAF50", "#8BC34A", "#CDDC39", "#FF9800"];
 
 const PerformanceChart: React.FC<PerformanceChartProps> = ({ data }) => {
+  const { t } = useLanguage();
+
   if (!data || !data.chartData || data.chartData.length === 0) {
     return (
       <div className="flex h-full items-center justify-center text-muted-foreground">
-        No performance data available
+        {t("analytics.noData.chart.emptyState.noActivity.message")}
       </div>
     );
   }

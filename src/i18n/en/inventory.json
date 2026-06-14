@@ -110,7 +110,7 @@
     "boughtPrice": "Bought Price *",
     "sellingPrice": "Selling Price *",
     "initialQty": "Initial Quantity *",
-    "unit": "Unit(psc,kg,ltr,etc) *",
+    "unit": "Unit(psc,kg,etc) *",
     "mfgDate": "Manufacturing Date (optional)",
     "expiryDate": "Expiry Date (optional)",
     "inventoryInfo": "Inventory Information",

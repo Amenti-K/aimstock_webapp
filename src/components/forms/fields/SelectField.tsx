@@ -34,6 +34,7 @@ interface Props {
   /** Alternative name for the entity to show in empty/loading states; falls back to label */
   entityName?: string;
   onAddClick?: () => void;
+  clearable?: boolean;
 }
 
 const SelectField = ({
@@ -48,6 +49,7 @@ const SelectField = ({
   addLabel = "Add New",
   entityName,
   onAddClick,
+  clearable = true,
 }: Props) => {
   const { t } = useLanguage();
   const displayEntity = (
@@ -81,6 +83,11 @@ const SelectField = ({
                 onAddClick?.();
                 return;
               }
+              if (val === "__none__") {
+                onChange("");
+                if (onValueChange) onValueChange("");
+                return;
+              }
               onChange(val);
               if (onValueChange) onValueChange(val);
             }}
@@ -93,7 +100,15 @@ const SelectField = ({
               <SelectValue placeholder={placeholder} />
             </SelectTrigger>
             <SelectContent className="bg-background">
-              {options.length <= 0 ? (
+              {clearable && (
+                <SelectItem
+                  value="__none__"
+                  className="text-muted-foreground italic font-medium"
+                >
+                  {t("common.none", { defaultValue: "None" })}
+                </SelectItem>
+              )}
+              {options.length <= 0 && !clearable ? (
                 <SelectItem
                   value="no-data"
                   disabled

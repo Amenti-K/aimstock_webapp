@@ -66,7 +66,7 @@ const MultiSelectField = ({
                     error && "ring-1 ring-destructive",
                   )}
                 >
-                  <div className="flex items-center gap-2 overflow-hidden">
+                  <div className="flex items-center gap-2 overflow-hidden flex-1">
                     <Filter className="h-4 w-4 shrink-0 opacity-50 text-muted-foreground" />
                     <span className="truncate text-[11px] font-medium">
                       {selectedValues.length > 0
@@ -79,6 +79,16 @@ const MultiSelectField = ({
                           })}
                     </span>
                   </div>
+                  {selectedValues.length > 0 && (
+                    <X
+                      className="h-3 w-3 ml-2 cursor-pointer hover:text-destructive transition-colors shrink-0"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        onChange([]);
+                      }}
+                    />
+                  )}
                 </Button>
               </PopoverTrigger>
               <PopoverContent

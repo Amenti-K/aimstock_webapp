@@ -32,6 +32,7 @@ import { BankAvatar } from "@/components/account/BankAvatar";
 import { useLanguage } from "@/hooks/language.hook";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { motion, AnimatePresence } from "motion/react";
+import { InfiniteScrollTrigger } from "@/components/common/InfiniteScrollTrigger";
 
 export default function AccountPage() {
   const router = useRouter();
@@ -43,8 +44,15 @@ export default function AccountPage() {
 
   const [showTotalBalance, setShowTotalBalance] = useState(false);
 
-  const { data, isLoading, isError, refetch } =
-    useGetAccountsInfinite(hasViewAccess);
+  const {
+    data,
+    isLoading,
+    isError,
+    refetch,
+    hasNextPage,
+    fetchNextPage,
+    isFetchingNextPage,
+  } = useGetAccountsInfinite(hasViewAccess);
 
   const { data: summaryData } = useGetSummary(hasViewAccess);
 
@@ -327,6 +335,12 @@ export default function AccountPage() {
           )}
         </div>
       </div>
+
+      <InfiniteScrollTrigger
+        hasNextPage={!!hasNextPage}
+        isLoading={isFetchingNextPage}
+        onIntersect={fetchNextPage}
+      />
 
       {/* Floating Action Button for Mobile */}
       {isMobile && hasCreateAccess && (

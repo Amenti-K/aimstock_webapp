@@ -22,14 +22,9 @@ import {
   Printer,
   Loader2,
 } from "lucide-react";
-import {
-  useGetAnalytics,
-  usePieChart,
-  // useProfit,
-} from "@/api/analytics/api.analytics";
+import { useGetAnalytics, usePieChart } from "@/api/analytics/api.analytics";
 import { LoadingView, ErrorView } from "@/components/common/StateView";
 import PerformanceChart from "@/components/analytics/PerformanceChart";
-// import TrendChart from "@/components/analytics/TrendChart";
 import { TimeFrame } from "@/components/interface/inventory/inventory.interface";
 import { usePermissions } from "@/hooks/permission.hook";
 import { AccessDeniedView } from "@/components/guards/AccessDeniedView";
@@ -65,17 +60,9 @@ export default function DashboardPage() {
     refetch: refetchPie,
   } = usePieChart(hasViewAccess, { timeFrame });
 
-  // const {
-  //   data: profitData,
-  //   isLoading: isProfitLoading,
-  //   isError: isProfitError,
-  //   refetch: refetchProfit,
-  // } = useProfit();
-
   const handleRefresh = () => {
     refetchSummary();
     refetchPie();
-    // refetchProfit();
   };
 
   const handlePrint = () => {
@@ -278,20 +265,6 @@ export default function DashboardPage() {
             <PerformanceChart data={pie} />
           </CardContent>
         </Card>
-
-        {/* <Card className="overflow-hidden border-none bg-card/50">
-              <CardHeader className="pb-0">
-                <CardTitle className="text-sm font-semibold uppercase tracking-tight text-muted-foreground">
-                  Growth Trend
-                </CardTitle>
-                <CardDescription>
-                  Revenue and profit comparison over time
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="pt-4 px-0">
-                <TrendChart data={profit} />
-              </CardContent>
-            </Card> */}
       </div>
     </section>
   );

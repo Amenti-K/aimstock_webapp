@@ -6,9 +6,10 @@ import { useTranslation } from "react-i18next";
 import {
   useFetchCategories,
   useGetInventoriesInfinite,
-  useAssignInventoryCategory,
   useUpdateCategory,
   useAssignInventoriesToCategory,
+  useFetchInventorySelector,
+  useUnassignInventoryCategory,
 } from "@/api/inventory/api.inventory";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -52,22 +53,28 @@ import {
 import { usePermissions } from "@/hooks/permission.hook";
 import { AccessDeniedView } from "@/components/guards/AccessDeniedView";
 import CategoryForm from "@/components/forms/category/categoryForm";
-import { IInventory } from "@/components/interface/inventory/inventory.interface";
+import {
+  IInventory,
+  IInventorySelector,
+} from "@/components/interface/inventory/inventory.interface";
 import { InventoryCategoryFormValues } from "@/components/schema/inventory.schema";
 import { formatCurrency } from "@/lib/formatter";
 import { cn } from "@/lib/utils";
+import { InfiniteScrollTrigger } from "@/components/common/InfiniteScrollTrigger";
 
 // ─── Remove button as its own component so the hook call is at top-level ──────
 function RemoveInventoryButton({
   inventoryId,
+  categoryId,
   label,
   onRemoved,
 }: {
   inventoryId: string;
+  categoryId: string;
   label: string;
   onRemoved?: () => void;
 }) {
-  const { mutate, isPending } = useAssignInventoryCategory(inventoryId);
+  const { mutate, isPending } = useUnassignInventoryCategory();
   return (
     <Button
       variant="ghost"
@@ -76,7 +83,7 @@ function RemoveInventoryButton({
       disabled={isPending}
       onClick={(e) => {
         e.stopPropagation();
-        mutate({ inventoryCategoryId: null }, { onSuccess: onRemoved });
+        mutate({ categoryId, inventoryId }, { onSuccess: onRemoved });
       }}
     >
       <Trash2 className="h-3.5 w-3.5 mr-1" />
@@ -91,7 +98,7 @@ function SelectableInventoryRow({
   isSelected,
   onToggle,
 }: {
-  item: IInventory;
+  item: IInventorySelector;
   isSelected: boolean;
   onToggle: () => void;
 }) {
@@ -118,7 +125,8 @@ function SelectableInventoryRow({
       <div className="flex-1 min-w-0">
         <p className="font-semibold text-sm truncate">{item.name}</p>
         <p className="text-xs text-muted-foreground font-mono">
-          {item.sku ?? "—"} · {totalQty.toLocaleString()} {item.unit}
+          {item.inventoryCategory?.name ?? "—"} · {totalQty.toLocaleString()}{" "}
+          {item.unit}
         </p>
       </div>
     </div>
@@ -131,11 +139,13 @@ function InventoryMobileCard({
   hasUpdateAccess,
   categoryId,
   onClick,
+  onRemoved,
 }: {
   item: IInventory;
   hasUpdateAccess: boolean;
   categoryId: string;
   onClick: () => void;
+  onRemoved: () => void;
 }) {
   const { t } = useTranslation();
   const totalQty = item.warehouseInventories.reduce(
@@ -239,7 +249,9 @@ function InventoryMobileCard({
         {hasUpdateAccess && (
           <RemoveInventoryButton
             inventoryId={item.id}
+            categoryId={categoryId}
             label={t("category.detail.removeInventory")}
+            onRemoved={onRemoved}
           />
         )}
       </div>
@@ -276,6 +288,7 @@ export default function CategoryDetailPage() {
   const {
     data: catInvData,
     isLoading: loadingInventories,
+    refetch: refetchInventories,
     hasNextPage,
     fetchNextPage,
     isFetchingNextPage,
@@ -287,18 +300,12 @@ export default function CategoryDetailPage() {
   );
 
   // Inventories without a category for "Add" dialog (only fetched when dialog is open)
-  const {
-    data: allData,
-    isLoading: loadingAll,
-    hasNextPage: hasNextAvailable,
-    fetchNextPage: fetchNextAvailable,
-    isFetchingNextPage: isFetchingNextAvailable,
-  } = useGetInventoriesInfinite(hasViewAccess && isAddOpen, {
-    noCategory: true,
-    search: addSearch,
-  });
-  const availableInventories: IInventory[] = useMemo(
-    () => allData?.pages?.flatMap((p) => (p as any).data) ?? [],
+  const { data: allData, isLoading: loadingAll } = useFetchInventorySelector(
+    hasViewAccess && isAddOpen,
+  );
+
+  const availableInventories: IInventorySelector[] = useMemo(
+    () => allData?.data ?? [],
     [allData],
   );
 
@@ -451,6 +458,9 @@ export default function CategoryDetailPage() {
               categoryId={id}
               hasUpdateAccess={hasUpdateAccess}
               onClick={() => router.push(`/inventory/${item.id}`)}
+              onRemoved={() => {
+                refetchInventories();
+              }}
             />
           ))
         )}
@@ -590,7 +600,11 @@ export default function CategoryDetailPage() {
                         <div className="flex justify-end">
                           <RemoveInventoryButton
                             inventoryId={item.id}
+                            categoryId={id}
                             label={t("category.detail.removeInventory")}
+                            onRemoved={() => {
+                              refetchInventories();
+                            }}
                           />
                         </div>
                       </TableCell>
@@ -603,20 +617,11 @@ export default function CategoryDetailPage() {
         </Table>
       </div>
 
-      {hasNextPage && (
-        <div className="flex justify-center">
-          <Button
-            variant="ghost"
-            onClick={() => fetchNextPage()}
-            disabled={isFetchingNextPage}
-            className="text-primary font-medium hover:bg-primary/5 rounded-full"
-          >
-            {isFetchingNextPage
-              ? t("inventory.table.loadingMore")
-              : t("inventory.table.showMore")}
-          </Button>
-        </div>
-      )}
+      <InfiniteScrollTrigger
+        hasNextPage={!!hasNextPage}
+        isLoading={isFetchingNextPage}
+        onIntersect={fetchNextPage}
+      />
 
       {/* Mobile FAB */}
       {hasUpdateAccess && (
@@ -721,18 +726,6 @@ export default function CategoryDetailPage() {
                     onToggle={() => handleToggleSelection(inv.id)}
                   />
                 ))}
-                {hasNextAvailable && (
-                  <Button
-                    variant="ghost"
-                    className="w-full text-xs"
-                    onClick={() => fetchNextAvailable()}
-                    disabled={isFetchingNextAvailable}
-                  >
-                    {isFetchingNextAvailable
-                      ? t("common.loading")
-                      : t("common.loadMore")}
-                  </Button>
-                )}
               </>
             )}
           </div>
