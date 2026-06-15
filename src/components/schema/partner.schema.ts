@@ -16,7 +16,6 @@ export const partnerSchema = z.object({
     // )
     .optional(),
   address: z.string().trim().optional(),
-  // isActive: z.boolean(),
 });
 
 // Schema for array of partners (bulk creation)
@@ -24,5 +23,5 @@ export const partnersArraySchema = z.object({
   partners: z.array(partnerSchema).min(1, "At least one partner is required"),
 });
 
-export type partnerFormValues = z.infer<typeof partnerSchema>;
-export type partnerArrayFormValues = z.infer<typeof partnersArraySchema>;
+export type PartnerFormValues = z.infer<typeof partnerSchema>;
+export type PartnerArrayFormValues = z.infer<typeof partnersArraySchema>;

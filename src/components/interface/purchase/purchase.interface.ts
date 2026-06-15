@@ -29,7 +29,7 @@ export interface IPurchaseCashPayment {
 
 export interface INewPurchase {
   description?: string;
-  partnerId: string;
+  partnerId?: string;
   purchaseItems: IPurchaseItem[];
   paymentItems: IPaymentItem[];
   purchaseCashPayment?: IPurchaseCashPayment;

@@ -12,6 +12,7 @@ const expenseCashPaymentSchema = z.object({
 export const expenseSchema = z
   .object({
     description: z.string().trim().optional(),
+    expenseTemplateId: z.string().optional(),
     paymentItems: z.array(expensePaymentSchema),
     cashItem: expenseCashPaymentSchema.optional(),
   })
@@ -34,4 +35,4 @@ export const expenseSchema = z
     },
   );
 
-export type FormExpenseValues = z.infer<typeof expenseSchema>;
+export type ExpenseFormValues = z.infer<typeof expenseSchema>;

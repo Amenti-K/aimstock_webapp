@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import {
   resetPasswordSchema,
   ResetPasswordFormValues,
-} from "./employee.schema";
+} from "@/components/schema/employee.schema";
 import { useLanguage } from "@/hooks/language.hook";
 
 interface EmployeeResetPasswordFormProps {

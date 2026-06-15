@@ -6,14 +6,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import TextField from "@/components/forms/fields/TextField";
 import SelectField from "@/components/forms/fields/SelectField";
 import { Button } from "@/components/ui/button";
-import { IEmployee } from "@/api/employee/api.employee";
 import {
   createEmployeeSchema,
   updateEmployeeSchema,
   CreateEmployeeFormValues,
   UpdateEmployeeFormValues,
-} from "./employee.schema";
+} from "@/components/schema/employee.schema";
 import { useLanguage } from "@/hooks/language.hook";
+import { IEmployee } from "@/components/interface/employee/employee.interface";
 
 interface Option {
   label: string;
@@ -49,7 +49,7 @@ export default function EmployeeForm({
         : {
             name: initialData?.name ?? "",
             phoneNumber: initialData?.phoneNumber ?? "",
-            roleId: initialData?.role?.id ?? initialData?.roleId ?? "",
+            roleId: initialData?.role?.id ?? "",
           },
   });
 
@@ -58,7 +58,7 @@ export default function EmployeeForm({
       form.reset({
         name: initialData?.name ?? "",
         phoneNumber: initialData?.phoneNumber ?? "",
-        roleId: initialData?.role?.id ?? initialData?.roleId ?? "",
+        roleId: initialData?.role?.id ?? "",
       });
     }
   }, [form, initialData, mode]);

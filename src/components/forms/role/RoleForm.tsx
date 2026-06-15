@@ -6,28 +6,29 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import TextField from "@/components/forms/fields/TextField";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { IRole } from "@/components/interface/role/role.interface";
 import {
-  moduleEnum,
-  permissionEnum,
-  roleFormSchema,
-  RoleFormValues,
-  ModuleType,
-  PermissionType,
-} from "./role.schema";
-import { IRole } from "@/api/role/api.role";
+  CreateRole,
+  Module,
+  ModuleEnum,
+  Permission,
+  PermissionEnum,
+  RolePermission,
+  roleSchema,
+} from "@/components/schema/role.schema";
 
-const COLUMNS: PermissionType[] = permissionEnum.options;
-const MODULES: ModuleType[] = moduleEnum.options;
+const COLUMNS: Permission[] = PermissionEnum.options;
+const MODULES: Module[] = ModuleEnum.options;
 
 interface RoleFormProps {
   initialData?: IRole | null;
-  onSubmit: (values: RoleFormValues) => void;
+  onSubmit: (values: CreateRole) => void;
   onCancel: () => void;
   isPending?: boolean;
   submitLabel: string;
 }
 
-const buildRoleValues = (initialData?: IRole | null): RoleFormValues => ({
+const buildRoleValues = (initialData?: IRole | null): CreateRole => ({
   name: initialData?.name ?? "",
   permissions: (initialData?.permissions ?? []).map((perm: any) => ({
     module: perm.module,
@@ -42,8 +43,8 @@ export default function RoleForm({
   isPending = false,
   submitLabel,
 }: RoleFormProps) {
-  const form = useForm<RoleFormValues>({
-    resolver: zodResolver(roleFormSchema),
+  const form = useForm<CreateRole>({
+    resolver: zodResolver(roleSchema),
     defaultValues: buildRoleValues(initialData),
   });
 
@@ -53,19 +54,24 @@ export default function RoleForm({
 
   const watchedPermissions = form.watch("permissions") ?? [];
 
-  const setPermissions = (value: RoleFormValues["permissions"]) => {
-    form.setValue("permissions", value, { shouldDirty: true, shouldValidate: true });
+  const setPermissions = (value: CreateRole["permissions"]) => {
+    form.setValue("permissions", value, {
+      shouldDirty: true,
+      shouldValidate: true,
+    });
   };
 
-  const modulePermissions = (module: ModuleType) =>
+  const modulePermissions = (module: Module) =>
     watchedPermissions
       .filter((permission) => permission.module === module)
       .map((permission) => permission.permission);
 
-  const togglePermission = (module: ModuleType, permission: PermissionType) => {
+  const togglePermission = (module: Module, permission: Permission) => {
     const current = modulePermissions(module);
     const isAllChecked = current.includes("ALL");
-    const withoutModule = watchedPermissions.filter((perm) => perm.module !== module);
+    const withoutModule = watchedPermissions.filter(
+      (perm) => perm.module !== module,
+    );
 
     if (permission === "ALL") {
       if (isAllChecked) {
@@ -109,13 +115,10 @@ export default function RoleForm({
   };
 
   return (
-    <form
-      onSubmit={form.handleSubmit(onSubmit)}
-      className="space-y-4"
-    >
+    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
       <TextField
         name="name"
-        control={form.control}
+        control={form.control as any}
         label="Role name"
         placeholder="e.g. Sales Manager"
       />
@@ -162,7 +165,12 @@ export default function RoleForm({
       )}
 
       <div className="flex justify-end gap-2">
-        <Button type="button" variant="outline" onClick={onCancel} disabled={isPending}>
+        <Button
+          type="button"
+          variant="outline"
+          onClick={onCancel}
+          disabled={isPending}
+        >
           Cancel
         </Button>
         <Button type="submit" disabled={isPending}>

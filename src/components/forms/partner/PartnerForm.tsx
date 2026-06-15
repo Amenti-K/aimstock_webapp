@@ -7,7 +7,10 @@ import { useTranslation } from "react-i18next";
 import TextField from "@/components/forms/fields/TextField";
 import SubmitButton from "@/components/forms/fields/SubmitButton";
 import { Button } from "@/components/ui/button";
-import { PartnerFormValues, partnerSchema } from "./partner.schema";
+import {
+  PartnerFormValues,
+  partnerSchema,
+} from "@/components/schema/partner.schema";
 
 interface Props {
   initialData?: Partial<PartnerFormValues> | null;

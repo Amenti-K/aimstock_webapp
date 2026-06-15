@@ -220,12 +220,12 @@ export default function PrintReportPage() {
   return (
     <section className="space-y-6 max-w-6xl mx-auto pb-10">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           <Button variant="outline" size="icon" onClick={() => router.back()}>
             <ArrowLeft className="h-4 w-4" />
           </Button>
-          <h1 className="text-2xl font-bold tracking-tight">
+          <h1 className="text-[16px] font-bold tracking-tight">
             {t("analytics.reports.title", "Financial Report")}
           </h1>
         </div>
@@ -372,13 +372,16 @@ export default function PrintReportPage() {
       {/* Aggregated Stats - Screen View */}
       <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">
         {quickStats.map((card) => (
-          <Card key={card.title} className="bg-card border shadow-sm">
-            <CardHeader className="p-4 pb-2">
+          <Card
+            key={card.title}
+            className="bg-card border shadow-sm py-[10px] md:p-8"
+          >
+            <CardHeader className="p-2 pb-2">
               <CardDescription className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-muted-foreground">
                 {card.icon}
                 {card.title}
               </CardDescription>
-              <CardTitle className="text-2xl font-bold truncate mt-1">
+              <CardTitle className="text-[16px] md:text-2xl font-bold mt-1">
                 {card.value}
               </CardTitle>
             </CardHeader>

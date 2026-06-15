@@ -26,7 +26,7 @@ export interface ICashPayment {
 
 export interface INewSale {
   description?: string;
-  partnerId: string;
+  partnerId?: string;
   saleItems: ISellItem[];
   salePayments: IPaymentItem[];
   saleCashPayment?: ICashPayment;

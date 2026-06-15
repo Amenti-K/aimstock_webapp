@@ -11,7 +11,10 @@ import SelectField from "@/components/forms/fields/SelectField";
 import SubmitButton from "@/components/forms/fields/SubmitButton";
 import TextAreaField from "@/components/forms/fields/TextAreaField";
 import { Button } from "@/components/ui/button";
-import { AdjustmentFormValues, adjustmentSchema } from "./adjustment.schema";
+import {
+  AdjustmentFormValues,
+  adjustmentSchema,
+} from "@/components/schema/adjustment.schema";
 import { useLanguage } from "@/hooks/language.hook";
 import { cn } from "@/lib/utils";
 import {

@@ -9,28 +9,28 @@ export const PermissionEnum = z.enum([
 ]);
 
 export const ModuleEnum = z.enum([
-  "AUTH",
   "ACCOUNT",
-  "ANALYTICS",
-  "AUDITLOG",
   "EMPLOYEES",
   "EXPENSE",
-  "PARTNERS",
-  "LOANS",
   "INVENTORY",
   "INVENTORYADJUSTMENT",
+  "LOANS",
+  "PARTNERS",
   "PURCHASE",
-  "PAYMENT",
-  "RECEIVE",
+  "ROLE",
   "SALES",
   "WAREHOUSES",
-  "RECEIPT",
-  "ROLE",
-  "SETTINGS",
-  "COMPANY",
-  "REPORTS",
-  "SHIPMENTS",
-  "PROFILE",
+  // "AUTH",
+  // "ANALYTICS",
+  // "AUDITLOG",
+  // "PAYMENT",
+  // "RECEIVE",
+  // "RECEIPT",
+  // "SETTINGS",
+  // "COMPANY",
+  // "REPORTS",
+  // "SHIPMENTS",
+  // "PROFILE",
 ]);
 
 export const rolePermissionSchema = z.object({
@@ -50,7 +50,7 @@ export const roleSchema = z.object({
     .min(1, { message: "permissions must contain at least one item" }),
 });
 
-export type Permission = z.infer<typeof PermissionEnum>;
 export type Module = z.infer<typeof ModuleEnum>;
+export type Permission = z.infer<typeof PermissionEnum>;
 export type RolePermission = z.infer<typeof rolePermissionSchema>;
 export type CreateRole = z.infer<typeof roleSchema>;

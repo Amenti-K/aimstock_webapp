@@ -25,7 +25,14 @@ import NumericField from "@/components/forms/fields/NumericField";
 import TextField from "@/components/forms/fields/TextField";
 import TextAreaField from "@/components/forms/fields/TextAreaField";
 import SubmitButton from "@/components/forms/fields/SubmitButton";
-import { Landmark, PlusCircle, Trash2, Wallet, FileText } from "lucide-react";
+import {
+  Landmark,
+  PlusCircle,
+  Trash2,
+  Wallet,
+  FileText,
+  Banknote,
+} from "lucide-react";
 import { formatCurrency } from "@/lib/formatter";
 import { Badge } from "@/components/ui/badge";
 
@@ -48,9 +55,21 @@ export function LoanSettlingModal({
   const isReceiving = balance > 0;
   const maxAmount = Math.abs(balance);
   const addLoanTranx = useCreateLoanTranx();
-  const { data: accountsRaw, isLoading: loadingAccounts } =
+
+  const { data: accountsData, isLoading: loadingAccounts } =
     useFetchAccountSelector();
-  const accounts = accountsRaw?.data || [];
+  const accountOptions = useMemo(() => {
+    const list = Array.isArray(accountsData)
+      ? accountsData
+      : Array.isArray(accountsData?.data)
+        ? accountsData.data
+        : [];
+
+    return list.map((account: any) => ({
+      label: `${account.name} (${account.bank}) (${formatCurrency(account.balance ?? 0)})`,
+      value: String(account.id),
+    }));
+  }, [accountsData]);
 
   const form = useForm<SettlingFormData>({
     resolver: zodResolver(settlingSchema),
@@ -121,7 +140,7 @@ export function LoanSettlingModal({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[600px] w-[95vw] max-h-[92vh] overflow-y-auto p-6 md:p-10 rounded-[0.5rem] border-none shadow-2xl">
-        <DialogHeader className="space-y-4 mb-8">
+        <DialogHeader className="space-y-4">
           <div className="flex items-center justify-between">
             <div className="space-y-1">
               <DialogTitle className="text-2xl font-black tracking-tight">
@@ -156,6 +175,33 @@ export function LoanSettlingModal({
 
         <Form {...form}>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-10">
+            {/* Note */}
+            <div className="space-y-4">
+              <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground flex items-center gap-2">
+                <FileText className="h-3.5 w-3.5" /> {t("loan.form.note")}
+              </h3>
+              <TextAreaField
+                control={control as any}
+                name="note"
+                placeholder={t("loan.form.note")}
+              />
+            </div>
+
+            {/* Cash Payment */}
+            <div className="flex justify-between items-center gap-2 space-x-2">
+              <div className="flex items-center gap-2 text-xs font-bold text-emerald-600 uppercase tracking-wider">
+                <Banknote className="h-5 w-5" />
+                {t("purchase.form.cashPay.title")}
+              </div>
+              <div className="w-[40%]">
+                <NumericField
+                  control={control as any}
+                  name="loanCashPayment.amount"
+                  placeholder={t("loan.form.amount")}
+                />
+              </div>
+            </div>
+
             {/* Bank Payments */}
             <div className="space-y-4">
               <div className="flex items-center justify-between">
@@ -185,10 +231,7 @@ export function LoanSettlingModal({
                       <SelectField
                         control={control as any}
                         name={`paymentItems.${index}.accountId`}
-                        options={accounts.map((acc: any) => ({
-                          value: acc.id,
-                          label: `${acc.name} (${acc.bank || t("common.bank")})`,
-                        }))}
+                        options={accountOptions}
                         placeholder={t("loan.form.bankPay.selectAccount", {
                           index: index + 1,
                         })}
@@ -214,40 +257,6 @@ export function LoanSettlingModal({
                   </div>
                 ))}
               </div>
-            </div>
-
-            {/* Cash Payment */}
-            <div className="space-y-4">
-              <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground flex items-center gap-2">
-                <Wallet className="h-3.5 w-3.5" />{" "}
-                {t("loan.form.cashPay.cashPayments")}
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <NumericField
-                  control={control as any}
-                  name="loanCashPayment.amount"
-                  label={t("loan.form.amount")}
-                  placeholder="0.00"
-                />
-                <TextField
-                  control={control as any}
-                  name="loanCashPayment.description"
-                  label={t("loan.form.cashPay.description")}
-                  placeholder={t("loan.form.cashPay.description")}
-                />
-              </div>
-            </div>
-
-            {/* Note */}
-            <div className="space-y-4">
-              <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground flex items-center gap-2">
-                <FileText className="h-3.5 w-3.5" /> {t("loan.form.note")}
-              </h3>
-              <TextAreaField
-                control={control as any}
-                name="note"
-                placeholder={t("loan.form.note")}
-              />
             </div>
 
             {/* Summary & Actions */}
