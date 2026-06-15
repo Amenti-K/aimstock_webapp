@@ -35,42 +35,25 @@ import {
 import {
   useFetchInventorySelector,
   useGetInventoriesInfinite,
+  useCreateInventory,
 } from "@/api/inventory/api.inventory";
 import { useFetchAccountSelector } from "@/api/account/api.account";
 import { formatCurrency } from "@/lib/formatter";
 import { useLanguage } from "@/hooks/language.hook";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  purchaseSchema,
+  PurchaseFormValues,
+} from "@/components/schema/purchase.schema";
 import {
   INewPurchase,
   IPurchaseView,
 } from "../../interface/purchase/purchase.interface";
 import { useFetchWarehouseSelector } from "@/api/warehouse/api.warehouse";
 import { PartnerFormValues } from "@/components/forms/partner/partner.schema";
-import InventoryForm from "@/components/forms/inventory/InventoryForm";
-import { useCreateInventory } from "@/api/inventory/api.inventory";
-import {
-  inventoryFormValues,
-  QuickInventoryFormValues,
-} from "@/components/schema/inventory.schema";
+import { inventoryFormValues } from "@/components/schema/inventory.schema";
 import { usePermissions } from "@/hooks/permission.hook";
 import InventoryQuickForm from "../inventory/InventoryQuickForm";
-
-type PurchaseFormValues = {
-  partnerId: string;
-  description: string;
-  purchaseItems: Array<{
-    inventoryId: string;
-    warehouseId: string;
-    quantity: number;
-    unitPrice: number;
-  }>;
-  purchasePayments: Array<{
-    accountId: string;
-    amount: number;
-  }>;
-  purchaseCashPayment: {
-    amount: number;
-  };
-};
 
 interface PurchaseFormProps {
   initialData?: IPurchaseView | null;
@@ -127,6 +110,7 @@ export default function PurchaseForm({
   const canCreateInventory = canCreate("INVENTORY");
 
   const form = useForm<PurchaseFormValues>({
+    resolver: zodResolver(purchaseSchema),
     defaultValues: buildFormValues(initialData),
   });
   const { control, handleSubmit, setError, reset, setValue } = form;
@@ -260,13 +244,13 @@ export default function PurchaseForm({
 
   const grandTotal = (watchedItems ?? []).reduce(
     (sum, item) =>
-      sum + Number(item.quantity || 0) * Number(item.unitPrice || 0),
+      sum + Number(item?.quantity || 0) * Number(item?.unitPrice || 0),
     0,
   );
 
   const totalPaid =
     (watchedBankPayments ?? []).reduce(
-      (sum, payment) => sum + Number(payment.amount || 0),
+      (sum, payment) => sum + Number(payment?.amount || 0),
       0,
     ) + Number(watchedCashPayment?.amount || 0);
 
@@ -274,38 +258,24 @@ export default function PurchaseForm({
 
   // ── Submit handler ────────────────────────────────────────────────────────
   const handleFormSubmit = (values: PurchaseFormValues) => {
-    const sanitizedItems = values.purchaseItems.filter(
-      (item) => item.inventoryId && Number(item.quantity) > 0,
-    );
-    if (sanitizedItems.length === 0) {
-      setError("purchaseItems", {
-        type: "manual",
-        message: "At least one valid item is required.",
-      });
-      return;
-    }
-
-    const sanitizedPayments = values.purchasePayments
-      .filter((payment) => payment.accountId && Number(payment.amount) > 0)
-      .map((payment) => ({
-        accountId: payment.accountId,
-        amount: Number(payment.amount),
-      }));
-
     onSubmit({
-      partnerId: values.partnerId,
+      partnerId: values.partnerId || undefined,
       description: values.description?.trim() || undefined,
-      purchaseItems: sanitizedItems.map((item) => ({
+      purchaseItems: values.purchaseItems.map((item) => ({
         inventoryId: item.inventoryId,
-        warehouseId: item.warehouseId,
+        warehouseId: item.warehouseId ?? undefined,
         quantity: Number(item.quantity),
         unitPrice: Number(item.unitPrice),
         id: "",
       })),
-      paymentItems: sanitizedPayments,
+      paymentItems:
+        values.purchasePayments?.map((payment) => ({
+          accountId: payment.accountId,
+          amount: Number(payment.amount),
+        })) || [],
       purchaseCashPayment:
-        Number(values.purchaseCashPayment.amount) > 0
-          ? { amount: Number(values.purchaseCashPayment.amount) }
+        Number(values.purchaseCashPayment?.amount) > 0
+          ? { amount: Number(values.purchaseCashPayment?.amount) }
           : undefined,
     });
   };

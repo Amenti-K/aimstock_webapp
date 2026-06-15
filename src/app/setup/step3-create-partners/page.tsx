@@ -17,7 +17,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Form } from "@/components/ui/form";
 import TextField from "@/components/forms/fields/TextField";
 import {
-  partnerArrayFormValues,
+  PartnerArrayFormValues,
   partnersArraySchema,
 } from "@/components/schema/partner.schema";
 
@@ -29,7 +29,7 @@ export default function Step3PartnerPage() {
   const { mutateAsync: createManyPartners, isPending } =
     useCreateManyPartners();
 
-  const form = useForm<partnerArrayFormValues>({
+  const form = useForm<PartnerArrayFormValues>({
     resolver: zodResolver(partnersArraySchema),
     defaultValues: {
       partners: [{ name: "", phone: "", address: "" }],
@@ -45,7 +45,7 @@ export default function Step3PartnerPage() {
     append({ name: "", phone: "", address: "" });
   };
 
-  const onSubmit = async (data: partnerArrayFormValues) => {
+  const onSubmit = async (data: PartnerArrayFormValues) => {
     await createManyPartners(data, {
       onSuccess: () => {
         dispatch(setCompanyStep(4));

@@ -9,7 +9,7 @@ import { Loader2, Plus, Trash2, Building2 } from "lucide-react";
 import { useCreateManyWarehouses } from "@/api/warehouse/api.warehouse";
 import {
   warehousesArraySchema,
-  FormWarehousesArrayValues,
+  WarehousesArrayFormValues,
 } from "@/components/schema/warehouse.schema";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { setCompanyStep } from "@/redux/slices/userAuthSlice";
@@ -32,7 +32,7 @@ export default function Step1WarehousePage() {
   const { mutateAsync: createManyWarehouses, isPending } =
     useCreateManyWarehouses();
 
-  const form = useForm<FormWarehousesArrayValues>({
+  const form = useForm<WarehousesArrayFormValues>({
     resolver: zodResolver(warehousesArraySchema),
     defaultValues: {
       warehouses: [
@@ -65,7 +65,7 @@ export default function Step1WarehousePage() {
     });
   };
 
-  const onSubmit = async (data: FormWarehousesArrayValues) => {
+  const onSubmit = async (data: WarehousesArrayFormValues) => {
     try {
       const payload = {
         warehouses: data.warehouses.map((w) => ({

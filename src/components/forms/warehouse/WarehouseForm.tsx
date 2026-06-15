@@ -9,7 +9,10 @@ import TextAreaField from "@/components/forms/fields/TextAreaField";
 import SwitchField from "@/components/forms/fields/SwitchField";
 import SubmitButton from "@/components/forms/fields/SubmitButton";
 import { Button } from "@/components/ui/button";
-import { WarehouseFormValues, warehouseSchema } from "./warehouse.schema";
+import {
+  WarehouseFormValues,
+  warehouseSchema,
+} from "@/components/schema/warehouse.schema";
 import { IWarehouse } from "@/components/interface/warehouse/warehouse.interface";
 
 interface Props {

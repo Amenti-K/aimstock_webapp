@@ -3,7 +3,7 @@ import { IAdjustmentType } from "@/components/interface/adjustment/adjustment.in
 
 export const adjustmentItemSchema = z.object({
   inventoryId: z.string().uuid({ message: "inventoryId must be a valid UUID" }),
-  quantity: z.coerce
+  quantity: z
     .number()
     .int({ message: "quantity must be an integer" })
     .positive({ message: "quantity must be greater than 0" }),
@@ -84,4 +84,4 @@ export const adjustmentSchema = z
   );
 
 export type AdjustmentItemSchema = z.infer<typeof adjustmentItemSchema>;
-export type CreateAdjustment = z.infer<typeof adjustmentSchema>;
+export type AdjustmentFormValues = z.infer<typeof adjustmentSchema>;

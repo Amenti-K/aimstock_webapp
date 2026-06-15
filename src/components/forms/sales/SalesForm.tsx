@@ -35,6 +35,8 @@ import { useFetchInventorySelector } from "@/api/inventory/api.inventory";
 import { useFetchAccountSelector } from "@/api/account/api.account";
 import { formatCurrency } from "@/lib/formatter";
 import { useLanguage } from "@/hooks/language.hook";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { saleSchema, SaleFormValues } from "@/components/schema/sale.schema";
 import type {
   INewSale,
   ISaleView,
@@ -42,24 +44,6 @@ import type {
 import { IPartnerSelector } from "@/components/interface/partner/partner.interfacce";
 import { useFetchWarehouseSelector } from "@/api/warehouse/api.warehouse";
 import { PartnerFormValues } from "@/components/forms/partner/partner.schema";
-
-type SalesFormValues = {
-  partnerId: string;
-  description: string;
-  saleItems: Array<{
-    inventoryId: string;
-    warehouseId: string;
-    quantity: number;
-    unitPrice: number;
-  }>;
-  salePayments: Array<{
-    accountId: string;
-    amount: number;
-  }>;
-  saleCashPayment: {
-    amount: number;
-  };
-};
 
 interface SalesFormProps {
   initialData?: ISaleView | null;
@@ -70,7 +54,7 @@ interface SalesFormProps {
 /** Build form values from initialData (used for both defaultValues and reset) */
 function buildFormValues(
   initialData: ISaleView | null | undefined,
-): SalesFormValues {
+): SaleFormValues {
   if (!initialData) {
     return {
       partnerId: "",
@@ -116,7 +100,8 @@ export default function SalesForm({
   // ── Form init: seed defaultValues from initialData directly so the first
   //    render already has the correct partnerId — avoids the race condition
   //    where reset() fires before the Select component mounts.
-  const form = useForm<SalesFormValues>({
+  const form = useForm<SaleFormValues>({
+    resolver: zodResolver(saleSchema),
     defaultValues: buildFormValues(initialData),
   });
   const { control, handleSubmit, setError, reset, watch, setValue } = form;
@@ -234,52 +219,37 @@ export default function SalesForm({
 
   const grandTotal = (watchedItems ?? []).reduce(
     (sum, item) =>
-      sum + Number(item.quantity || 0) * Number(item.unitPrice || 0),
+      sum + Number(item?.quantity || 0) * Number(item?.unitPrice || 0),
     0,
   );
 
   const totalPaid =
     (watchedBankPayments ?? []).reduce(
-      (sum, payment) => sum + Number(payment.amount || 0),
+      (sum, payment) => sum + Number(payment?.amount || 0),
       0,
     ) + Number(watchedCashPayment?.amount || 0);
 
   const outstandingBalance = Math.max(0, grandTotal - totalPaid);
 
   // ── Submit handler ────────────────────────────────────────────────────────
-  const handleFormSubmit = (values: SalesFormValues) => {
-    const sanitizedItems = values.saleItems.filter(
-      (item) => item.inventoryId && Number(item.quantity) > 0,
-    );
-    if (sanitizedItems.length === 0) {
-      setError("saleItems", {
-        type: "manual",
-        message: "At least one valid item is required.",
-      });
-      return;
-    }
-
-    const sanitizedPayments = values.salePayments
-      .filter((payment) => payment.accountId && Number(payment.amount) > 0)
-      .map((payment) => ({
-        accountId: payment.accountId,
-        amount: Number(payment.amount),
-      }));
-
+  const handleFormSubmit = (values: SaleFormValues) => {
     onSubmit({
-      partnerId: values.partnerId,
+      partnerId: values.partnerId || undefined,
       description: values.description?.trim() || undefined,
-      saleItems: sanitizedItems.map((item) => ({
+      saleItems: values.saleItems.map((item) => ({
         id: "",
         inventoryId: item.inventoryId,
-        warehouseId: item.warehouseId,
+        warehouseId: item.warehouseId ?? undefined,
         quantity: Number(item.quantity),
         unitPrice: Number(item.unitPrice),
       })),
-      salePayments: sanitizedPayments,
+      salePayments: (values.salePayments ?? []).map((payment) => ({
+        accountId: payment.accountId,
+        amount: Number(payment.amount),
+      })),
       saleCashPayment:
-        Number(values.saleCashPayment.amount) > 0
-          ? { amount: Number(values.saleCashPayment.amount) }
+        Number(values.saleCashPayment?.amount) > 0
+          ? { amount: Number(values.saleCashPayment?.amount) }
           : undefined,
     });
   };

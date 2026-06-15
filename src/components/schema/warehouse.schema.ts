@@ -7,7 +7,7 @@ export const warehouseSchema = z.object({
     .string()
     .regex(
       /^(09[0-9]{8}|07[0-9]{8}|\+2519[0-9]{8}|\+2517[0-9]{8})$/,
-      "Phone number must be a valid Ethiopian number (e.g. 0912345678 or +251912345678 0712345678 or +251712345678)",
+      "Phone number must be a valid Ethiopian number",
     )
     .nonempty("Phone number is required"),
   description: z.string().optional(),
@@ -21,5 +21,5 @@ export const warehousesArraySchema = z.object({
     .min(1, "At least one warehouse is required"),
 });
 
-export type FormWarehouseValues = z.infer<typeof warehouseSchema>;
-export type FormWarehousesArrayValues = z.infer<typeof warehousesArraySchema>;
+export type WarehouseFormValues = z.infer<typeof warehouseSchema>;
+export type WarehousesArrayFormValues = z.infer<typeof warehousesArraySchema>;

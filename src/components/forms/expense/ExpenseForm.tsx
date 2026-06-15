@@ -19,7 +19,10 @@ import SubmitButton from "@/components/forms/fields/SubmitButton";
 import TextAreaField from "@/components/forms/fields/TextAreaField";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ExpenseFormValues, expenseSchema } from "./expense.schema";
+import {
+  ExpenseFormValues,
+  expenseSchema,
+} from "@/components/schema/expense.schema";
 import { formatCurrency } from "@/lib/formatter";
 
 interface Props {
