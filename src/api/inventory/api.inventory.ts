@@ -148,6 +148,8 @@ export const useDeleteInventory = () => {
 export const useFetchCategories = () => {
   return useFetch<IResponse<Array<IInventoryCategory>>>(endpoints.CATEGORIES, {
     queryKey: queryKeys.categories.root,
+    params: { limit: 150 },
+    enabled: true,
   });
 };
 
