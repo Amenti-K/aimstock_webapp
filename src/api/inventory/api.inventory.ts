@@ -71,7 +71,7 @@ export const useGetInventoriesInfinite = (
     endpoints.INVENTORY,
     {
       queryKey: queryKeys.inventories.list(queryParams),
-      params: { limit: 10, ...queryParams },
+      params: { limit: 20, ...queryParams },
       enabled: enabled ?? true,
     },
   );

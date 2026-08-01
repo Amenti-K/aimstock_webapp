@@ -300,12 +300,19 @@ export default function CategoryDetailPage() {
   );
 
   // Inventories without a category for "Add" dialog (only fetched when dialog is open)
-  const { data: allData, isLoading: loadingAll } = useFetchInventorySelector(
-    hasViewAccess && isAddOpen,
-  );
+  const {
+    data: allData,
+    isLoading: loadingAll,
+    hasNextPage: hasNextPageAll,
+    fetchNextPage: fetchNextPageAll,
+    isFetchingNextPage: isFetchingNextPageAll,
+  } = useGetInventoriesInfinite(hasViewAccess && isAddOpen, {
+    noCategory: true,
+    limit: 20,
+  });
 
-  const availableInventories: IInventorySelector[] = useMemo(
-    () => allData?.data ?? [],
+  const availableInventories = useMemo(
+    () => allData?.pages?.flatMap((p) => p.data) ?? [],
     [allData],
   );
 
@@ -726,9 +733,16 @@ export default function CategoryDetailPage() {
                     onToggle={() => handleToggleSelection(inv.id)}
                   />
                 ))}
+
+                <InfiniteScrollTrigger
+                  hasNextPage={!!hasNextPageAll}
+                  isLoading={isFetchingNextPageAll}
+                  onIntersect={fetchNextPageAll}
+                />
               </>
             )}
           </div>
+
           <DialogFooter className="flex flex-row items-center justify-between gap-4 border-t pt-4">
             <div className="text-xs text-muted-foreground">
               {selectedIds.size}{" "}

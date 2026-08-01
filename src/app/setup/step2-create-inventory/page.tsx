@@ -1,13 +1,24 @@
 "use client";
 
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2, Plus, Trash2, Package, Warehouse } from "lucide-react";
+import {
+  Loader2,
+  Plus,
+  Trash2,
+  Package,
+  Warehouse,
+  PlusIcon,
+} from "lucide-react";
 
 import { useFetchWarehouseSelector } from "@/api/warehouse/api.warehouse";
-import { useCreateBulkInventory } from "@/api/inventory/api.inventory";
+import {
+  useCreateBulkInventory,
+  useCreateCategory,
+  useFetchCategories,
+} from "@/api/inventory/api.inventory";
 import {
   inventoriesArraySchema,
   inventoriesArrayFormValues,
@@ -23,15 +34,24 @@ import {
   CardTitle,
   CardDescription,
 } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Form } from "@/components/ui/form";
 import TextField from "@/components/forms/fields/TextField";
 import NumericField from "@/components/forms/fields/NumericField";
 import SelectField from "@/components/forms/fields/SelectField";
+import CategoryForm from "@/components/forms/category/categoryForm";
 
 export default function Step2InventoryPage() {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const { t } = useLanguage();
+  const [showAddCategory, setShowAddCategory] = useState(false);
+  const [categoryTargetIndex, setCategoryTargetIndex] = useState<number>(0);
 
   // Fetch warehouses for distribution of initial quantities
   const { data: warehousesResponse, isLoading: loadingWarehouses } =
@@ -45,6 +65,25 @@ export default function Step2InventoryPage() {
         label: `${warehouse.name}${warehouse.isInternal ? ` (${t("warehouse.card.isInternal")})` : ""}`,
       })),
     [warehouses, t],
+  );
+
+  // Fetch categories for inventories grouping
+  const {
+    data: categoriesData,
+    isLoading: loadingCategories,
+    refetch: refetchCategories,
+  } = useFetchCategories();
+
+  const { mutate: createCategory, isPending: creatingCategory } =
+    useCreateCategory();
+
+  const categoryOptions = useMemo(
+    () =>
+      (categoriesData?.data ?? []).map((category) => ({
+        value: category.id,
+        label: category.name,
+      })),
+    [categoriesData],
   );
 
   const { mutateAsync: createBulkInventory, isPending } =
@@ -62,6 +101,7 @@ export default function Step2InventoryPage() {
           boughtPrice: 0,
           sellingPrice: 0,
           initialQuantity: 0,
+          inventoryCategoryId: "",
           warehouseInventories: [
             { warehouseId: "", quantity: 0, reorderQuantity: 0 },
           ],
@@ -84,6 +124,7 @@ export default function Step2InventoryPage() {
       boughtPrice: 0,
       sellingPrice: 0,
       initialQuantity: 0,
+      inventoryCategoryId: "",
       warehouseInventories: [
         { warehouseId: "", quantity: 0, reorderQuantity: 0 },
       ],
@@ -98,6 +139,23 @@ export default function Step2InventoryPage() {
     } catch (error) {
       console.error(error);
     }
+  };
+
+  const handleCategoryCreated = (values: any) => {
+    createCategory(values, {
+      onSuccess: (data: any) => {
+        const newId = data?.data?.id ?? data?.id;
+        refetchCategories().then(() => {
+          if (newId) {
+            form.setValue(
+              `inventories.${categoryTargetIndex}.inventoryCategoryId`,
+              String(newId),
+            );
+          }
+        });
+        setShowAddCategory(false);
+      },
+    });
   };
 
   if (loadingWarehouses) {
@@ -160,9 +218,8 @@ export default function Step2InventoryPage() {
                   </CardDescription>
                 </div>
               </div>
-              <CardContent className="space-y-8">
-                {/* Product Information Grid */}
-                <div className="grid grid-cols-2 lg:grid-cols-3 gap-6">
+              <CardContent className="grid grid-cols-1 gap-6 p-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <TextField
                     name={`inventories.${index}.name`}
                     control={form.control as any}
@@ -175,6 +232,24 @@ export default function Step2InventoryPage() {
                     label={t("inventory.form.sku")}
                     placeholder="CRN-0001"
                   />
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <TextField
+                    name={`inventories.${index}.brand`}
+                    control={form.control as any}
+                    label={t("inventory.form.brand")}
+                    placeholder={t("inventory.card.brand")}
+                  />
+                  <TextField
+                    name={`inventories.${index}.unit`}
+                    control={form.control as any}
+                    label={t("inventory.form.unit")}
+                    placeholder="pcs, kg, etc."
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
                   <NumericField
                     name={`inventories.${index}.boughtPrice`}
                     control={form.control as any}
@@ -187,12 +262,23 @@ export default function Step2InventoryPage() {
                     label={t("inventory.form.sellingPrice")}
                     placeholder="0"
                   />
-                  <TextField
-                    name={`inventories.${index}.unit`}
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <SelectField
+                    name={`inventories.${index}.inventoryCategoryId`}
                     control={form.control as any}
-                    label={t("inventory.form.unit")}
-                    placeholder="pcs, kg, etc."
+                    label={t("category.form.title")}
+                    placeholder={t("category.form.placeholder")}
+                    options={categoryOptions}
+                    canAdd
+                    addLabel={t("category.form.add")}
+                    onAddClick={() => {
+                      setCategoryTargetIndex(index);
+                      setShowAddCategory(true);
+                    }}
                   />
+
                   <NumericField
                     name={`inventories.${index}.initialQuantity`}
                     control={form.control as any}
@@ -279,6 +365,22 @@ export default function Step2InventoryPage() {
           </div>
         </form>
       </Form>
+      {/* ── Quick-Add Category Dialog ────────────────────────────────────── */}
+      <Dialog open={showAddCategory} onOpenChange={setShowAddCategory}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <PlusIcon className="h-5 w-5 text-primary" />
+              {t("category.form.add", { defaultValue: "Add New Category" })}
+            </DialogTitle>
+          </DialogHeader>
+          <CategoryForm
+            onSubmit={handleCategoryCreated}
+            onCancel={() => setShowAddCategory(false)}
+            isPending={creatingCategory}
+          />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
