@@ -4,11 +4,11 @@ import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useCreateAdjustment } from "@/api/adjustment/api.adjustment";
 import AdjustmentForm from "@/components/forms/adjustment/AdjustmentForm";
-import { AdjustmentFormValues } from "@/components/forms/adjustment/adjustment.schema";
 import { AccessDeniedView } from "@/components/guards/AccessDeniedView";
 import { usePermissions } from "@/hooks/permission.hook";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/hooks/language.hook";
+import { AdjustmentFormValues } from "@/components/schema/adjustment.schema";
 
 export default function NewAdjustmentPage() {
   const router = useRouter();
@@ -46,7 +46,7 @@ export default function NewAdjustmentPage() {
             {t("adjustment.form.basicInfoDescription")}
           </p>
         </div>
-        
+
         <AdjustmentForm
           isPending={createAdjustment.isPending}
           onSubmit={(values: AdjustmentFormValues) =>

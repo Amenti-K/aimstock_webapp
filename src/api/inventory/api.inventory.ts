@@ -131,6 +131,14 @@ export const useUpdateInventory = (id: string) => {
   );
 };
 
+export const useDiscontinueInventory = (id: string) => {
+  return useMutate(`${endpoints.INVENTORY}/${id}/discontinue`, "patch", {
+    onError: onErrorNotification,
+    onSuccess: () => toast.success("Inventory discontinued successfully!"),
+    queryKey: queryKeys.inventories.root,
+  });
+};
+
 export const useDeleteInventory = () => {
   return useMutate(
     (data: { id: string }) => `${endpoints.INVENTORY}/${data.id}`,

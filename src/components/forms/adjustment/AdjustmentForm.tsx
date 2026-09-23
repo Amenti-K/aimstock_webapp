@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { PlusCircle, Trash2, Info, Package } from "lucide-react";
+import { PlusCircle, Trash2, Info, Package, AlertCircle } from "lucide-react";
 import { useMemo } from "react";
 import { useFieldArray, useForm, useWatch } from "react-hook-form";
 import { useFetchWarehouseInventorySelector } from "@/api/inventory/api.inventory";
@@ -22,6 +22,7 @@ import {
   IAdjustmentType,
 } from "@/components/interface/adjustment/adjustment.interface";
 import SelectSearchField from "../fields/SelectSearchField";
+import { toast } from "sonner";
 
 interface Props {
   item?: IAdjustment | null;
@@ -40,20 +41,22 @@ export default function AdjustmentForm({
 }: Props) {
   const { t } = useLanguage();
 
-  // Mirror the mobile pattern: bake item values directly into defaultValues
-  // at form init time. The edit page already guards behind isLoading, so
-  // `item` is guaranteed to be present when this form mounts in edit mode.
-  const { control, handleSubmit } = useForm<AdjustmentFormValues>({
+  const {
+    control,
+    handleSubmit,
+    setValue,
+    formState: { errors },
+  } = useForm<AdjustmentFormValues>({
     resolver: zodResolver(adjustmentSchema),
     defaultValues: {
       warehouseId: item?.warehouseId || item?.warehouse?.id || "",
-      type: (item?.type as IAdjustmentType) || IAdjustmentType.stockIn,
+      type: (item?.type as IAdjustmentType) || ("" as IAdjustmentType),
       note: item?.note || "",
       items: item?.items
         ? (item.items as any[]).map((i) => ({
             inventoryId: i.inventoryId || i.inventory?.id || "",
             quantity: i.quantity || 0,
-            toWarehouseId: i.toWarehouseId || i.toWarehouse?.id || "",
+            toWarehouseId: i.toWarehouseId || i.toWarehouse?.id || undefined,
           }))
         : [],
     },
@@ -62,18 +65,21 @@ export default function AdjustmentForm({
   const { fields, append, remove } = useFieldArray({ control, name: "items" });
   const sourceWarehouseId = useWatch({ control, name: "warehouseId" });
   const type = useWatch({ control, name: "type" });
+  const watchedItems = useWatch({ control, name: "items" }) || [];
 
-  const { data: warehouses } = useFetchWarehouseSelector();
-  const { data: inventorySelector } = useFetchWarehouseInventorySelector(
-    sourceWarehouseId || "",
-    !!sourceWarehouseId,
-  );
+  const { data: warehouses, isPending: loadingWarehouses } =
+    useFetchWarehouseSelector();
+  const { data: inventorySelector, isPending: loadingInventories } =
+    useFetchWarehouseInventorySelector(
+      sourceWarehouseId || "",
+      !!sourceWarehouseId,
+    );
 
   const warehouseOptions = useMemo(() => {
     if (!Array.isArray(warehouses?.data)) return [];
     return warehouses.data.map((w: any) => ({
       value: w.id,
-      label: w.name,
+      label: w.name || w.warehouse?.name || "Unknown Warehouse",
     }));
   }, [warehouses]);
 
@@ -82,13 +88,73 @@ export default function AdjustmentForm({
     return inventorySelector.data.map((w: any) => ({
       value: w.inventory.id,
       label: `${w.inventory.name} - ${w.quantity} ${w.inventory.unit}`,
+      raw: w,
     }));
   }, [inventorySelector]);
 
-  const destinationOptions = useMemo(
-    () => warehouseOptions.filter((w) => w.value !== sourceWarehouseId),
-    [warehouseOptions, sourceWarehouseId],
-  );
+  // Allocation map mirroring mobile app for remaining stock calculations
+  const allocationMap = useMemo(() => {
+    const map: Record<string, number> = {};
+    watchedItems.forEach((it) => {
+      if (it?.inventoryId) {
+        map[it.inventoryId] =
+          (map[it.inventoryId] || 0) + (Number(it.quantity) || 0);
+      }
+    });
+    return map;
+  }, [watchedItems]);
+
+  const getOptionsForInventory = (idx: number) => {
+    if (type === IAdjustmentType.transfer) {
+      return inventoryOptions;
+    }
+    const selectedIds = watchedItems
+      .map((w, i) => (i !== idx ? w?.inventoryId : null))
+      .filter(Boolean);
+
+    return inventoryOptions.filter((opt) => !selectedIds.includes(opt.value));
+  };
+
+  const getDestWarehouseOptions = (idx: number) => {
+    if (!sourceWarehouseId) return [];
+    const currentInventoryId = watchedItems?.[idx]?.inventoryId;
+
+    let filtered = warehouseOptions.filter(
+      (w) => w.value !== sourceWarehouseId,
+    );
+
+    if (type === IAdjustmentType.transfer && currentInventoryId) {
+      const alreadyChosenWarehouses = watchedItems
+        .map((w, i) =>
+          i !== idx && w?.inventoryId === currentInventoryId
+            ? w?.toWarehouseId
+            : null,
+        )
+        .filter(Boolean);
+
+      filtered = filtered.filter(
+        (w) => !alreadyChosenWarehouses.includes(w.value),
+      );
+    }
+
+    return filtered;
+  };
+
+  const getStockInfo = (inventoryId: string) => {
+    if (!inventoryId) return null;
+    const inv = inventoryOptions.find((opt) => opt.value === inventoryId);
+    if (!inv) return null;
+
+    const totalStock = Number(inv.raw.quantity);
+    const totalAllocated = allocationMap[inventoryId] || 0;
+    const remainingStock = totalStock - totalAllocated;
+
+    return {
+      total: totalStock,
+      remaining: remainingStock,
+      unit: inv.raw.inventory.unit,
+    };
+  };
 
   const isStep1Complete = !!sourceWarehouseId && !!type;
 
@@ -97,15 +163,36 @@ export default function AdjustmentForm({
       return t("adjustment.form.quantityAdd");
     if (type === IAdjustmentType.stockOut)
       return t("adjustment.form.quantityRemove");
-    return t("adjustment.form.quantityTransfer");
+    if (type === IAdjustmentType.transfer)
+      return t("adjustment.form.quantityTransfer");
+    return t("adjustment.form.quantity");
   };
 
   const onFormSubmit = (values: AdjustmentFormValues) => {
+    if (
+      type === IAdjustmentType.stockOut ||
+      type === IAdjustmentType.transfer
+    ) {
+      for (const invId of Object.keys(allocationMap)) {
+        const info = getStockInfo(invId);
+        if (info && info.remaining < 0) {
+          const itemLabel = inventoryOptions.find(
+            (o) => o.value === invId,
+          )?.label;
+          toast.error(
+            `${t("adjustment.form.errorExcessiveStock")}: ${itemLabel || ""}`,
+          );
+          return;
+        }
+      }
+    }
+
     const payload = {
       ...values,
       items: values.items.map((it) => ({
         ...it,
-        quantity: Math.abs(it.quantity),
+        quantity: Math.abs(Number(it.quantity)),
+        toWarehouseId: it.toWarehouseId ? it.toWarehouseId : undefined,
       })),
     };
     onSubmit(payload as any);
@@ -144,13 +231,23 @@ export default function AdjustmentForm({
                   label: t("adjustment.types.transfer"),
                 },
               ]}
+              onValueChange={() => {
+                setValue("items", []);
+              }}
             />
             <SelectField
               name="warehouseId"
               control={control as any}
               label={t("adjustment.form.sourceWarehouse")}
-              placeholder={t("adjustment.form.selectSource")}
+              placeholder={
+                loadingWarehouses
+                  ? t("common.loading")
+                  : t("adjustment.form.selectSource")
+              }
               options={warehouseOptions}
+              onValueChange={() => {
+                setValue("items", []);
+              }}
             />
           </div>
 
@@ -180,8 +277,14 @@ export default function AdjustmentForm({
             variant="outline"
             size="sm"
             className="rounded-xl"
+            disabled={!isStep1Complete}
             onClick={() =>
-              append({ inventoryId: "", quantity: 1, toWarehouseId: "" })
+              append({
+                inventoryId: "",
+                quantity: 1,
+                toWarehouseId:
+                  type === IAdjustmentType.transfer ? "" : undefined,
+              })
             }
           >
             <PlusCircle className="mr-2 h-4 w-4" />
@@ -198,63 +301,79 @@ export default function AdjustmentForm({
 
           {fields.map((field, index) => {
             const isTransfer = type === IAdjustmentType.transfer;
+            const selectedInvId = watchedItems?.[index]?.inventoryId;
+            const stockInfo = getStockInfo(selectedInvId);
+
             return (
               <div
                 key={field.id}
                 className={cn(
-                  "group flex items-start gap-3 p-4 rounded-xl bg-muted/10 hover:bg-muted/20 transition-all",
-                  isTransfer ? "min-w-[500px]" : "min-w-[300px] sm:min-w-0",
+                  "group flex flex-col gap-3 p-4 rounded-xl bg-muted/10 hover:bg-muted/20 transition-all border border-border/40",
                 )}
               >
-                <div
-                  className={cn(
-                    "flex-[3] min-w-[200px]",
-                    isTransfer ? "flex-[2]" : "flex-[3]",
-                  )}
-                >
-                  <SelectSearchField
-                    name={`items.${index}.inventoryId`}
-                    control={control as any}
-                    label={t("adjustment.form.inventoryItem")}
-                    placeholder={t("adjustment.form.selectItem")}
-                    options={inventoryOptions}
-                  />
-                </div>
-
-                {/* Quantity */}
-                <div className="flex-1 min-w-[100px]">
-                  <NumericField
-                    name={`items.${index}.quantity`}
-                    control={control as any}
-                    label={getQuantityLabel()}
-                  />
-                </div>
-
-                {/* To Warehouse — only shown for transfer */}
-                {isTransfer && (
-                  <div className="flex-[2] min-w-[200px]">
-                    <SelectField
-                      name={`items.${index}.toWarehouseId`}
+                <div className="flex items-start gap-3 w-full">
+                  <div className="flex-[3] min-w-[200px]">
+                    <SelectSearchField
+                      name={`items.${index}.inventoryId`}
                       control={control as any}
-                      label={t("adjustment.form.toWarehouse")}
-                      placeholder={t("adjustment.form.selectDest")}
-                      options={destinationOptions}
+                      label={t("adjustment.form.inventoryItem")}
+                      placeholder={
+                        loadingInventories
+                          ? t("common.loading")
+                          : t("adjustment.form.selectItem")
+                      }
+                      options={getOptionsForInventory(index)}
                     />
                   </div>
-                )}
 
-                {/* Delete — icon-only button, always at the right */}
-                <div className="flex-none pb-[2px]">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="icon"
-                    className="h-10 w-10 border-destructive/20 text-destructive hover:bg-destructive/10 rounded-xl"
-                    onClick={() => remove(index)}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
+                  {/* Quantity */}
+                  <div className="flex-1 min-w-[100px]">
+                    <NumericField
+                      name={`items.${index}.quantity`}
+                      control={control as any}
+                      label={getQuantityLabel()}
+                    />
+                  </div>
+
+                  {/* To Warehouse — only shown for transfer */}
+                  {isTransfer && (
+                    <div className="flex-[2] min-w-[200px]">
+                      <SelectField
+                        name={`items.${index}.toWarehouseId`}
+                        control={control as any}
+                        label={t("adjustment.form.toWarehouse")}
+                        placeholder={t("adjustment.form.selectDest")}
+                        options={getDestWarehouseOptions(index)}
+                      />
+                    </div>
+                  )}
+
+                  {/* Delete button */}
+                  <div className="flex-none pt-7">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="icon"
+                      className="h-10 w-10 border-destructive/20 text-destructive hover:bg-destructive/10 rounded-xl"
+                      onClick={() => remove(index)}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
                 </div>
+
+                {/* Stock info display mirroring mobile app */}
+                {stockInfo &&
+                  (type === IAdjustmentType.stockOut || isTransfer) && (
+                    <div className="flex items-center gap-1.5 text-xs font-medium text-amber-600 dark:text-amber-400 pl-1">
+                      <AlertCircle className="h-3.5 w-3.5" />
+                      <span>
+                        {t("adjustment.form.available")}: {stockInfo.total}{" "}
+                        {stockInfo.unit} ({t("adjustment.form.remaining")}:{" "}
+                        {stockInfo.remaining} {stockInfo.unit})
+                      </span>
+                    </div>
+                  )}
               </div>
             );
           })}
@@ -269,7 +388,12 @@ export default function AdjustmentForm({
                 type="button"
                 variant="link"
                 onClick={() =>
-                  append({ inventoryId: "", quantity: 1, toWarehouseId: "" })
+                  append({
+                    inventoryId: "",
+                    quantity: 1,
+                    toWarehouseId:
+                      type === IAdjustmentType.transfer ? "" : undefined,
+                  })
                 }
               >
                 {t("adjustment.form.addItem")}
@@ -279,11 +403,27 @@ export default function AdjustmentForm({
         </div>
       </div>
 
+      {/* Validation Errors */}
+      {Array.isArray(errors.items) &&
+        errors.items.map((error, index) =>
+          error?.message ? (
+            <div key={index} className="text-destructive text-sm font-medium">
+              {error.message}
+            </div>
+          ) : null,
+        )}
+      {errors.items?.root?.message && (
+        <div className="text-destructive text-sm font-medium">
+          {errors.items.root.message}
+        </div>
+      )}
+
       {/* Action Buttons */}
       <div className="flex flex-col sm:flex-row gap-4 pt-4">
         <SubmitButton
           title={submitLabel || (item ? t("common.update") : t("common.save"))}
           loading={isPending}
+          disabled={isPending || fields.length === 0}
           className="flex-1 h-12 rounded-xl text-lg shadow-lg shadow-primary/20"
         />
         {onCancel && (

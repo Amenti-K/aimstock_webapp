@@ -43,6 +43,8 @@ type InventoryFormProps = {
   isEdit?: boolean;
   showHint?: boolean;
   onCancel?: () => void;
+  onDiscontinue?: () => void;
+  isDiscontinuePending?: boolean;
 };
 
 const defaultValues: inventoryFormValues = {
@@ -65,6 +67,8 @@ export default function InventoryForm({
   isEdit = false,
   showHint = isEdit,
   onCancel,
+  onDiscontinue,
+  isDiscontinuePending = false,
 }: InventoryFormProps) {
   const { t } = useTranslation();
   const form = useForm<inventoryFormValues>({
@@ -380,6 +384,21 @@ export default function InventoryForm({
           >
             {t("common.cancel")}
           </Button>
+          {isEdit &&
+            onDiscontinue &&
+            initialData?.status !== "DISCONTINUED" && (
+              <Button
+                type="button"
+                variant="outline"
+                disabled={isDiscontinuePending}
+                className="rounded-full px-8 border-orange-500/40 text-orange-600 hover:bg-orange-500/10 hover:text-orange-700 dark:text-orange-400"
+                onClick={() => onDiscontinue()}
+              >
+                {isDiscontinuePending
+                  ? t("common.saving")
+                  : t("inventory.form.discontinue")}
+              </Button>
+            )}
           <SubmitButton
             title={isEdit ? t("inventory.form.edit") : t("inventory.form.add")}
             loading={isLoading}

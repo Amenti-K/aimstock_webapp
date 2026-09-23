@@ -18,6 +18,7 @@ import {
   MoreVertical,
   MapPin,
   Calendar,
+  Ban,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -204,23 +205,33 @@ export default function InventoryDetailPage() {
                 <span className="text-2xl font-black">
                   #{inventory.sku || t("inventory.card.noSku")}
                 </span>
-                <Badge
-                  className={cn(
-                    "rounded-lg px-2 py-0.5 text-[10px] font-extrabold border",
-                    outOfStock
-                      ? "bg-destructive/10 text-destructive border-destructive"
+                {inventory.status === "DISCONTINUED" ? (
+                  <Badge
+                    className="rounded-lg px-2 py-0.5 text-[10px] font-extrabold border bg-orange-500/10 text-orange-600 border-orange-500 flex items-center gap-1"
+                    variant="outline"
+                  >
+                    <Ban className="h-3 w-3" />
+                    {t("inventory.discontinue.badge").toUpperCase()}
+                  </Badge>
+                ) : (
+                  <Badge
+                    className={cn(
+                      "rounded-lg px-2 py-0.5 text-[10px] font-extrabold border",
+                      outOfStock
+                        ? "bg-destructive/10 text-destructive border-destructive"
+                        : lowStock
+                          ? "bg-yellow-500/10 text-yellow-600 border-yellow-500"
+                          : "bg-primary/10 text-primary border-primary",
+                    )}
+                    variant="outline"
+                  >
+                    {outOfStock
+                      ? t("inventory.card.outOfStock").toUpperCase()
                       : lowStock
-                        ? "bg-yellow-500/10 text-yellow-600 border-yellow-500"
-                        : "bg-primary/10 text-primary border-primary",
-                  )}
-                  variant="outline"
-                >
-                  {outOfStock
-                    ? t("inventory.card.outOfStock").toUpperCase()
-                    : lowStock
-                      ? t("inventory.card.lowStock").toUpperCase()
-                      : t("inventory.card.inStock").toUpperCase()}
-                </Badge>
+                        ? t("inventory.card.lowStock").toUpperCase()
+                        : t("inventory.card.inStock").toUpperCase()}
+                  </Badge>
+                )}
                 {inventory.inventoryCategory && (
                   <Badge
                     className={cn(

@@ -104,6 +104,7 @@
     "searchPlaceholder": "Search inventories...",
     "add": "New Inventory",
     "edit": "Edit Inventory",
+    "discontinue": "Discontinue",
     "sku": "SKU (optional)",
     "name": "Name *",
     "brand": "Brand (optional)",
@@ -125,5 +126,13 @@
       "loadingWare": "Loading...",
       "addWare": "Add Warehouse"
     }
+  },
+  "discontinue": {
+    "badge": "Discontinued",
+    "confirmTitle": "Discontinue Inventory",
+    "confirmMessage": "Are you sure you want to discontinue \"{{name}}\"? This item will no longer appear in sales or purchase forms. This action can only be done when the item has zero stock in all warehouses.",
+    "confirm": "Yes, Discontinue",
+    "alreadyDiscontinued": "This inventory is already discontinued.",
+    "hasStock": "Cannot discontinue: item still has stock in one or more warehouses."
   }
 }

@@ -9,6 +9,11 @@ export enum StockStatus {
   OUT = "out",
 }
 
+export enum InventoryStatus {
+  ACTIVE = "ACTIVE",
+  DISCONTINUED = "DISCONTINUED",
+}
+
 export enum TimeFrame {
   LAST_30_DAYS = "LAST_30_DAYS",
   LAST_90_DAYS = "LAST_90_DAYS",
@@ -57,6 +62,7 @@ export interface IInventory {
   sellingPrice: number;
   brand?: string;
   unit?: string;
+  status: InventoryStatus;
   inventoryCategory?: {
     id: string;
     name: string;

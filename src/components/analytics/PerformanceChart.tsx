@@ -24,7 +24,7 @@ const PerformanceChart: React.FC<PerformanceChartProps> = ({ data }) => {
   if (!data || !data.chartData || data.chartData.length === 0) {
     return (
       <div className="flex h-full items-center justify-center text-muted-foreground">
-        {t("analytics.noData.chart.emptyState.noActivity.message")}
+        {t("analytics.chart.emptyState.noActivity.message")}
       </div>
     );
   }
