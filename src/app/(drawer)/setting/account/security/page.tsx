@@ -33,9 +33,12 @@ import {
 
 const passwordSchema = z
   .object({
-    currentPassword: z.string().min(1, "Current password is required"),
-    newPassword: z.string().min(6, "Password must be at least 6 characters"),
-    confirmPassword: z.string().min(1, "Please confirm your password"),
+    currentPassword: z.string().trim().min(1, "Current password is required"),
+    newPassword: z
+      .string()
+      .trim()
+      .min(6, "Password must be at least 6 characters"),
+    confirmPassword: z.string().trim().min(1, "Please confirm your password"),
   })
   .refine((data) => data.newPassword === data.confirmPassword, {
     message: "Passwords don't match",
@@ -46,6 +49,7 @@ const pinSchema = z
   .object({
     pin: z
       .string()
+      .trim()
       .length(6, "PIN must be 6 digits")
       .regex(/^\d+$/, "PIN must be numeric"),
     confirmPin: z.string().length(6, "PIN must be 6 digits"),
@@ -89,8 +93,8 @@ export default function SecurityPage() {
   const onChangePassword = (data: PasswordFormValues) => {
     changePassword.mutate(
       {
-        currentPassword: data.currentPassword,
-        newPassword: data.newPassword,
+        currentPassword: data.currentPassword.trim(),
+        newPassword: data.newPassword.trim(),
       },
       {
         onSuccess: () => {
