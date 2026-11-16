@@ -2,7 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { PlusCircle, Trash2, Info, Package, AlertCircle } from "lucide-react";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { useFieldArray, useForm, useWatch } from "react-hook-form";
 import { useFetchWarehouseInventorySelector } from "@/api/inventory/api.inventory";
 import { useFetchWarehouseSelector } from "@/api/warehouse/api.warehouse";
@@ -83,6 +83,25 @@ export default function AdjustmentForm({
     }));
   }, [warehouses]);
 
+  const typeOptions = [
+    {
+      value: IAdjustmentType.stockIn,
+      label: t("adjustment.types.stockIn"),
+    },
+    {
+      value: IAdjustmentType.stockOut,
+      label: t("adjustment.types.stockOut"),
+    },
+    ...(warehouseOptions.length > 1
+      ? [
+          {
+            value: IAdjustmentType.transfer,
+            label: t("adjustment.types.transfer"),
+          },
+        ]
+      : []),
+  ];
+
   const inventoryOptions = useMemo(() => {
     if (!Array.isArray(inventorySelector?.data)) return [];
     return inventorySelector.data.map((w: any) => ({
@@ -91,6 +110,26 @@ export default function AdjustmentForm({
       raw: w,
     }));
   }, [inventorySelector]);
+
+  useEffect(() => {
+    if (loadingWarehouses || !Array.isArray(warehouses?.data)) return;
+
+    if (warehouseOptions.length === 1) {
+      if (sourceWarehouseId !== warehouseOptions[0].value) {
+        setValue("warehouseId", warehouseOptions[0].value);
+      }
+      if (type === IAdjustmentType.transfer) {
+        setValue("type", "" as IAdjustmentType);
+      }
+    }
+  }, [
+    loadingWarehouses,
+    setValue,
+    sourceWarehouseId,
+    type,
+    warehouseOptions,
+    warehouses,
+  ]);
 
   // Allocation map mirroring mobile app for remaining stock calculations
   const allocationMap = useMemo(() => {
@@ -211,44 +250,38 @@ export default function AdjustmentForm({
             {t("adjustment.form.basicInfoDescription")}
           </p>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div
+            className={cn(
+              "grid grid-cols-1 gap-6",
+              warehouseOptions.length !== 1 && "md:grid-cols-2",
+            )}
+          >
             <SelectField
               name="type"
               control={control as any}
               label={t("adjustment.form.typeLabel")}
               placeholder={t("adjustment.form.selectType")}
-              options={[
-                {
-                  value: IAdjustmentType.stockIn,
-                  label: t("adjustment.types.stockIn"),
-                },
-                {
-                  value: IAdjustmentType.stockOut,
-                  label: t("adjustment.types.stockOut"),
-                },
-                {
-                  value: IAdjustmentType.transfer,
-                  label: t("adjustment.types.transfer"),
-                },
-              ]}
+              options={typeOptions}
               onValueChange={() => {
                 setValue("items", []);
               }}
             />
-            <SelectField
-              name="warehouseId"
-              control={control as any}
-              label={t("adjustment.form.sourceWarehouse")}
-              placeholder={
-                loadingWarehouses
-                  ? t("common.loading")
-                  : t("adjustment.form.selectSource")
-              }
-              options={warehouseOptions}
-              onValueChange={() => {
-                setValue("items", []);
-              }}
-            />
+            {warehouseOptions.length !== 1 && (
+              <SelectField
+                name="warehouseId"
+                control={control as any}
+                label={t("adjustment.form.sourceWarehouse")}
+                placeholder={
+                  loadingWarehouses
+                    ? t("common.loading")
+                    : t("adjustment.form.selectSource")
+                }
+                options={warehouseOptions}
+                onValueChange={() => {
+                  setValue("items", []);
+                }}
+              />
+            )}
           </div>
 
           <TextAreaField
