@@ -62,7 +62,14 @@ export const useCreateSale = () => {
   return useMutate<INewSale>(endpoints.SALE, "post", {
     onError: onErrorNotification,
     onSuccess: onSuccessNotification,
-    queryKey: queryKeys.sales.root,
+    invalidateKeys: [
+      queryKeys.sales.root,
+      queryKeys.inventories.root,
+      queryKeys.accounts.root,
+      queryKeys.loans.partners.root,
+      queryKeys.analytics.root,
+      queryKeys.reports.root,
+    ],
   });
 };
 
@@ -89,7 +96,14 @@ export const useUpdateSale = (id: string) => {
   return useMutate<Partial<ISale>>(`${endpoints.SALE}/${id}`, "patch", {
     onError: onErrorNotification,
     onSuccess: () => toast.success("Sale updated successfully!"),
-    queryKey: queryKeys.sales.root,
+    invalidateKeys: [
+      queryKeys.sales.root,
+      queryKeys.inventories.root,
+      queryKeys.accounts.root,
+      queryKeys.loans.partners.root,
+      queryKeys.analytics.root,
+      queryKeys.reports.root,
+    ],
   });
 };
 
@@ -100,7 +114,14 @@ export const useDeleteSale = () => {
     {
       onError: onErrorNotification,
       onSuccess: () => toast.success("Sale Deleted successfully!"),
-      queryKey: queryKeys.sales.root,
+      invalidateKeys: [
+        queryKeys.sales.root,
+        queryKeys.inventories.root,
+        queryKeys.accounts.root,
+        queryKeys.loans.partners.root,
+        queryKeys.analytics.root,
+        queryKeys.reports.root,
+      ],
     },
   );
 };

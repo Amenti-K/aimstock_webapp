@@ -43,7 +43,7 @@ import type {
 } from "@/components/interface/sales/interface.sale";
 import { IPartnerSelector } from "@/components/interface/partner/partner.interfacce";
 import { useFetchWarehouseSelector } from "@/api/warehouse/api.warehouse";
-import { PartnerFormValues } from "@/components/forms/partner/partner.schema";
+import { PartnerFormValues } from "@/components/schema/partner.schema";
 
 interface SalesFormProps {
   initialData?: ISaleView | null;
@@ -563,7 +563,7 @@ export default function SalesForm({
             </div>
 
             {/* ── Right Column: Summary & Submit (Sticky) ───────────────── */}
-            <div className="lg:fixed lg:top-24 lg:right-8 space-y-6">
+            <div className="lg:col-span-1 lg:sticky lg:top-24 lg:right-4 space-y-6">
               <Card className="shadow-lg border-t-4 border-t-emerald-600 overflow-hidden">
                 <CardHeader className="pb-4 border-b">
                   <CardTitle className="text-base flex items-center gap-2 text-emerald-700">

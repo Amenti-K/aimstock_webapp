@@ -205,7 +205,7 @@ export default function PurchaseDetailPage() {
             </AlertDialogTitle>
             <AlertDialogDescription>
               {t("common.confirmDelete.message", {
-                entity: t("purchase.moduleName"),
+                entity: t("purchase.moduleName") + " " + poNumber,
               })}
             </AlertDialogDescription>
           </AlertDialogHeader>

@@ -34,7 +34,6 @@ import {
 } from "@/api/partner/api.partner";
 import {
   useFetchInventorySelector,
-  useGetInventoriesInfinite,
   useCreateInventory,
 } from "@/api/inventory/api.inventory";
 import { useFetchAccountSelector } from "@/api/account/api.account";
@@ -50,7 +49,7 @@ import {
   IPurchaseView,
 } from "../../interface/purchase/purchase.interface";
 import { useFetchWarehouseSelector } from "@/api/warehouse/api.warehouse";
-import { PartnerFormValues } from "@/components/forms/partner/partner.schema";
+import { PartnerFormValues } from "@/components/schema/partner.schema";
 import { inventoryFormValues } from "@/components/schema/inventory.schema";
 import { usePermissions } from "@/hooks/permission.hook";
 import InventoryQuickForm from "../inventory/InventoryQuickForm";
@@ -589,7 +588,7 @@ export default function PurchaseForm({
             </div>
 
             {/* ── Right Column: Summary & Submit (Sticky) ───────────────── */}
-            <div className="lg:fixed lg:top-24 lg:right-8 space-y-6">
+            <div className="lg:col-span-1 lg:sticky lg:top-24 lg:right-4 space-y-6">
               <Card className="shadow-lg border-t-4 border-t-primary overflow-hidden">
                 <CardHeader className="pb-4 border-b">
                   <CardTitle className="text-base flex items-center gap-2">

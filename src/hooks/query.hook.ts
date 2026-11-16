@@ -4,12 +4,14 @@ import {
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
+import type { QueryKey } from "@tanstack/react-query";
 import { AxiosRequestConfig, AxiosResponse } from "axios";
 import AxiosInstance from "@/lib/axiosInstance";
 
 /** Options for mutation hooks */
 interface UseMutateOptions<TData> {
   queryKey?: any[] | readonly any[];
+  invalidateKeys?: QueryKey[];
   onSuccess?: (data: TData) => void;
   onError?: (error: any) => void;
   headers?: Record<string, string>;
@@ -49,8 +51,13 @@ export const useMutate = <TData = any>(
       return res.data;
     },
     onSuccess: (data) => {
-      if (options?.queryKey)
+      if (options?.invalidateKeys) {
+        options.invalidateKeys.forEach((key) => {
+          queryClient.invalidateQueries({ queryKey: key });
+        });
+      } else if (options?.queryKey) {
         queryClient.invalidateQueries({ queryKey: options.queryKey });
+      }
       options?.onSuccess?.(data);
     },
     onError: options?.onError,

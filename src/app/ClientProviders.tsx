@@ -122,11 +122,14 @@ function AuthGuard({ children }: { children: React.ReactNode }) {
     router,
   ]);
 
-  if (
-    !isMounted ||
-    authLoading ||
-    (accessToken && (!isInitialized || subLoading))
-  ) {
+  const isAuthPage = pathname.startsWith("/auth");
+
+  const isRedirectPending =
+    isMounted &&
+    ((!accessToken && !isAuthPage) ||
+      (accessToken && (!isInitialized || subLoading)));
+
+  if (!isMounted || authLoading || isRedirectPending) {
     return (
       <div className="flex min-h-screen w-full items-center justify-center bg-background">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />

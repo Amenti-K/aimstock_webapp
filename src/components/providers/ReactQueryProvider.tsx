@@ -5,7 +5,7 @@ const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       retry: 4,
-      refetchOnMount: false, // avoid redundant fetches
+      refetchOnMount: true,
       refetchOnWindowFocus: false, // ERP users often multitask
     },
   },

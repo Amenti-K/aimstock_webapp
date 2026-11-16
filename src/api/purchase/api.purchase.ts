@@ -58,7 +58,14 @@ export const useCreatePurchase = () => {
   return useMutate<INewPurchase>(endpoints.PURCHASE, "post", {
     onError: onErrorNotification,
     onSuccess: onSuccessNotification,
-    queryKey: queryKeys.purchases.root,
+    invalidateKeys: [
+      queryKeys.purchases.root,
+      queryKeys.inventories.root,
+      queryKeys.accounts.root,
+      queryKeys.loans.partners.root,
+      queryKeys.analytics.root,
+      queryKeys.reports.root,
+    ],
   });
 };
 
@@ -88,7 +95,14 @@ export const useUpdatePurchase = (id: string) => {
   return useMutate<Partial<IPurchase>>(`${endpoints.PURCHASE}/${id}`, "patch", {
     onError: onErrorNotification,
     onSuccess: () => toast.success("Purchase updated successfully!"),
-    queryKey: queryKeys.purchases.root,
+    invalidateKeys: [
+      queryKeys.purchases.root,
+      queryKeys.inventories.root,
+      queryKeys.accounts.root,
+      queryKeys.loans.partners.root,
+      queryKeys.analytics.root,
+      queryKeys.reports.root,
+    ],
   });
 };
 
@@ -99,7 +113,14 @@ export const useDeletePurchase = () => {
     {
       onError: onErrorNotification,
       onSuccess: () => toast.success("Purchase Deleted successfully!"),
-      queryKey: queryKeys.purchases.root,
+      invalidateKeys: [
+        queryKeys.purchases.root,
+        queryKeys.inventories.root,
+        queryKeys.accounts.root,
+        queryKeys.loans.partners.root,
+        queryKeys.analytics.root,
+        queryKeys.reports.root,
+      ],
     },
   );
 };
